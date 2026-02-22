@@ -65,7 +65,10 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
       query: t.Object({
         page: t.Optional(t.String()),
         limit: t.Optional(t.String())
-      })
+      }),
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )
 
@@ -91,7 +94,10 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
         businessId: t.String(),
         status: t.Union([t.Literal('approved'), t.Literal('rejected')]),
         rejectionReason: t.Optional(t.String())
-      })
+      }),
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )
 
@@ -110,6 +116,11 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
       return {
         success: true,
         data: stats
+      }
+    },
+    {
+      detail: {
+        security: [{ bearerAuth: [] }]
       }
     }
   )
@@ -140,7 +151,10 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
         page: t.Optional(t.String()),
         limit: t.Optional(t.String()),
         search: t.Optional(t.String())
-      })
+      }),
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )
 
@@ -166,7 +180,10 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
         userId: t.String(),
         isBanned: t.Boolean(),
         banReason: t.Optional(t.String())
-      })
+      }),
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )
 
@@ -185,6 +202,11 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
       return {
         success: true,
         data: stats
+      }
+    },
+    {
+      detail: {
+        security: [{ bearerAuth: [] }]
       }
     }
   )
@@ -214,7 +236,10 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
       query: t.Object({
         page: t.Optional(t.String()),
         limit: t.Optional(t.String())
-      })
+      }),
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )
 
@@ -239,7 +264,10 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
       body: t.Object({
         reviewId: t.String(),
         isApproved: t.Boolean()
-      })
+      }),
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )
 
@@ -271,7 +299,10 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
         startDate: t.Optional(t.String({ format: 'date' })),
         endDate: t.Optional(t.String({ format: 'date' })),
         regionId: t.Optional(t.String())
-      })
+      }),
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )
 
@@ -291,6 +322,11 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
       return {
         success: true,
         data: regions
+      }
+    },
+    {
+      detail: {
+        security: [{ bearerAuth: [] }]
       }
     }
   )
@@ -318,7 +354,10 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
       }),
       body: t.Object({
         isActive: t.Boolean()
-      })
+      }),
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )
 
@@ -338,6 +377,11 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
       return {
         success: true,
         data: categories
+      }
+    },
+    {
+      detail: {
+        security: [{ bearerAuth: [] }]
       }
     }
   )
@@ -365,6 +409,9 @@ export const adminRoutes = new Elysia({ prefix: '/api/admin' })
       }),
       body: t.Object({
         isActive: t.Boolean()
-      })
+      }),
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )

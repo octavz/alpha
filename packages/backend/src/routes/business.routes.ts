@@ -42,44 +42,28 @@ async function getAuthUser(authHeader: string | null) {
 }
 
 export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
-  // Create business (requires authentication)
-  .post('/', 
-    async ({ body, request, set }) => {
-      const authHeader = request.headers.get('authorization')
-      const auth = await getAuthUser(authHeader)
+  // Public endpoints
+  .get('/', 
+    async ({ query, set }) => {
+      const businesses = await businessService.searchBusinesses(query)
       
-      if (!auth) {
-        set.status = 401
-        return { success: false, error: 'Unauthorized' }
-      }
-
-      const business = await businessService.createBusiness(auth.userId, body)
-      
-      set.status = 201
       return {
         success: true,
-        data: business
+        data: businesses
       }
     },
     {
-      body: t.Object({
-        name: t.String({ minLength: 2, maxLength: 100 }),
-        description: t.String({ minLength: 10, maxLength: 200 }),
-        addressLine1: t.String({ minLength: 5 }),
-        addressLine2: t.Optional(t.String()),
-        city: t.String({ minLength: 2 }),
-        state: t.String({ minLength: 2 }),
-        zipCode: t.String({ minLength: 3 }),
-        country: t.String({ minLength: 2 }),
-        latitude: t.Number(),
-        longitude: t.Number(),
-        categoryId: t.String(),
-        phone: t.String({ minLength: 5 }),
-        email: t.String({ format: 'email' }),
-        website: t.Optional(t.String({ format: 'url' })),
-        logoUrl: t.Optional(t.String({ format: 'url' })),
-        servicePointsCount: t.Number({ minimum: 1, maximum: 50 })
-      })
+      query: t.Object({
+        search: t.Optional(t.String()),
+        regionId: t.Optional(t.String()),
+        categoryId: t.Optional(t.String()),
+        page: t.Optional(t.Numeric({ default: 1 })),
+        limit: t.Optional(t.Numeric({ default: 20 }))
+      }),
+      detail: {
+        tags: ['Business'],
+        security: [] // Public endpoint, no auth required
+      }
     }
   )
 
@@ -104,6 +88,13 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
       return {
         success: true,
         data: business
+      }
+    },
+    {
+      detail: {
+        tags: ['Business'],
+        security: [{ bearerAuth: [] }],
+        description: 'Get the current authenticated user\'s business. Requires authentication.'
       }
     }
   )
@@ -146,17 +137,27 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
         email: t.Optional(t.String({ format: 'email' })),
         website: t.Optional(t.String({ format: 'url' })),
         logoUrl: t.Optional(t.String({ format: 'url' })),
-        servicePointsCount: t.Optional(t.Number({ minimum: 1, maximum: 50 })),
-        isActive: t.Optional(t.Boolean())
-      })
+        coverImageUrl: t.Optional(t.String({ format: 'url' })),
+        servicePointsCount: t.Optional(t.Number({ minimum: 1 }))
+      }),
+      detail: {
+        tags: ['Business'],
+        security: [{ bearerAuth: [] }],
+        description: 'Update a business. Requires authentication and ownership of the business.'
+      }
     }
   )
 
   // Get business by ID (public)
   .get('/:id',
-    async ({ params }) => {
+    async ({ params, set }) => {
       const business = await businessService.getBusiness(params.id)
       
+      if (!business) {
+        set.status = 404
+        return { success: false, error: 'Business not found' }
+      }
+
       return {
         success: true,
         data: business
@@ -165,7 +166,12 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
     {
       params: t.Object({
         id: t.String()
-      })
+      }),
+      detail: {
+        tags: ['Business'],
+        security: [], // Public endpoint
+        description: 'Get business details by ID. Public endpoint.'
+      }
     }
   )
 
@@ -191,13 +197,18 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
     },
     {
       query: t.Object({
-        regionId: t.String(),
+        regionId: t.Optional(t.String()),
         categoryId: t.Optional(t.String()),
         q: t.Optional(t.String()),
         page: t.Optional(t.String()),
         limit: t.Optional(t.String()),
-        sortBy: t.Optional(t.String())
-      })
+        sortBy: t.Optional(t.String({ default: 'name' }))
+      }),
+      detail: {
+        tags: ['Business'],
+        security: [], // Public endpoint
+        description: 'Search businesses with filters. Public endpoint.'
+      }
     }
   )
 
@@ -214,7 +225,12 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
     {
       params: t.Object({
         id: t.String()
-      })
+      }),
+      detail: {
+        tags: ['Business'],
+        security: [], // Public endpoint
+        description: 'Get business hours. Public endpoint.'
+      }
     }
   )
 
@@ -247,7 +263,12 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
           closeTime: t.String({ pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$' }),
           isClosed: t.Boolean()
         })
-      )
+      ),
+      detail: {
+        tags: ['Business'],
+        security: [{ bearerAuth: [] }],
+        description: 'Update business hours. Requires business ownership.'
+      }
     }
   )
 
@@ -264,7 +285,12 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
     {
       params: t.Object({
         id: t.String()
-      })
+      }),
+      detail: {
+        tags: ['Business'],
+        security: [], // Public endpoint
+        description: 'Get business services. Public endpoint.'
+      }
     }
   )
 
@@ -297,7 +323,12 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
         durationMinutes: t.Number({ minimum: 5, maximum: 480 }),
         price: t.Optional(t.Number({ minimum: 0 })),
         isActive: t.Boolean()
-      })
+      }),
+      detail: {
+        tags: ['Business'],
+        security: [{ bearerAuth: [] }],
+        description: 'Create a new service for a business. Requires business ownership.'
+      }
     }
   )
 
@@ -329,7 +360,12 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
         durationMinutes: t.Optional(t.Number({ minimum: 5, maximum: 480 })),
         price: t.Optional(t.Number({ minimum: 0 })),
         isActive: t.Optional(t.Boolean())
-      })
+      }),
+      detail: {
+        tags: ['Business'],
+        security: [{ bearerAuth: [] }],
+        description: 'Update a service. Requires business ownership.'
+      }
     }
   )
 
@@ -354,7 +390,12 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
       query: t.Object({
         page: t.Optional(t.String()),
         limit: t.Optional(t.String())
-      })
+      }),
+      detail: {
+        tags: ['Business'],
+        security: [], // Public endpoint
+        description: 'Get business reviews. Public endpoint.'
+      }
     }
   )
 
@@ -379,6 +420,11 @@ export const businessRoutes = new Elysia({ prefix: '/api/businesses' })
     {
       params: t.Object({
         id: t.String()
-      })
+      }),
+      detail: {
+        tags: ['Business'],
+        security: [{ bearerAuth: [] }],
+        description: 'Get business statistics. Requires business ownership.'
+      }
     }
   )

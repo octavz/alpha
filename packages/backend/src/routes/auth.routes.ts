@@ -7,7 +7,7 @@ export const authRoutes = new Elysia({ prefix: '/api/auth' })
   // Register
   .post('/register', 
     async ({ body, request, set }) => {
-      const userAgent = request.headers.get('user-agent')
+      const userAgent = request.headers.get('user-agent') || undefined
       const ipAddress = request.headers.get('x-forwarded-for') || 'unknown'
 
       const result = await authService.register(body, userAgent, ipAddress)
@@ -30,7 +30,7 @@ export const authRoutes = new Elysia({ prefix: '/api/auth' })
   // Login
   .post('/login',
     async ({ body, request, set }) => {
-      const userAgent = request.headers.get('user-agent')
+      const userAgent = request.headers.get('user-agent') || undefined
       const ipAddress = request.headers.get('x-forwarded-for') || 'unknown'
 
       const result = await authService.login(body, userAgent, ipAddress)
@@ -71,7 +71,7 @@ export const authRoutes = new Elysia({ prefix: '/api/auth' })
   // Logout
   .post('/logout',
     async ({ headers, set }) => {
-      const authHeader = headers.authorization
+      const authHeader = headers['authorization']
       
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         throw new AuthenticationError('Authentication required')
@@ -91,13 +91,18 @@ export const authRoutes = new Elysia({ prefix: '/api/auth' })
         success: true,
         message: 'Logged out successfully'
       }
+    },
+    {
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )
 
   // Get current user
   .get('/me',
     async ({ headers, set }) => {
-      const authHeader = headers.authorization
+      const authHeader = headers['authorization']
       
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         throw new AuthenticationError('Authentication required')
@@ -113,13 +118,18 @@ export const authRoutes = new Elysia({ prefix: '/api/auth' })
         success: true,
         data: user
       }
+    },
+    {
+      detail: {
+        security: [{ bearerAuth: [] }]
+      }
     }
   )
 
   // Request email verification
   .post('/verify-email/request',
     async ({ headers, set }) => {
-      const authHeader = headers.authorization
+      const authHeader = headers['authorization']
       
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         throw new AuthenticationError('Authentication required')
@@ -128,7 +138,7 @@ export const authRoutes = new Elysia({ prefix: '/api/auth' })
       const token = authHeader.substring(7)
       const payload = jwtService.verifyAccessToken(token)
 
-      const verificationToken = await authService.createEmailVerificationToken(payload.userId)
+      await authService.createEmailVerificationToken(payload.userId)
       
       // TODO: Send email with verification token
       
@@ -136,6 +146,11 @@ export const authRoutes = new Elysia({ prefix: '/api/auth' })
       return {
         success: true,
         message: 'Verification email sent'
+      }
+    },
+    {
+      detail: {
+        security: [{ bearerAuth: [] }]
       }
     }
   )
@@ -163,7 +178,7 @@ export const authRoutes = new Elysia({ prefix: '/api/auth' })
   .post('/reset-password/request',
     async ({ body, set }) => {
       const { email } = body
-      const token = await authService.createPasswordResetToken(email)
+      await authService.createPasswordResetToken(email)
       
       // TODO: Send email with reset token
       

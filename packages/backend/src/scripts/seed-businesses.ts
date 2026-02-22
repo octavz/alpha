@@ -2,6 +2,7 @@ import { db } from '../db/client'
 import { businesses, services, businessHours, users, categories, regions } from '../db/schema'
 import { eq, sql } from 'drizzle-orm'
 import { faker } from '@faker-js/faker'
+import bcrypt from 'bcrypt'
 
 // Business names by category
 const businessNamesByCategory: Record<string, string[]> = {
@@ -126,19 +127,21 @@ async function seedBusinesses() {
       where: eq(users.email, email)
     })
 
-    if (!existingUser) {
-      const [user] = await db.insert(users).values({
-        email,
-        name: faker.person.fullName(),
-        phone: faker.phone.number(),
-        role: 'business_admin',
-        emailVerified: true,
-        regionId: faker.helpers.arrayElement(allRegions).id
-      }).returning()
-      testUsers.push(user)
-    } else {
-      testUsers.push(existingUser)
-    }
+      if (!existingUser) {
+        const passwordHash = await bcrypt.hash('password123', 10)
+        const newUsers = await db.insert(users).values({
+          email,
+          passwordHash,
+          name: faker.person.fullName(),
+          phone: faker.phone.number(),
+          role: 'business_admin',
+          emailVerified: true,
+          regionId: faker.helpers.arrayElement(allRegions).id
+        }).returning()
+        testUsers.push(newUsers[0])
+      } else {
+        testUsers.push(existingUser)
+      }
   }
 
   console.log(`Created/retrieved ${testUsers.length} test users`)

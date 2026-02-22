@@ -172,15 +172,22 @@ CREATE TABLE IF NOT EXISTS appointments (
   appointment_date DATE NOT NULL,
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
-  status TEXT DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show')),
-  notes TEXT,
-  
-  -- Service Point Assignment
   service_point_number INTEGER,
+  
+  -- Customer Information (cached for historical reference)
+  customer_name TEXT NOT NULL,
+  customer_email TEXT NOT NULL,
+  customer_phone TEXT,
+  customer_notes TEXT,
+  
+  -- Status
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled', 'no_show')),
   
   -- Metadata
   created_at TIMESTAMP DEFAULT NOW() NOT NULL,
-  updated_at TIMESTAMP DEFAULT NOW() NOT NULL
+  updated_at TIMESTAMP DEFAULT NOW() NOT NULL,
+  cancelled_at TIMESTAMP,
+  cancelled_reason TEXT
 );
 
 CREATE INDEX IF NOT EXISTS appointments_business_id_idx ON appointments(business_id);
@@ -277,7 +284,7 @@ ON CONFLICT (slug) DO NOTHING;
 
 -- Create admin user (password: admin123)
 INSERT INTO users (id, email, password_hash, name, role, email_verified) VALUES
-('11111111-1111-1111-1111-111111111111', 'admin@alpha.com', '$2b$10$YourHashedPasswordHere', 'Admin User', 'admin', true)
+('11111111-1111-1111-1111-111111111111', 'admin@alpha.com', '$2b$10$qjpBH3VUDogv5T0F0KPPyOiF.Ezx0LDcVuMo3yK1f/M0faZKGTeLC', 'Admin User', 'admin', true)
 ON CONFLICT (email) DO NOTHING;
 
 -- ========== CREATE FULL-TEXT SEARCH INDEX ==========

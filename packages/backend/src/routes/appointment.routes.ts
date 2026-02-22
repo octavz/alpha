@@ -83,7 +83,12 @@ export const appointmentRoutes = new Elysia({ prefix: '/api/appointments' })
         endTime: t.String({ pattern: '^([0-1][0-9]|2[0-3]):[0-5][0-9]$' }),
         notes: t.Optional(t.String()),
         servicePointNumber: t.Optional(t.Number({ minimum: 1 }))
-      })
+      }),
+      detail: {
+        tags: ['Appointment'],
+        security: [{ bearerAuth: [] }],
+        description: 'Create a new appointment. Customer role required.'
+      }
     }
   )
 
@@ -116,7 +121,12 @@ export const appointmentRoutes = new Elysia({ prefix: '/api/appointments' })
     {
       params: t.Object({
         id: t.String()
-      })
+      }),
+      detail: {
+        tags: ['Appointment'],
+        security: [{ bearerAuth: [] }],
+        description: 'Get appointment by ID. Requires appointment ownership or business ownership.'
+      }
     }
   )
 
@@ -165,7 +175,12 @@ export const appointmentRoutes = new Elysia({ prefix: '/api/appointments' })
         ])),
         notes: t.Optional(t.String()),
         servicePointNumber: t.Optional(t.Number({ minimum: 1 }))
-      })
+      }),
+      detail: {
+        tags: ['Appointment'],
+        security: [{ bearerAuth: [] }],
+        description: 'Update appointment. Requires appointment ownership or business ownership.'
+      }
     }
   )
 
@@ -199,7 +214,12 @@ export const appointmentRoutes = new Elysia({ prefix: '/api/appointments' })
       query: t.Object({
         page: t.Optional(t.String()),
         limit: t.Optional(t.String())
-      })
+      }),
+      detail: {
+        tags: ['Appointment'],
+        security: [{ bearerAuth: [] }],
+        description: 'Get customer appointments. Customer role required.'
+      }
     }
   )
 
@@ -243,7 +263,12 @@ export const appointmentRoutes = new Elysia({ prefix: '/api/appointments' })
         page: t.Optional(t.String()),
         limit: t.Optional(t.String()),
         date: t.Optional(t.String({ format: 'date' }))
-      })
+      }),
+      detail: {
+        tags: ['Appointment'],
+        security: [{ bearerAuth: [] }],
+        description: 'Get business appointments. Business owner role required.'
+      }
     }
   )
 
@@ -282,7 +307,12 @@ export const appointmentRoutes = new Elysia({ prefix: '/api/appointments' })
         date: t.String({ format: 'date' }),
         serviceId: t.Optional(t.String()),
         durationMinutes: t.Optional(t.String())
-      })
+      }),
+      detail: {
+        tags: ['Appointment'],
+        security: [], // Public endpoint
+        description: 'Get available time slots for a business. Public endpoint.'
+      }
     }
   )
 
@@ -320,6 +350,11 @@ export const appointmentRoutes = new Elysia({ prefix: '/api/appointments' })
     {
       params: t.Object({
         businessId: t.String()
-      })
+      }),
+      detail: {
+        tags: ['Appointment'],
+        security: [{ bearerAuth: [] }],
+        description: 'Get appointment statistics. Business owner role required.'
+      }
     }
   )

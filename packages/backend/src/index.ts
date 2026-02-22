@@ -22,11 +22,29 @@ const app = new Elysia()
       info: {
         title: 'Alpha API',
         version: '1.0.0',
-        description: 'Alpha client-server application API'
+        description: 'Alpha Business Directory Platform API'
       },
       tags: [
         { name: 'Auth', description: 'Authentication endpoints' },
-        { name: 'Health', description: 'Health check endpoints' }
+        { name: 'Health', description: 'Health check endpoints' },
+        { name: 'Business', description: 'Business directory endpoints' },
+        { name: 'Appointment', description: 'Appointment booking endpoints' },
+        { name: 'Admin', description: 'Administration endpoints' }
+      ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            description: 'Enter JWT token'
+          }
+        }
+      },
+      security: [
+        {
+          bearerAuth: []
+        }
       ]
     }
   }))
@@ -38,6 +56,23 @@ const app = new Elysia()
   .use(adminRoutes)
   .use(appointmentRoutes)
   .get('/', () => 'Alpha API Server')
+  // Test protected endpoint for Swagger
+  .get('/api/test-protected', 
+    ({ request }) => {
+      const authHeader = request.headers.get('authorization')
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        throw new Error('Unauthorized')
+      }
+      return { message: 'You are authenticated!', timestamp: new Date().toISOString() }
+    },
+    {
+      detail: {
+        tags: ['Test'],
+        security: [{ bearerAuth: [] }],
+        description: 'Test endpoint to verify authentication works in Swagger'
+      }
+    }
+  )
   .listen(process.env.PORT || 3000)
 
 console.log(`🚀 Server is running at ${app.server?.hostname}:${app.server?.port}`)
