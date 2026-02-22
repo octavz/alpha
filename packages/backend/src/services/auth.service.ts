@@ -15,6 +15,9 @@ export interface RegisterInput {
   email: string
   password: string
   name: string
+  phone?: string
+  role?: 'customer' | 'business_admin' | 'business_staff' | 'admin'
+  regionId?: string
 }
 
 export interface LoginInput {
@@ -27,8 +30,12 @@ export interface AuthResponse {
     id: string
     email: string
     name: string | null
+    phone: string | null
+    role: 'customer' | 'business_admin' | 'business_staff' | 'admin'
     emailVerified: boolean
     avatarUrl: string | null
+    regionId: string | null
+    isBanned: boolean
     createdAt: Date
   }
   accessToken: string
@@ -58,8 +65,15 @@ export class AuthService {
       email: input.email,
       passwordHash,
       name: input.name,
+      phone: input.phone || null,
+      role: input.role || 'customer',
+      regionId: input.regionId || null,
       emailVerified: false
     }).returning()
+
+    if (!user) {
+      throw new Error('Failed to create user')
+    }
 
     // Create session
     const session = await this.createSession(user.id, userAgent, ipAddress)
@@ -68,6 +82,7 @@ export class AuthService {
     const tokenPayload: Omit<TokenPayload, 'sessionId'> & { sessionId: string } = {
       userId: user.id,
       email: user.email,
+      role: user.role as 'customer' | 'business_admin' | 'business_staff' | 'admin',
       sessionId: session.id
     }
 
@@ -81,8 +96,12 @@ export class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
-        emailVerified: user.emailVerified,
+        phone: user.phone,
+        role: user.role as 'customer' | 'business_admin' | 'business_staff' | 'admin',
+        emailVerified: user.emailVerified || false,
         avatarUrl: user.avatarUrl,
+        regionId: user.regionId,
+        isBanned: user.isBanned || false,
         createdAt: user.createdAt
       },
       accessToken,
@@ -119,6 +138,7 @@ export class AuthService {
     const tokenPayload: Omit<TokenPayload, 'sessionId'> & { sessionId: string } = {
       userId: user.id,
       email: user.email,
+      role: user.role as 'customer' | 'business_admin' | 'business_staff' | 'admin',
       sessionId: session.id
     }
 
@@ -130,8 +150,12 @@ export class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
-        emailVerified: user.emailVerified,
+        phone: user.phone,
+        role: user.role as 'customer' | 'business_admin' | 'business_staff' | 'admin',
+        emailVerified: user.emailVerified || false,
         avatarUrl: user.avatarUrl,
+        regionId: user.regionId,
+        isBanned: user.isBanned || false,
         createdAt: user.createdAt
       },
       accessToken,
@@ -162,6 +186,7 @@ export class AuthService {
     const tokenPayload: Omit<TokenPayload, 'sessionId'> & { sessionId: string } = {
       userId: payload.userId,
       email: payload.email,
+      role: payload.role,
       sessionId: session.id
     }
 
@@ -171,8 +196,7 @@ export class AuthService {
     // Update session with new refresh token
     await db.update(sessions)
       .set({ 
-        refreshToken: newRefreshToken,
-        updatedAt: new Date()
+        refreshToken: newRefreshToken
       })
       .where(eq(sessions.id, session.id))
 
@@ -208,8 +232,12 @@ export class AuthService {
       id: user.id,
       email: user.email,
       name: user.name,
-      emailVerified: user.emailVerified,
+      phone: user.phone,
+      role: user.role as 'customer' | 'business_admin' | 'business_staff' | 'admin',
+      emailVerified: user.emailVerified || false,
       avatarUrl: user.avatarUrl,
+      regionId: user.regionId,
+      isBanned: user.isBanned || false,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     }
@@ -310,10 +338,14 @@ export class AuthService {
       userId,
       token: '', // Will be set with JWT
       refreshToken: '', // Will be set with JWT
-      userAgent,
-      ipAddress,
+      userAgent: userAgent || null,
+      ipAddress: ipAddress || null,
       expiresAt
     }).returning()
+
+    if (!session) {
+      throw new Error('Failed to create session')
+    }
 
     return session
   }

@@ -15,30 +15,31 @@ export class JWTService {
   private readonly refreshTokenExpiry: string
 
   constructor() {
-    this.accessTokenSecret = process.env['JWT_ACCESS_SECRET'] || process.env['JWT_SECRET'] || 'your-access-token-secret-change-this'
-    this.refreshTokenSecret = process.env['JWT_REFRESH_SECRET'] || process.env['JWT_SECRET'] || 'your-refresh-token-secret-change-this'
-    this.accessTokenExpiry = process.env['JWT_ACCESS_EXPIRY'] || '15m'
-    this.refreshTokenExpiry = process.env['JWT_REFRESH_EXPIRY'] || '7d'
+    const env = process.env as any
+    this.accessTokenSecret = env.JWT_ACCESS_SECRET || env.JWT_SECRET || 'your-access-token-secret-change-this'
+    this.refreshTokenSecret = env.JWT_REFRESH_SECRET || env.JWT_SECRET || 'your-refresh-token-secret-change-this'
+    this.accessTokenExpiry = env.JWT_ACCESS_EXPIRY || '15m'
+    this.refreshTokenExpiry = env.JWT_REFRESH_EXPIRY || '7d'
 
     if (!this.accessTokenSecret || !this.refreshTokenSecret) {
       throw new Error('JWT secrets must be configured in environment variables')
     }
   }
 
-  generateAccessToken(payload: Omit<TokenPayload, 'sessionId'> & { sessionId: string }): string {
+  generateAccessToken(payload: TokenPayload): string {
     return jwt.sign(payload, this.accessTokenSecret, {
-      expiresIn: this.accessTokenExpiry as string | number,
+      expiresIn: this.accessTokenExpiry,
       issuer: 'alpha-backend',
       audience: 'alpha-client'
-    })
+    } as jwt.SignOptions)
   }
 
-  generateRefreshToken(payload: Omit<TokenPayload, 'sessionId'> & { sessionId: string }): string {
+  generateRefreshToken(payload: TokenPayload): string {
     return jwt.sign(payload, this.refreshTokenSecret, {
-      expiresIn: this.refreshTokenExpiry as string | number,
+      expiresIn: this.refreshTokenExpiry,
       issuer: 'alpha-backend',
       audience: 'alpha-client'
-    })
+    } as jwt.SignOptions)
   }
 
   verifyAccessToken(token: string): TokenPayload {
@@ -55,7 +56,7 @@ export class JWTService {
       if (error instanceof jwt.JsonWebTokenError) {
         throw new AuthenticationError('Invalid access token')
       }
-      throw new AuthenticationError('Authentication failed')
+      throw new AuthenticationError('Failed to verify access token')
     }
   }
 
@@ -73,16 +74,7 @@ export class JWTService {
       if (error instanceof jwt.JsonWebTokenError) {
         throw new AuthenticationError('Invalid refresh token')
       }
-      throw new AuthenticationError('Authentication failed')
-    }
-  }
-
-  decodeToken(token: string): TokenPayload | null {
-    try {
-      const decoded = jwt.decode(token) as TokenPayload
-      return decoded
-    } catch {
-      return null
+      throw new AuthenticationError('Failed to verify refresh token')
     }
   }
 }

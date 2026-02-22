@@ -5,6 +5,9 @@ import { logger } from './middleware/logger'
 import { errorHandler } from './middleware/error-handler'
 import { authRoutes } from './routes/auth.routes'
 import { healthRoutes } from './routes/health.routes'
+import { businessRoutes } from './routes/business.routes'
+import { adminRoutes } from './routes/admin.routes'
+import { appointmentRoutes } from './routes/appointment.routes'
 import { db } from './db/client'
 
 const app = new Elysia()
@@ -31,6 +34,9 @@ const app = new Elysia()
   .use(errorHandler)
   .use(healthRoutes)
   .use(authRoutes)
+  .use(businessRoutes)
+  .use(adminRoutes)
+  .use(appointmentRoutes)
   .get('/', () => 'Alpha API Server')
   .listen(process.env.PORT || 3000)
 

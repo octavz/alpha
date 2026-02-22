@@ -1,8 +1,6 @@
 import { pgTable, text, timestamp, uuid, boolean, index, integer, decimal, date, time } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
 
-// ========== EXISTING TABLES ==========
-
 // Users table
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -14,7 +12,7 @@ export const users = pgTable('users', {
   role: text('role').default('customer').$type<'customer' | 'business_admin' | 'business_staff' | 'admin'>(),
   emailVerified: boolean('email_verified').default(false),
   avatarUrl: text('avatar_url'),
-  regionId: uuid('region_id'),
+  regionId: uuid('region_id').references(() => regions.id),
   isBanned: boolean('is_banned').default(false),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull()
@@ -28,7 +26,7 @@ export const users = pgTable('users', {
 // Sessions table
 export const sessions = pgTable('sessions', {
   id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
   token: text('token').notNull(),
   refreshToken: text('refresh_token').notNull(),
   userAgent: text('user_agent'),
@@ -44,7 +42,7 @@ export const sessions = pgTable('sessions', {
 // Email verifications table
 export const emailVerifications = pgTable('email_verifications', {
   id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
   token: text('token').notNull(),
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull()
@@ -56,7 +54,7 @@ export const emailVerifications = pgTable('email_verifications', {
 // Password resets table
 export const passwordResets = pgTable('password_resets', {
   id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
   token: text('token').notNull(),
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull()
@@ -65,7 +63,126 @@ export const passwordResets = pgTable('password_resets', {
   tokenIdx: index('password_resets_token_idx').on(table.token)
 }))
 
-// ========== NEW TABLES ==========
+// Relations
+export const usersRelations = relations(users, ({ many, one }) => ({
+  sessions: many(sessions),
+  emailVerifications: many(emailVerifications),
+  passwordResets: many(passwordResets),
+  region: one(regions, {
+    fields: [users.regionId],
+    references: [regions.id]
+  }),
+  businesses: many(businesses),
+  appointmentsAsCustomer: many(appointments, { relationName: 'customerAppointments' }),
+  appointmentsAsBusiness: many(appointments, { relationName: 'businessAppointments' }),
+  reviews: many(reviews)
+}))
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, {
+    fields: [sessions.userId],
+    references: [users.id]
+  })
+}))
+
+export const emailVerificationsRelations = relations(emailVerifications, ({ one }) => ({
+  user: one(users, {
+    fields: [emailVerifications.userId],
+    references: [users.id]
+  })
+}))
+
+export const passwordResetsRelations = relations(passwordResets, ({ one }) => ({
+  user: one(users, {
+    fields: [passwordResets.userId],
+    references: [users.id]
+  })
+}))
+
+export const regionsRelations = relations(regions, ({ many }) => ({
+  users: many(users),
+  businesses: many(businesses)
+}))
+
+export const categoriesRelations = relations(categories, ({ many, one }) => ({
+  parent: one(categories, {
+    fields: [categories.parentId],
+    references: [categories.id],
+    relationName: 'parentCategory'
+  }),
+  children: many(categories, { relationName: 'childCategories' }),
+  businesses: many(businesses)
+}))
+
+export const businessesRelations = relations(businesses, ({ many, one }) => ({
+  user: one(users, {
+    fields: [businesses.userId],
+    references: [users.id]
+  }),
+  category: one(categories, {
+    fields: [businesses.categoryId],
+    references: [categories.id]
+  }),
+  region: one(regions, {
+    fields: [businesses.regionId],
+    references: [regions.id]
+  }),
+  services: many(services),
+  appointments: many(appointments),
+  reviews: many(reviews),
+  businessHours: many(businessHours)
+}))
+
+export const servicesRelations = relations(services, ({ many, one }) => ({
+  business: one(businesses, {
+    fields: [services.businessId],
+    references: [businesses.id]
+  }),
+  appointments: many(appointments)
+}))
+
+export const appointmentsRelations = relations(appointments, ({ one }) => ({
+  business: one(businesses, {
+    fields: [appointments.businessId],
+    references: [businesses.id],
+    relationName: 'businessAppointments'
+  }),
+  customer: one(users, {
+    fields: [appointments.customerId],
+    references: [users.id],
+    relationName: 'customerAppointments'
+  }),
+  service: one(services, {
+    fields: [appointments.serviceId],
+    references: [services.id]
+  }),
+  review: one(reviews, {
+    fields: [appointments.id],
+    references: [reviews.appointmentId]
+  })
+}))
+
+export const reviewsRelations = relations(reviews, ({ one }) => ({
+  business: one(businesses, {
+    fields: [reviews.businessId],
+    references: [businesses.id]
+  }),
+  customer: one(users, {
+    fields: [reviews.customerId],
+    references: [users.id]
+  }),
+  appointment: one(appointments, {
+    fields: [reviews.appointmentId],
+    references: [appointments.id]
+  })
+}))
+
+export const businessHoursRelations = relations(businessHours, ({ one }) => ({
+  business: one(businesses, {
+    fields: [businessHours.businessId],
+    references: [businesses.id]
+  })
+}))
 
 // Regions table
 export const regions = pgTable('regions', {
@@ -100,12 +217,12 @@ export const categories = pgTable('categories', {
 // Businesses table
 export const businesses = pgTable('businesses', {
   id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
   name: text('name').notNull(),
   slug: text('slug').unique().notNull(),
   description: text('description'),
-  categoryId: uuid('category_id'),
-  regionId: uuid('region_id').notNull(),
+  categoryId: uuid('category_id').references(() => categories.id),
+  regionId: uuid('region_id').references(() => regions.id, { onDelete: 'restrict' }).notNull(),
   
   // Contact Information
   email: text('email'),
@@ -147,7 +264,7 @@ export const businesses = pgTable('businesses', {
 // Services table
 export const services = pgTable('services', {
   id: uuid('id').primaryKey().defaultRandom(),
-  businessId: uuid('business_id').notNull(),
+  businessId: uuid('business_id').references(() => businesses.id, { onDelete: 'cascade' }).notNull(),
   name: text('name').notNull(),
   description: text('description'),
   durationMinutes: integer('duration_minutes').notNull(),
@@ -162,9 +279,9 @@ export const services = pgTable('services', {
 // Appointments table
 export const appointments = pgTable('appointments', {
   id: uuid('id').primaryKey().defaultRandom(),
-  businessId: uuid('business_id').notNull(),
-  customerId: uuid('customer_id').notNull(),
-  serviceId: uuid('service_id'),
+  businessId: uuid('business_id').references(() => businesses.id, { onDelete: 'cascade' }).notNull(),
+  customerId: uuid('customer_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  serviceId: uuid('service_id').references(() => services.id),
   
   // Appointment Details
   appointmentDate: date('appointment_date').notNull(),
@@ -196,9 +313,9 @@ export const appointments = pgTable('appointments', {
 // Reviews table
 export const reviews = pgTable('reviews', {
   id: uuid('id').primaryKey().defaultRandom(),
-  businessId: uuid('business_id').notNull(),
-  customerId: uuid('customer_id').notNull(),
-  appointmentId: uuid('appointment_id'),
+  businessId: uuid('business_id').references(() => businesses.id, { onDelete: 'cascade' }).notNull(),
+  customerId: uuid('customer_id').references(() => users.id, { onDelete: 'cascade' }).notNull(),
+  appointmentId: uuid('appointment_id').references(() => appointments.id, { onDelete: 'set null' }),
   
   // Review Details
   rating: integer('rating').notNull(),
@@ -220,7 +337,7 @@ export const reviews = pgTable('reviews', {
 // Business hours table
 export const businessHours = pgTable('business_hours', {
   id: uuid('id').primaryKey().defaultRandom(),
-  businessId: uuid('business_id').notNull(),
+  businessId: uuid('business_id').references(() => businesses.id, { onDelete: 'cascade' }).notNull(),
   dayOfWeek: integer('day_of_week').notNull(),
   openTime: time('open_time'),
   closeTime: time('close_time'),
@@ -230,139 +347,7 @@ export const businessHours = pgTable('business_hours', {
   businessIdIdx: index('business_hours_business_id_idx').on(table.businessId)
 }))
 
-// ========== RELATIONS ==========
-
-// Users relations
-export const usersRelations = relations(users, ({ many, one }) => ({
-  sessions: many(sessions),
-  emailVerifications: many(emailVerifications),
-  passwordResets: many(passwordResets),
-  region: one(regions, {
-    fields: [users.regionId],
-    references: [regions.id]
-  }),
-  businesses: many(businesses),
-  appointmentsAsCustomer: many(appointments, { relationName: 'customerAppointments' }),
-  reviews: many(reviews)
-}))
-
-// Sessions relations
-export const sessionsRelations = relations(sessions, ({ one }) => ({
-  user: one(users, {
-    fields: [sessions.userId],
-    references: [users.id]
-  })
-}))
-
-// Email verifications relations
-export const emailVerificationsRelations = relations(emailVerifications, ({ one }) => ({
-  user: one(users, {
-    fields: [emailVerifications.userId],
-    references: [users.id]
-  })
-}))
-
-// Password resets relations
-export const passwordResetsRelations = relations(passwordResets, ({ one }) => ({
-  user: one(users, {
-    fields: [passwordResets.userId],
-    references: [users.id]
-  })
-}))
-
-// Regions relations
-export const regionsRelations = relations(regions, ({ many }) => ({
-  users: many(users),
-  businesses: many(businesses)
-}))
-
-// Categories relations
-export const categoriesRelations = relations(categories, ({ many, one }) => ({
-  parent: one(categories, {
-    fields: [categories.parentId],
-    references: [categories.id],
-    relationName: 'parentCategory'
-  }),
-  children: many(categories, { relationName: 'childCategories' }),
-  businesses: many(businesses)
-}))
-
-// Businesses relations
-export const businessesRelations = relations(businesses, ({ many, one }) => ({
-  user: one(users, {
-    fields: [businesses.userId],
-    references: [users.id]
-  }),
-  category: one(categories, {
-    fields: [businesses.categoryId],
-    references: [categories.id]
-  }),
-  region: one(regions, {
-    fields: [businesses.regionId],
-    references: [regions.id]
-  }),
-  services: many(services),
-  appointments: many(appointments),
-  reviews: many(reviews),
-  businessHours: many(businessHours)
-}))
-
-// Services relations
-export const servicesRelations = relations(services, ({ many, one }) => ({
-  business: one(businesses, {
-    fields: [services.businessId],
-    references: [businesses.id]
-  }),
-  appointments: many(appointments)
-}))
-
-// Appointments relations
-export const appointmentsRelations = relations(appointments, ({ one }) => ({
-  business: one(businesses, {
-    fields: [appointments.businessId],
-    references: [businesses.id]
-  }),
-  customer: one(users, {
-    fields: [appointments.customerId],
-    references: [users.id]
-  }),
-  service: one(services, {
-    fields: [appointments.serviceId],
-    references: [services.id]
-  }),
-  review: one(reviews, {
-    fields: [appointments.id],
-    references: [reviews.appointmentId]
-  })
-}))
-
-// Reviews relations
-export const reviewsRelations = relations(reviews, ({ one }) => ({
-  business: one(businesses, {
-    fields: [reviews.businessId],
-    references: [businesses.id]
-  }),
-  customer: one(users, {
-    fields: [reviews.customerId],
-    references: [users.id]
-  }),
-  appointment: one(appointments, {
-    fields: [reviews.appointmentId],
-    references: [appointments.id]
-  })
-}))
-
-// Business hours relations
-export const businessHoursRelations = relations(businessHours, ({ one }) => ({
-  business: one(businesses, {
-    fields: [businessHours.businessId],
-    references: [businesses.id]
-  })
-}))
-
-// ========== TYPE EXPORTS ==========
-
-// Existing types
+// Export types
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
 export type Session = typeof sessions.$inferSelect
@@ -372,7 +357,6 @@ export type NewEmailVerification = typeof emailVerifications.$inferInsert
 export type PasswordReset = typeof passwordResets.$inferSelect
 export type NewPasswordReset = typeof passwordResets.$inferInsert
 
-// New types
 export type Region = typeof regions.$inferSelect
 export type NewRegion = typeof regions.$inferInsert
 export type Category = typeof categories.$inferSelect
