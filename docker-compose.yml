@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: alpha-postgres
+    environment:
+      POSTGRES_DB: alpha
+      POSTGRES_USER: alpha_user
+      POSTGRES_PASSWORD: alpha_password
+    ports:
+      - "5433:5432"  # Different port to avoid conflicts with existing PostgreSQL
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alpha_user -d alpha"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - alpha-network
+
+  # Backend API
+  backend:
+    build:
+      context: ./packages/backend
+      dockerfile: Dockerfile.dev
+    container_name: alpha-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://alpha_user:alpha_password@postgres:5432/alpha
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+      - JWT_ACCESS_EXPIRY=15m
+      - JWT_REFRESH_EXPIRY=7d
+      - CORS_ORIGIN=http://localhost:5173
+      - PORT=3000
+    volumes:
+      - ./packages/backend:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - alpha-network
+    command: bun run dev
+
+  # Web Frontend
+  web:
+    build:
+      context: ./packages/web
+      dockerfile: Dockerfile.dev
+    container_name: alpha-web
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+      - VITE_WEB_URL=http://localhost:5173
+    volumes:
+      - ./packages/web:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - alpha-network
+    command: bun run dev --host
+
+networks:
+  alpha-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

@@ -1,0 +1,31 @@
+/* Minimal base styles - Mantine handles most styling */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Ensure Mantine components work properly */
+.mantine-Button-root {
+  cursor: pointer;
+}
+
+/* Fix for Mantine inputs */
+.mantine-TextInput-input,
+.mantine-PasswordInput-input {
+  font-family: inherit;
+}
+
+/* Loading overlay fix */
+.mantine-LoadingOverlay-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}

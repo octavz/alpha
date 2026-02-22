@@ -1,0 +1,50 @@
+{
+  "name": "@alpha/backend",
+  "version": "1.0.0",
+  "description": "Alpha backend with Bun.js + Elysia + PostgreSQL",
+  "main": "dist/index.js",
+  "types": "src/types.ts",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "test": "bun test",
+    "lint": "eslint src --ext .ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
+    "db:push": "drizzle-kit push",
+    "db:seed": "bun run src/scripts/seed.ts"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "0.7.0",
+    "@elysiajs/swagger": "0.7.0",
+    "@sinclair/typebox": "0.32.0",
+    "bcrypt": "^5.1.1",
+    "drizzle-orm": "^0.30.10",
+    "elysia": "1.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "localtunnel": "^2.0.2",
+    "postgres": "^3.4.4",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.10.5",
+    "bun-types": "latest",
+    "drizzle-kit": "^0.22.8",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "bun",
+    "elysia",
+    "postgresql",
+    "drizzle",
+    "api",
+    "backend"
+  ],
+  "author": "Alpha Team",
+  "license": "MIT"
+}
