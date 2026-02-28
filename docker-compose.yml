@@ -22,36 +22,33 @@ services:
     networks:
       - alpha-network
 
-  # Backend API
+  # Backend API (Spring Boot + Kotlin)
   backend:
     build:
-      context: ./packages/backend
-      dockerfile: Dockerfile.dev
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: alpha-backend
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://alpha_user:alpha_password@postgres:5432/alpha
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/alpha
+      - SPRING_DATASOURCE_USERNAME=alpha_user
+      - SPRING_DATASOURCE_PASSWORD=alpha_password
       - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
       - JWT_ACCESS_EXPIRY=15m
       - JWT_REFRESH_EXPIRY=7d
-      - CORS_ORIGIN=http://localhost:5173
-      - PORT=3000
-    volumes:
-      - ./packages/backend:/app
-      - /app/node_modules
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:5179
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - alpha-network
-    command: bun run dev
 
   # Web Frontend
   web:
     build:
-      context: ./packages/web
+      context: ./frontend/web
       dockerfile: Dockerfile.dev
     container_name: alpha-web
     ports:
@@ -60,7 +57,7 @@ services:
       - VITE_API_URL=http://localhost:3000
       - VITE_WEB_URL=http://localhost:5173
     volumes:
-      - ./packages/web:/app
+      - ./frontend/web:/app
       - /app/node_modules
     depends_on:
       - backend

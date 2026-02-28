@@ -1,0 +1,370 @@
+package com.alpha.service
+
+import com.alpha.domain.entity.*
+import com.alpha.domain.enums.UserRole
+import com.alpha.domain.repository.*
+import com.alpha.service.dto.*
+import com.alpha.service.exception.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.springframework.security.crypto.password.PasswordEncoder
+import java.time.OffsetDateTime
+import java.util.*
+
+class AuthServiceTest {
+
+    private lateinit var authService: AuthService
+    private lateinit var userRepository: UserRepository
+    private lateinit var sessionRepository: SessionRepository
+    private lateinit var emailVerificationRepository: EmailVerificationRepository
+    private lateinit var passwordResetRepository: PasswordResetRepository
+    private lateinit var passwordEncoder: PasswordEncoder
+    private lateinit var jwtService: JwtService
+    private lateinit var emailService: EmailService
+
+    @BeforeEach
+    fun setUp() {
+        userRepository = mockk()
+        sessionRepository = mockk()
+        emailVerificationRepository = mockk()
+        passwordResetRepository = mockk()
+        passwordEncoder = mockk()
+        jwtService = mockk()
+        emailService = mockk()
+        
+        authService = AuthService(
+            userRepository = userRepository,
+            sessionRepository = sessionRepository,
+            emailVerificationRepository = emailVerificationRepository,
+            passwordResetRepository = passwordResetRepository,
+            passwordEncoder = passwordEncoder,
+            jwtService = jwtService,
+            emailService = emailService
+        )
+    }
+
+    @Test
+    fun `register should create new user successfully`() {
+        // Given
+        val request = RegisterRequest(
+            email = "test@example.com",
+            password = "password123",
+            name = "Test User",
+            phone = "1234567890",
+            role = UserRole.CUSTOMER
+        )
+
+        every { userRepository.existsByEmail(request.email) } returns false
+        every { passwordEncoder.encode(request.password) } returns "encodedPassword"
+        every { userRepository.save(any()) } returnsArgument 0
+        every { sessionRepository.save(any()) } returnsArgument 0
+        every { emailVerificationRepository.save(any()) } returnsArgument 0
+        every { emailService.sendVerificationEmail(any(), any()) } returns Unit
+        every { jwtService.generateAccessToken(any()) } returns "access-token"
+
+        // When
+        val result = authService.register(request, "test-agent", "127.0.0.1")
+
+        // Then
+        assertEquals(request.email, result.user.email)
+        assertEquals(request.name, result.user.name)
+        assertEquals(request.phone, result.user.phone)
+        assertEquals("access-token", result.accessToken)
+        assertNotNull(result.refreshToken)
+        assertNotNull(result.sessionId)
+        
+        verify { userRepository.save(any()) }
+        verify { sessionRepository.save(any()) }
+        verify { emailVerificationRepository.save(any()) }
+        verify { emailService.sendVerificationEmail(any(), any()) }
+    }
+
+    @Test
+    fun `register should fail when email already exists`() {
+        // Given
+        val request = RegisterRequest(
+            email = "existing@example.com",
+            password = "password123",
+            name = "Test User",
+            phone = "1234567890",
+            role = UserRole.CUSTOMER
+        )
+
+        every { userRepository.existsByEmail(request.email) } returns true
+
+        // When & Then
+        val exception = assertThrows(ConflictException::class.java) {
+            authService.register(request, "test-agent", "127.0.0.1")
+        }
+        
+        assertEquals("User with this email already exists", exception.message)
+        
+        verify { userRepository.existsByEmail(request.email) }
+        verify(exactly = 0) { userRepository.save(any()) }
+    }
+
+    @Test
+    fun `login should succeed with valid credentials`() {
+        // Given
+        val request = LoginRequest(
+            email = "test@example.com",
+            password = "password123"
+        )
+
+        val user = UserEntity().apply {
+            id = UUID.randomUUID()
+            email = request.email
+            passwordHash = "encodedPassword"
+            name = "Test User"
+            role = UserRole.CUSTOMER
+            emailVerified = true
+            isBanned = false
+        }
+
+        every { userRepository.findByEmail(request.email) } returns user
+        every { passwordEncoder.matches(request.password, user.passwordHash) } returns true
+        every { sessionRepository.save(any()) } returnsArgument 0
+        every { jwtService.generateAccessToken(user) } returns "access-token"
+
+        // When
+        val result = authService.login(request, "test-agent", "127.0.0.1")
+
+        // Then
+        assertEquals(user.email, result.user.email)
+        assertEquals(user.name, result.user.name)
+        assertEquals("access-token", result.accessToken)
+        assertNotNull(result.refreshToken)
+        assertNotNull(result.sessionId)
+        
+        verify { userRepository.findByEmail(request.email) }
+        verify { passwordEncoder.matches(request.password, user.passwordHash) }
+        verify { sessionRepository.save(any()) }
+    }
+
+    @Test
+    fun `login should fail with invalid email`() {
+        // Given
+        val request = LoginRequest(
+            email = "nonexistent@example.com",
+            password = "password123"
+        )
+
+        every { userRepository.findByEmail(request.email) } returns null
+
+        // When & Then
+        val exception = assertThrows(AuthenticationException::class.java) {
+            authService.login(request, "test-agent", "127.0.0.1")
+        }
+        
+        assertEquals("Invalid email or password", exception.message)
+        
+        verify { userRepository.findByEmail(request.email) }
+        verify(exactly = 0) { passwordEncoder.matches(any(), any()) }
+    }
+
+    @Test
+    fun `login should fail with invalid password`() {
+        // Given
+        val request = LoginRequest(
+            email = "test@example.com",
+            password = "wrongpassword"
+        )
+
+        val user = UserEntity().apply {
+            id = UUID.randomUUID()
+            email = request.email
+            passwordHash = "encodedPassword"
+            name = "Test User"
+            role = UserRole.CUSTOMER
+            emailVerified = true
+            isBanned = false
+        }
+
+        every { userRepository.findByEmail(request.email) } returns user
+        every { passwordEncoder.matches(request.password, user.passwordHash) } returns false
+
+        // When & Then
+        val exception = assertThrows(AuthenticationException::class.java) {
+            authService.login(request, "test-agent", "127.0.0.1")
+        }
+        
+        assertEquals("Invalid email or password", exception.message)
+        
+        verify { userRepository.findByEmail(request.email) }
+        verify { passwordEncoder.matches(request.password, user.passwordHash) }
+    }
+
+    @Test
+    fun `login should fail when user is banned`() {
+        // Given
+        val request = LoginRequest(
+            email = "banned@example.com",
+            password = "password123"
+        )
+
+        val user = UserEntity().apply {
+            id = UUID.randomUUID()
+            email = request.email
+            passwordHash = "encodedPassword"
+            name = "Banned User"
+            role = UserRole.CUSTOMER
+            emailVerified = true
+            isBanned = true
+        }
+
+        every { userRepository.findByEmail(request.email) } returns user
+        every { passwordEncoder.matches(request.password, user.passwordHash) } returns true
+
+        // When & Then
+        val exception = assertThrows(AuthenticationException::class.java) {
+            authService.login(request, "test-agent", "127.0.0.1")
+        }
+        
+        assertEquals("Account is banned", exception.message)
+        
+        verify { userRepository.findByEmail(request.email) }
+        verify(exactly = 0) { passwordEncoder.matches(any(), any()) }
+    }
+
+    @Test
+    fun `refreshToken should succeed with valid refresh token`() {
+        // Given
+        val request = RefreshTokenRequest(refreshToken = "valid-refresh-token")
+        val user = UserEntity().apply {
+            id = UUID.randomUUID()
+            email = "test@example.com"
+            name = "Test User"
+            role = UserRole.CUSTOMER
+        }
+        val session = SessionEntity(
+            user = user,
+            token = "old-access-token",
+            refreshToken = "valid-refresh-token",
+            userAgent = "test-agent",
+            ipAddress = "127.0.0.1",
+            expiresAt = OffsetDateTime.now().plusDays(1)
+        )
+
+        every { sessionRepository.findByRefreshToken(request.refreshToken) } returns session
+        every { jwtService.generateAccessToken(user) } returns "new-access-token"
+        every { sessionRepository.save(any()) } returnsArgument 0
+        every { sessionRepository.delete(session) } returns Unit
+
+        // When
+        val result = authService.refreshToken(request)
+
+        // Then
+        assertEquals("new-access-token", result.accessToken)
+        assertNotNull(result.refreshToken)
+        
+        verify { sessionRepository.findByRefreshToken(request.refreshToken) }
+        verify { sessionRepository.save(any()) }
+        verify { sessionRepository.delete(session) }
+    }
+
+    @Test
+    fun `refreshToken should fail with invalid refresh token`() {
+        // Given
+        val request = RefreshTokenRequest(refreshToken = "invalid-refresh-token")
+
+        every { sessionRepository.findByRefreshToken(request.refreshToken) } returns null
+
+        // When & Then
+        val exception = assertThrows(AuthenticationException::class.java) {
+            authService.refreshToken(request)
+        }
+        
+        assertEquals("Invalid refresh token", exception.message)
+        
+        verify { sessionRepository.findByRefreshToken(request.refreshToken) }
+        verify(exactly = 0) { sessionRepository.save(any()) }
+    }
+
+    @Test
+    fun `logout should delete session`() {
+        // Given
+        val sessionId = UUID.randomUUID().toString()
+        val userId = UUID.randomUUID()
+        val user = UserEntity().apply {
+            id = userId
+            email = "test@example.com"
+            name = "Test User"
+        }
+        val session = SessionEntity(
+            id = UUID.fromString(sessionId),
+            user = user,
+            token = "access-token",
+            refreshToken = "refresh-token",
+            userAgent = "test-agent",
+            ipAddress = "127.0.0.1",
+            expiresAt = OffsetDateTime.now().plusDays(1)
+        )
+
+        every { sessionRepository.findById(UUID.fromString(sessionId)) } returns Optional.of(session)
+        every { sessionRepository.delete(session) } returns Unit
+
+        // When
+        authService.logout(sessionId, userId)
+
+        // Then
+        verify { sessionRepository.findById(UUID.fromString(sessionId)) }
+        verify { sessionRepository.delete(session) }
+    }
+
+    @Test
+    fun `logout should fail when session not found`() {
+        // Given
+        val sessionId = UUID.randomUUID().toString()
+        val userId = UUID.randomUUID()
+
+        every { sessionRepository.findById(UUID.fromString(sessionId)) } returns Optional.empty()
+
+        // When & Then
+        val exception = assertThrows(NotFoundException::class.java) {
+            authService.logout(sessionId, userId)
+        }
+        
+        assertEquals("Session not found", exception.message)
+        
+        verify { sessionRepository.findById(UUID.fromString(sessionId)) }
+        verify(exactly = 0) { sessionRepository.delete(any()) }
+    }
+
+    @Test
+    fun `logout should fail when session belongs to different user`() {
+        // Given
+        val sessionId = UUID.randomUUID().toString()
+        val userId = UUID.randomUUID()
+        val otherUserId = UUID.randomUUID()
+        val user = UserEntity().apply {
+            id = otherUserId
+            email = "other@example.com"
+            name = "Other User"
+        }
+        val session = SessionEntity(
+            id = UUID.fromString(sessionId),
+            user = user,
+            token = "access-token",
+            refreshToken = "refresh-token",
+            userAgent = "test-agent",
+            ipAddress = "127.0.0.1",
+            expiresAt = OffsetDateTime.now().plusDays(1)
+        )
+
+        every { sessionRepository.findById(UUID.fromString(sessionId)) } returns Optional.of(session)
+
+        // When & Then
+        val exception = assertThrows(ForbiddenException::class.java) {
+            authService.logout(sessionId, userId)
+        }
+        
+        assertEquals("Cannot logout other user's session", exception.message)
+        
+        verify { sessionRepository.findById(UUID.fromString(sessionId)) }
+        verify(exactly = 0) { sessionRepository.delete(any()) }
+    }
+}

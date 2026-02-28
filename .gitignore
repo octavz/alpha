@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-packages/*/node_modules/
+frontend/*/node_modules/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -8,12 +8,34 @@ yarn-error.log*
 pnpm-debug.log*
 bun.lockb
 
+# Java/Kotlin/Spring Boot
+backend/.gradle/
+backend/build/
+backend/out/
+backend/.idea/
+backend/*.iml
+backend/*.ipr
+backend/*.iws
+backend/gradle/wrapper/gradle-wrapper.jar
+backend/gradle.properties
+backend/gradlew.bat
+backend/logs/
+backend/*.log
+backend/target/
+backend/.settings/
+backend/.project
+backend/.classpath
+backend/bin/
+backend/.metadata/
+
 # Build outputs
 dist/
 build/
 .next/
 out/
 *.tsbuildinfo
+frontend/web/dist/
+frontend/web/.next/
 
 # Environment variables
 .env
@@ -120,25 +142,25 @@ public
 .vscode-test
 
 # React Native
-packages/mobile/.expo/
-packages/mobile/.expo-shared/
-packages/mobile/.gradle/
-packages/mobile/android/.gradle/
-packages/mobile/android/app/build/
-packages/mobile/android/build/
-packages/mobile/ios/build/
-packages/mobile/*.jsbundle
-packages/mobile/*.map
+frontend/mobile/.expo/
+frontend/mobile/.expo-shared/
+frontend/mobile/.gradle/
+frontend/mobile/android/.gradle/
+frontend/mobile/android/app/build/
+frontend/mobile/android/build/
+frontend/mobile/ios/build/
+frontend/mobile/*.jsbundle
+frontend/mobile/*.map
 
 # Android
-packages/mobile/android/.idea/
-packages/mobile/android/local.properties
-packages/mobile/android/captures/
+frontend/mobile/android/.idea/
+frontend/mobile/android/local.properties
+frontend/mobile/android/captures/
 
 # iOS
-packages/mobile/ios/Pods/
-packages/mobile/ios/*.xcworkspace
-packages/mobile/ios/*.xcodeproj
+frontend/mobile/ios/Pods/
+frontend/mobile/ios/*.xcworkspace
+frontend/mobile/ios/*.xcodeproj
 
 # Bun
 .bun

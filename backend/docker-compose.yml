@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: alpha-postgres
+    environment:
+      POSTGRES_DB: alpha
+      POSTGRES_USER: alpha_user
+      POSTGRES_PASSWORD: alpha_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/main/resources/db/migration:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alpha_user -d alpha"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - alpha-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: alpha-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/alpha
+      SPRING_DATASOURCE_USERNAME: alpha_user
+      SPRING_DATASOURCE_PASSWORD: alpha_password
+      APP_CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:5179
+      JWT_SECRET: ${JWT_SECRET:-your_jwt_secret_here}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-your_jwt_access_secret_here}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-your_jwt_refresh_secret_here}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - alpha-network
+    restart: unless-stopped
+
+  # Optional: Add pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: alpha-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@businessdirectory.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - alpha-network
+
+networks:
+  alpha-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

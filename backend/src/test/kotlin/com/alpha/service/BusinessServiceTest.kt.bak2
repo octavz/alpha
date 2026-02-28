@@ -1,0 +1,487 @@
+package com.alpha.service
+
+import com.alpha.domain.entity.*
+import com.alpha.domain.enums.UserRole
+import com.alpha.domain.enums.VerificationStatus
+import com.alpha.domain.repository.*
+import com.alpha.service.dto.*
+import com.alpha.service.exception.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import java.math.BigDecimal
+import java.time.OffsetDateTime
+import java.util.*
+
+class BusinessServiceTest {
+
+    private lateinit var businessService: BusinessService
+    private lateinit var businessRepository: BusinessRepository
+    private lateinit var userRepository: UserRepository
+    private lateinit var regionRepository: RegionRepository
+    private lateinit var categoryRepository: CategoryRepository
+    private lateinit var securityContextService: SecurityContextService
+
+    @BeforeEach
+    fun setUp() {
+        businessRepository = mockk()
+        userRepository = mockk()
+        regionRepository = mockk()
+        categoryRepository = mockk()
+        securityContextService = mockk()
+        
+        businessService = BusinessService(
+            businessRepository = businessRepository,
+            userRepository = userRepository,
+            regionRepository = regionRepository,
+            categoryRepository = categoryRepository,
+            securityContextService = securityContextService
+        )
+    }
+
+    @Test
+    fun `getAllBusinesses should return paginated businesses`() {
+        // Given
+        val pageable = PageRequest.of(0, 10)
+        val businesses = listOf(
+            BusinessEntity().apply {
+                id = UUID.randomUUID()
+                name = "Test Business 1"
+                description = "Description 1"
+                verificationStatus = VerificationStatus.PENDING
+                createdAt = OffsetDateTime.now()
+            },
+            BusinessEntity().apply {
+                id = UUID.randomUUID()
+                name = "Test Business 2"
+                description = "Description 2"
+                verificationStatus = VerificationStatus.VERIFIED
+                createdAt = OffsetDateTime.now()
+            }
+        )
+        val page: Page<BusinessEntity> = PageImpl(businesses, pageable, 2)
+
+        every { businessRepository.findAll(pageable) } returns page
+
+        // When
+        val result = businessService.getAllBusinesses(pageable)
+
+        // Then
+        assertEquals(2, result.content.size)
+        assertEquals("Test Business 1", result.content[0].name)
+        assertEquals("Test Business 2", result.content[1].name)
+        
+        verify { businessRepository.findAll(pageable) }
+    }
+
+    @Test
+    fun `getBusinessById should return business when found`() {
+        // Given
+        val businessId = UUID.randomUUID()
+        val business = BusinessEntity().apply {
+            id = businessId
+            name = "Test Business"
+            description = "Test Description"
+            verificationStatus = VerificationStatus.VERIFIED
+            createdAt = OffsetDateTime.now()
+        }
+
+        every { businessRepository.findById(businessId) } returns Optional.of(business)
+
+        // When
+        val result = businessService.getBusinessById(businessId)
+
+        // Then
+        assertEquals(businessId, result.id)
+        assertEquals("Test Business", result.name)
+        assertEquals("Test Description", result.description)
+        
+        verify { businessRepository.findById(businessId) }
+    }
+
+    @Test
+    fun `getBusinessById should throw NotFoundException when business not found`() {
+        // Given
+        val businessId = UUID.randomUUID()
+
+        every { businessRepository.findById(businessId) } returns Optional.empty()
+
+        // When & Then
+        val exception = assertThrows(NotFoundException::class.java) {
+            businessService.getBusinessById(businessId)
+        }
+        
+        assertEquals("Business not found", exception.message)
+        
+        verify { businessRepository.findById(businessId) }
+    }
+
+    @Test
+    fun `createBusiness should create new business successfully`() {
+        // Given
+        val userId = UUID.randomUUID()
+        val regionId = UUID.randomUUID()
+        val categoryId = UUID.randomUUID()
+        
+        val request = CreateBusinessRequest(
+            name = "New Business",
+            description = "Business Description",
+            address = "123 Main St",
+            latitude = BigDecimal("40.7128"),
+            longitude = BigDecimal("-74.0060"),
+            phone = "1234567890",
+            email = "business@example.com",
+            website = "https://example.com",
+            regionId = regionId,
+            categoryId = categoryId
+        )
+
+        val user = UserEntity().apply {
+            id = userId
+            email = "owner@example.com"
+            name = "Business Owner"
+            role = UserRole.BUSINESS_ADMIN
+        }
+
+        val region = RegionEntity().apply {
+            id = regionId
+            name = "Test Region"
+        }
+
+        val category = CategoryEntity().apply {
+            id = categoryId
+            name = "Test Category"
+        }
+
+        every { securityContextService.getCurrentUserId() } returns userId
+        every { userRepository.findById(userId) } returns Optional.of(user)
+        every { regionRepository.findById(regionId) } returns Optional.of(region)
+        every { categoryRepository.findById(categoryId) } returns Optional.of(category)
+        every { businessRepository.save(any()) } returnsArgument 0
+
+        // When
+        val result = businessService.createBusiness(request)
+
+        // Then
+        assertEquals("New Business", result.name)
+        assertEquals("Business Description", result.description)
+        assertEquals("123 Main St", result.address)
+        assertEquals(userId, result.ownerId)
+        assertEquals(regionId, result.regionId)
+        assertEquals(categoryId, result.categoryId)
+        
+        verify { securityContextService.getCurrentUserId() }
+        verify { userRepository.findById(userId) }
+        verify { regionRepository.findById(regionId) }
+        verify { categoryRepository.findById(categoryId) }
+        verify { businessRepository.save(any()) }
+    }
+
+    @Test
+    fun `createBusiness should throw NotFoundException when user not found`() {
+        // Given
+        val userId = UUID.randomUUID()
+        val request = CreateBusinessRequest(
+            name = "New Business",
+            description = "Business Description",
+            address = "123 Main St",
+            latitude = BigDecimal("40.7128"),
+            longitude = BigDecimal("-74.0060"),
+            phone = "1234567890",
+            email = "business@example.com",
+            website = "https://example.com",
+            regionId = UUID.randomUUID(),
+            categoryId = UUID.randomUUID()
+        )
+
+        every { securityContextService.getCurrentUserId() } returns userId
+        every { userRepository.findById(userId) } returns Optional.empty()
+
+        // When & Then
+        val exception = assertThrows(NotFoundException::class.java) {
+            businessService.createBusiness(request)
+        }
+        
+        assertEquals("User not found", exception.message)
+        
+        verify { securityContextService.getCurrentUserId() }
+        verify { userRepository.findById(userId) }
+        verify(exactly = 0) { businessRepository.save(any()) }
+    }
+
+    @Test
+    fun `updateBusiness should update business successfully`() {
+        // Given
+        val businessId = UUID.randomUUID()
+        val userId = UUID.randomUUID()
+        val regionId = UUID.randomUUID()
+        val categoryId = UUID.randomUUID()
+        
+        val request = UpdateBusinessRequest(
+            name = "Updated Business",
+            description = "Updated Description",
+            address = "456 Updated St",
+            latitude = BigDecimal("40.7128"),
+            longitude = BigDecimal("-74.0060"),
+            phone = "0987654321",
+            email = "updated@example.com",
+            website = "https://updated.com",
+            regionId = regionId,
+            categoryId = categoryId
+        )
+
+        val user = UserEntity().apply {
+            id = userId
+            email = "owner@example.com"
+            name = "Business Owner"
+            role = UserRole.BUSINESS_ADMIN
+        }
+
+        val business = BusinessEntity().apply {
+            id = businessId
+            name = "Original Business"
+            description = "Original Description"
+            address = "123 Original St"
+            phone = "1234567890"
+            email = "original@example.com"
+            owner = user
+            verificationStatus = VerificationStatus.VERIFIED
+            createdAt = OffsetDateTime.now()
+        }
+
+        val region = RegionEntity().apply {
+            id = regionId
+            name = "Updated Region"
+        }
+
+        val category = CategoryEntity().apply {
+            id = categoryId
+            name = "Updated Category"
+        }
+
+        every { securityContextService.getCurrentUserId() } returns userId
+        every { businessRepository.findById(businessId) } returns Optional.of(business)
+        every { regionRepository.findById(regionId) } returns Optional.of(region)
+        every { categoryRepository.findById(categoryId) } returns Optional.of(category)
+        every { businessRepository.save(any()) } returnsArgument 0
+
+        // When
+        val result = businessService.updateBusiness(businessId, request)
+
+        // Then
+        assertEquals("Updated Business", result.name)
+        assertEquals("Updated Description", result.description)
+        assertEquals("456 Updated St", result.address)
+        assertEquals("0987654321", result.phone)
+        assertEquals("updated@example.com", result.email)
+        assertEquals(regionId, result.regionId)
+        assertEquals(categoryId, result.categoryId)
+        
+        verify { securityContextService.getCurrentUserId() }
+        verify { businessRepository.findById(businessId) }
+        verify { regionRepository.findById(regionId) }
+        verify { categoryRepository.findById(categoryId) }
+        verify { businessRepository.save(any()) }
+    }
+
+    @Test
+    fun `updateBusiness should throw NotFoundException when business not found`() {
+        // Given
+        val businessId = UUID.randomUUID()
+        val request = UpdateBusinessRequest(
+            name = "Updated Business",
+            description = "Updated Description",
+            address = "456 Updated St",
+            latitude = BigDecimal("40.7128"),
+            longitude = BigDecimal("-74.0060"),
+            phone = "0987654321",
+            email = "updated@example.com",
+            website = "https://updated.com",
+            regionId = UUID.randomUUID(),
+            categoryId = UUID.randomUUID()
+        )
+
+        every { securityContextService.getCurrentUserId() } returns UUID.randomUUID()
+        every { businessRepository.findById(businessId) } returns Optional.empty()
+
+        // When & Then
+        val exception = assertThrows(NotFoundException::class.java) {
+            businessService.updateBusiness(businessId, request)
+        }
+        
+        assertEquals("Business not found", exception.message)
+        
+        verify { businessRepository.findById(businessId) }
+        verify(exactly = 0) { businessRepository.save(any()) }
+    }
+
+    @Test
+    fun `updateBusiness should throw ForbiddenException when user is not owner`() {
+        // Given
+        val businessId = UUID.randomUUID()
+        val ownerId = UUID.randomUUID()
+        val otherUserId = UUID.randomUUID()
+        
+        val request = UpdateBusinessRequest(
+            name = "Updated Business",
+            description = "Updated Description",
+            address = "456 Updated St",
+            latitude = BigDecimal("40.7128"),
+            longitude = BigDecimal("-74.0060"),
+            phone = "0987654321",
+            email = "updated@example.com",
+            website = "https://updated.com",
+            regionId = UUID.randomUUID(),
+            categoryId = UUID.randomUUID()
+        )
+
+        val owner = UserEntity().apply {
+            id = ownerId
+            email = "owner@example.com"
+            name = "Business Owner"
+            role = UserRole.BUSINESS_ADMIN
+        }
+
+        val business = BusinessEntity().apply {
+            id = businessId
+            name = "Original Business"
+            description = "Original Description"
+            address = "123 Original St"
+            phone = "1234567890"
+            email = "original@example.com"
+            owner = owner
+            verificationStatus = VerificationStatus.VERIFIED
+            createdAt = OffsetDateTime.now()
+        }
+
+        every { securityContextService.getCurrentUserId() } returns otherUserId
+        every { businessRepository.findById(businessId) } returns Optional.of(business)
+
+        // When & Then
+        val exception = assertThrows(ForbiddenException::class.java) {
+            businessService.updateBusiness(businessId, request)
+        }
+        
+        assertEquals("Only business owner can update business", exception.message)
+        
+        verify { securityContextService.getCurrentUserId() }
+        verify { businessRepository.findById(businessId) }
+        verify(exactly = 0) { businessRepository.save(any()) }
+    }
+
+    @Test
+    fun `deleteBusiness should delete business successfully`() {
+        // Given
+        val businessId = UUID.randomUUID()
+        val userId = UUID.randomUUID()
+
+        val user = UserEntity().apply {
+            id = userId
+            email = "owner@example.com"
+            name = "Business Owner"
+            role = UserRole.BUSINESS_ADMIN
+        }
+
+        val business = BusinessEntity().apply {
+            id = businessId
+            name = "Test Business"
+            description = "Test Description"
+            owner = user
+            verificationStatus = VerificationStatus.VERIFIED
+            createdAt = OffsetDateTime.now()
+        }
+
+        every { securityContextService.getCurrentUserId() } returns userId
+        every { businessRepository.findById(businessId) } returns Optional.of(business)
+        every { businessRepository.delete(business) } returns Unit
+
+        // When
+        businessService.deleteBusiness(businessId)
+
+        // Then
+        verify { securityContextService.getCurrentUserId() }
+        verify { businessRepository.findById(businessId) }
+        verify { businessRepository.delete(business) }
+    }
+
+    @Test
+    fun `deleteBusiness should throw ForbiddenException when user is not owner`() {
+        // Given
+        val businessId = UUID.randomUUID()
+        val ownerId = UUID.randomUUID()
+        val otherUserId = UUID.randomUUID()
+
+        val owner = UserEntity().apply {
+            id = ownerId
+            email = "owner@example.com"
+            name = "Business Owner"
+            role = UserRole.BUSINESS_ADMIN
+        }
+
+        val business = BusinessEntity().apply {
+            id = businessId
+            name = "Test Business"
+            description = "Test Description"
+            owner = owner
+            verificationStatus = VerificationStatus.VERIFIED
+            createdAt = OffsetDateTime.now()
+        }
+
+        every { securityContextService.getCurrentUserId() } returns otherUserId
+        every { businessRepository.findById(businessId) } returns Optional.of(business)
+
+        // When & Then
+        val exception = assertThrows(ForbiddenException::class.java) {
+            businessService.deleteBusiness(businessId)
+        }
+        
+        assertEquals("Only business owner can delete business", exception.message)
+        
+        verify { securityContextService.getCurrentUserId() }
+        verify { businessRepository.findById(businessId) }
+        verify(exactly = 0) { businessRepository.delete(any()) }
+    }
+
+    @Test
+    fun `searchBusinesses should return matching businesses`() {
+        // Given
+        val query = "restaurant"
+        val pageable = PageRequest.of(0, 10)
+        
+        val businesses = listOf(
+            BusinessEntity().apply {
+                id = UUID.randomUUID()
+                name = "Restaurant One"
+                description = "A great restaurant"
+                verificationStatus = VerificationStatus.VERIFIED
+                createdAt = OffsetDateTime.now()
+            },
+            BusinessEntity().apply {
+                id = UUID.randomUUID()
+                name = "Restaurant Two"
+                description = "Another restaurant"
+                verificationStatus = VerificationStatus.VERIFIED
+                createdAt = OffsetDateTime.now()
+            }
+        )
+        val page: Page<BusinessEntity> = PageImpl(businesses, pageable, 2)
+
+        every { businessRepository.searchBusinesses(query, pageable) } returns page
+
+        // When
+        val result = businessService.searchBusinesses(query, pageable)
+
+        // Then
+        assertEquals(2, result.content.size)
+        assertTrue(result.content[0].name.contains("Restaurant", ignoreCase = true))
+        assertTrue(result.content[1].name.contains("Restaurant", ignoreCase = true))
+        
+        verify { businessRepository.searchBusinesses(query, pageable) }
+    }
+}

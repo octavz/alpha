@@ -1,0 +1,163 @@
+package com.alpha.web.controller
+
+import com.alpha.domain.enums.UserRole
+import com.alpha.service.dto.LoginRequest
+import com.alpha.service.dto.RegisterRequest
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.util.*
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+class AuthControllerIntegrationTest {
+
+    @Autowired
+    private lateinit var mockMvc: MockMvc
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
+
+    @Test
+    fun `register should return success response`() {
+        // Given
+        val uniqueEmail = "test-${UUID.randomUUID()}@example.com"
+        val request = RegisterRequest(
+            email = uniqueEmail,
+            password = "password123",
+            name = "Test User",
+            phone = "1234567890",
+            role = UserRole.CUSTOMER
+        )
+
+        // When & Then
+        mockMvc.perform(
+            post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("X-Forwarded-For", "127.0.0.1")
+                .header("User-Agent", "Test Browser")
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.user.email").value(uniqueEmail))
+            .andExpect(jsonPath("$.user.name").value("Test User"))
+            .andExpect(jsonPath("$.user.phone").value("1234567890"))
+            .andExpect(jsonPath("$.accessToken").exists())
+            .andExpect(jsonPath("$.refreshToken").exists())
+            .andExpect(jsonPath("$.sessionId").exists())
+    }
+
+    @Test
+    fun `register should return bad request for invalid data`() {
+        // Given
+        val request = RegisterRequest(
+            email = "",  // Invalid: empty email
+            password = "123",  // Invalid: too short
+            name = "",  // Invalid: empty name
+            phone = "",
+            role = UserRole.CUSTOMER
+        )
+
+        // When & Then
+        mockMvc.perform(
+            post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("X-Forwarded-For", "127.0.0.1")
+                .header("User-Agent", "Test Browser")
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun `register should fail when email already exists`() {
+        // Given - First registration
+        val email = "duplicate-${UUID.randomUUID()}@example.com"
+        val firstRequest = RegisterRequest(
+            email = email,
+            password = "password123",
+            name = "First User",
+            phone = "1234567890",
+            role = UserRole.CUSTOMER
+        )
+
+        // Register first user
+        mockMvc.perform(
+            post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(firstRequest))
+                .header("X-Forwarded-For", "127.0.0.1")
+                .header("User-Agent", "Test Browser")
+        )
+
+        // Second registration with same email
+        val secondRequest = RegisterRequest(
+            email = email,
+            password = "password456",
+            name = "Second User",
+            phone = "0987654321",
+            role = UserRole.CUSTOMER
+        )
+
+        // When & Then
+        mockMvc.perform(
+            post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(secondRequest))
+                .header("X-Forwarded-For", "127.0.0.1")
+                .header("User-Agent", "Test Browser")
+        )
+            .andExpect(status().isConflict)
+            .andExpect(jsonPath("$.message").value("User with this email already exists"))
+    }
+
+    @Test
+    fun `login should return unauthorized for invalid credentials`() {
+        // Given
+        val request = LoginRequest(
+            email = "nonexistent-${UUID.randomUUID()}@example.com",
+            password = "wrongPassword"
+        )
+
+        // When & Then
+        mockMvc.perform(
+            post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("X-Forwarded-For", "127.0.0.1")
+                .header("User-Agent", "Test Browser")
+        )
+            .andExpect(status().isUnauthorized)
+            .andExpect(jsonPath("$.message").value("Invalid email or password"))
+    }
+
+    @Test
+    fun `health endpoint should return success`() {
+        // When & Then
+        mockMvc.perform(
+            post("/api/v1/health")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.status").value("UP"))
+            .andExpect(jsonPath("$.timestamp").exists())
+    }
+
+    @Test
+    fun `actuator health endpoint should be accessible`() {
+        // When & Then
+        mockMvc.perform(
+            post("/actuator/health")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+    }
+}

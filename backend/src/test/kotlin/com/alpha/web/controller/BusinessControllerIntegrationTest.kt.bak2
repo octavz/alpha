@@ -1,0 +1,315 @@
+package com.alpha.web.controller
+
+import com.alpha.domain.entity.*
+import com.alpha.domain.enums.UserRole
+import com.alpha.domain.enums.VerificationStatus
+import com.alpha.domain.repository.*
+import com.alpha.service.dto.CreateBusinessRequest
+import com.alpha.service.dto.UpdateBusinessRequest
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+import java.math.BigDecimal
+import java.time.OffsetDateTime
+import java.util.*
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+class BusinessControllerIntegrationTest {
+
+    @Autowired
+    private lateinit var mockMvc: MockMvc
+
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private lateinit var businessRepository: BusinessRepository
+
+    @Autowired
+    private lateinit var regionRepository: RegionRepository
+
+    @Autowired
+    private lateinit var categoryRepository: CategoryRepository
+
+    private lateinit var testUser: UserEntity
+    private lateinit var testRegion: RegionEntity
+    private lateinit var testCategory: CategoryEntity
+    private lateinit var testBusiness: BusinessEntity
+
+    @BeforeEach
+    fun setUp() {
+        // Clean up test data
+        businessRepository.deleteAll()
+        userRepository.deleteAll()
+        regionRepository.deleteAll()
+        categoryRepository.deleteAll()
+
+        // Create test user
+        testUser = userRepository.save(
+            UserEntity().apply {
+                email = "test-business-owner-${UUID.randomUUID()}@example.com"
+                passwordHash = "encodedPassword"
+                name = "Business Owner"
+                phone = "1234567890"
+                role = UserRole.BUSINESS_ADMIN
+                emailVerified = true
+                isBanned = false
+            }
+        )
+
+        // Create test region
+        testRegion = regionRepository.save(
+            RegionEntity().apply {
+                name = "Test Region"
+                description = "Test Region Description"
+                latitude = BigDecimal("40.7128")
+                longitude = BigDecimal("-74.0060")
+                radiusKm = BigDecimal("50.0")
+            }
+        )
+
+        // Create test category
+        testCategory = categoryRepository.save(
+            CategoryEntity().apply {
+                name = "Test Category"
+                description = "Test Category Description"
+            }
+        )
+
+        // Create test business
+        testBusiness = businessRepository.save(
+            BusinessEntity().apply {
+                name = "Test Business"
+                description = "Test Business Description"
+                address = "123 Test St"
+                latitude = BigDecimal("40.7128")
+                longitude = BigDecimal("-74.0060")
+                phone = "1234567890"
+                email = "test@example.com"
+                website = "https://test.example.com"
+                owner = testUser
+                region = testRegion
+                category = testCategory
+                verificationStatus = VerificationStatus.PENDING
+            }
+        )
+    }
+
+    @Test
+    @WithMockUser(username = "test-business-owner", roles = ["BUSINESS_ADMIN"])
+    fun `getAllBusinesses should return paginated businesses`() {
+        // When & Then
+        mockMvc.perform(
+            get("/api/v1/businesses")
+                .param("page", "0")
+                .param("size", "10")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content").isArray)
+            .andExpect(jsonPath("$.content[0].name").value("Test Business"))
+            .andExpect(jsonPath("$.content[0].description").value("Test Business Description"))
+    }
+
+    @Test
+    @WithMockUser(username = "test-business-owner", roles = ["BUSINESS_ADMIN"])
+    fun `getBusinessById should return business when found`() {
+        // When & Then
+        mockMvc.perform(
+            get("/api/v1/businesses/${testBusiness.id}")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(testBusiness.id.toString()))
+            .andExpect(jsonPath("$.name").value("Test Business"))
+            .andExpect(jsonPath("$.description").value("Test Business Description"))
+    }
+
+    @Test
+    @WithMockUser(username = "test-business-owner", roles = ["BUSINESS_ADMIN"])
+    fun `getBusinessById should return not found when business does not exist`() {
+        // Given
+        val nonExistentId = UUID.randomUUID()
+
+        // When & Then
+        mockMvc.perform(
+            get("/api/v1/businesses/$nonExistentId")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.message").value("Business not found"))
+    }
+
+    @Test
+    @WithMockUser(username = "test-business-owner", roles = ["BUSINESS_ADMIN"])
+    fun `createBusiness should create new business successfully`() {
+        // Given
+        val request = CreateBusinessRequest(
+            name = "New Business",
+            description = "New Business Description",
+            address = "456 New St",
+            latitude = BigDecimal("40.7580"),
+            longitude = BigDecimal("-73.9855"),
+            phone = "0987654321",
+            email = "new@example.com",
+            website = "https://new.example.com",
+            regionId = testRegion.id!!,
+            categoryId = testCategory.id!!
+        )
+
+        // When & Then
+        mockMvc.perform(
+            post("/api/v1/businesses")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.name").value("New Business"))
+            .andExpect(jsonPath("$.description").value("New Business Description"))
+            .andExpect(jsonPath("$.address").value("456 New St"))
+            .andExpect(jsonPath("$.ownerId").value(testUser.id.toString()))
+            .andExpect(jsonPath("$.regionId").value(testRegion.id.toString()))
+            .andExpect(jsonPath("$.categoryId").value(testCategory.id.toString()))
+    }
+
+    @Test
+    @WithMockUser(username = "test-business-owner", roles = ["BUSINESS_ADMIN"])
+    fun `createBusiness should return bad request for invalid data`() {
+        // Given
+        val request = CreateBusinessRequest(
+            name = "",  // Invalid: empty name
+            description = "",
+            address = "",
+            latitude = BigDecimal("40.7128"),
+            longitude = BigDecimal("-74.0060"),
+            phone = "",
+            email = "invalid-email",
+            website = "not-a-url",
+            regionId = testRegion.id!!,
+            categoryId = testCategory.id!!
+        )
+
+        // When & Then
+        mockMvc.perform(
+            post("/api/v1/businesses")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    @WithMockUser(username = "test-business-owner", roles = ["BUSINESS_ADMIN"])
+    fun `updateBusiness should update business successfully`() {
+        // Given
+        val request = UpdateBusinessRequest(
+            name = "Updated Business",
+            description = "Updated Business Description",
+            address = "789 Updated St",
+            latitude = BigDecimal("40.7580"),
+            longitude = BigDecimal("-73.9855"),
+            phone = "0987654321",
+            email = "updated@example.com",
+            website = "https://updated.example.com",
+            regionId = testRegion.id!!,
+            categoryId = testCategory.id!!
+        )
+
+        // When & Then
+        mockMvc.perform(
+            put("/api/v1/businesses/${testBusiness.id}")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.name").value("Updated Business"))
+            .andExpect(jsonPath("$.description").value("Updated Business Description"))
+            .andExpect(jsonPath("$.address").value("789 Updated St"))
+            .andExpect(jsonPath("$.phone").value("0987654321"))
+            .andExpect(jsonPath("$.email").value("updated@example.com"))
+    }
+
+    @Test
+    @WithMockUser(username = "test-business-owner", roles = ["BUSINESS_ADMIN"])
+    fun `updateBusiness should return not found when business does not exist`() {
+        // Given
+        val nonExistentId = UUID.randomUUID()
+        val request = UpdateBusinessRequest(
+            name = "Updated Business",
+            description = "Updated Business Description",
+            address = "789 Updated St",
+            latitude = BigDecimal("40.7580"),
+            longitude = BigDecimal("-73.9855"),
+            phone = "0987654321",
+            email = "updated@example.com",
+            website = "https://updated.example.com",
+            regionId = testRegion.id!!,
+            categoryId = testCategory.id!!
+        )
+
+        // When & Then
+        mockMvc.perform(
+            put("/api/v1/businesses/$nonExistentId")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+        )
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.message").value("Business not found"))
+    }
+
+    @Test
+    @WithMockUser(username = "test-business-owner", roles = ["BUSINESS_ADMIN"])
+    fun `deleteBusiness should delete business successfully`() {
+        // When & Then
+        mockMvc.perform(
+            delete("/api/v1/businesses/${testBusiness.id}")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isNoContent)
+    }
+
+    @Test
+    @WithMockUser(username = "test-business-owner", roles = ["BUSINESS_ADMIN"])
+    fun `deleteBusiness should return not found when business does not exist`() {
+        // Given
+        val nonExistentId = UUID.randomUUID()
+
+        // When & Then
+        mockMvc.perform(
+            delete("/api/v1/businesses/$nonExistentId")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.message").value("Business not found"))
+    }
+
+    @Test
+    @WithMockUser(username = "test-business-owner", roles = ["BUSINESS_ADMIN"])
+    fun `searchBusinesses should return matching businesses`() {
+        // When & Then
+        mockMvc.perform(
+            get("/api/v1/businesses/search")
+                .param("query", "Test")
+                .param("page", "0")
+                .param("size", "10")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.content").isArray)
+            .andExpect(jsonPath("$.content[0].name").value("Test Business"))
+    }
+}

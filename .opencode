@@ -1,0 +1,37 @@
+# OpenCode Configuration for Alpha Project
+
+## Project Context
+Alpha is a business directory platform with React frontend and Bun/Elysia backend.
+
+## Development Workflow
+1. Always kill existing processes before starting:
+   - `powershell -Command "Get-Process java -ErrorAction SilentlyContinue | Stop-Process -Force"`
+   - `powershell -Command "Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }"`
+   - `powershell -Command "Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }"`
+   - Verify processes are killed: `timeout /t 2 /nobreak >nul && powershell -Command "if (Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Port 5173 still in use' -ForegroundColor Yellow }" && powershell -Command "if (Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Port 3000 still in use' -ForegroundColor Yellow }" && powershell -Command "if (Get-Process java -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Java processes still running' -ForegroundColor Yellow }"`
+2. Backend runs on port 3000: `cd packages/backend-java && ./gradlew bootRun`
+3. Frontend runs on port 5173: `cd packages/web && npm run dev`
+4. Database runs on port 5433 (PostgreSQL)
+
+## Code Conventions
+- Use TypeScript strict mode
+- Follow existing patterns in codebase
+- Fix root causes, not symptoms
+- Never use mock data when real API/database is available
+- Handle CORS properly (no Vite proxy)
+
+## Testing Requirements
+- Run tests after significant changes
+- Backend: `cd packages/backend-java && ./gradlew test`
+- Frontend: `cd packages/web && npm run test`
+
+## Environment
+- Single .env file in root directory
+- CORS_ORIGIN includes http://localhost:5173 and http://localhost:5179
+- Database connection: postgresql://alpha_user:alpha_password@localhost:5433/alpha
+
+## Common Tasks
+- Database migrations: `./gradlew flywayMigrate`
+- Build application: `./gradlew build`
+- Run application: `./gradlew bootRun`
+- Build frontend: `npm run build`

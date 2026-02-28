@@ -1,0 +1,110 @@
+# Development Profile Configuration
+spring:
+  # Enable development tools
+  devtools:
+    restart:
+      enabled: true
+      additional-exclude: static/**,public/**
+    livereload:
+      enabled: true
+  
+  # Development database settings
+  datasource:
+    hikari:
+      connection-test-query: SELECT 1
+      validation-timeout: 5000
+  
+  # JPA Development Settings
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+  
+  # Flyway Development Settings
+  flyway:
+    clean-on-validation-error: false
+  
+  # Jackson Development Settings
+  jackson:
+    serialization:
+      indent-output: true
+  
+  # Mail Development (for testing)
+  mail:
+    host: localhost
+    port: 1025
+    username: 
+    password: 
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+# Logging Development Settings
+logging:
+  level:
+    com.alpha: DEBUG
+    org.springframework: DEBUG
+    org.hibernate: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.transaction: DEBUG
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID}){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
+
+# Server Development Settings
+server:
+  error:
+    include-stacktrace: on_param
+  compression:
+    enabled: false  # Disable in dev for easier debugging
+
+# Development-specific application settings
+app:
+  debug: true
+  mock-external-services: true
+  seed-data:
+    enabled: true
+    count:
+      businesses: 50
+      users: 100
+      appointments: 200
+  rate-limiting:
+    enabled: false
+
+# Actuator Development Settings
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    loggers:
+      enabled: true
+    env:
+      enabled: true
+    beans:
+      enabled: true
+    mappings:
+      enabled: true
+
+# OpenAPI Development Settings
+springdoc:
+  swagger-ui:
+    try-it-out-enabled: true
+    filter: true
+    display-operation-id: true
+    default-models-expand-depth: 2
+    default-model-expand-depth: 2
+    doc-expansion: none
+    tags-sorter: alpha
+    operations-sorter: alpha
+  show-actuator: true
