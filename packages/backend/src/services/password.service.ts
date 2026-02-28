@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 import { ValidationError } from '../middleware/error-handler'
 
 export class PasswordService {

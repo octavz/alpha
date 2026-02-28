@@ -22,7 +22,7 @@
     "@elysiajs/swagger": "0.7.0",
     "@faker-js/faker": "^10.3.0",
     "@sinclair/typebox": "0.32.0",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.30.10",
     "elysia": "1.0.0",

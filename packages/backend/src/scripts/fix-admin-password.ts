@@ -1,7 +1,7 @@
 import { db } from '../db/client'
 import { users } from '../db/schema'
 import { eq } from 'drizzle-orm'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 async function fixAdminPassword() {
   console.log('🔧 Fixing admin password...')

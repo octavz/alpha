@@ -2,7 +2,7 @@ import { db } from '../db/client'
 import { businesses, services, businessHours, users, categories, regions } from '../db/schema'
 import { eq, sql } from 'drizzle-orm'
 import { faker } from '@faker-js/faker'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 // Business names by category
 const businessNamesByCategory: Record<string, string[]> = {
