@@ -1,6 +1,7 @@
 package com.alpha.web.controller
 
 import com.alpha.service.BusinessService
+import com.alpha.service.SecurityContextService
 import com.alpha.service.dto.*
 import com.alpha.web.dto.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
@@ -17,7 +18,8 @@ import java.util.*
 @RequestMapping("/api/v1/businesses")
 @Tag(name = "Businesses", description = "Business management endpoints")
 class BusinessController(
-    private val businessService: BusinessService
+    private val businessService: BusinessService,
+    private val securityContextService: SecurityContextService
 ) {
     
     @PostMapping
@@ -75,8 +77,8 @@ class BusinessController(
     fun getUserBusinesses(
         pageable: Pageable
     ): ResponseEntity<ApiResponse<Page<BusinessDto>>> {
-        // Note: The service will get current user ID from security context
-        val businesses = businessService.getUserBusinesses(UUID.randomUUID(), pageable)
+        val userId = securityContextService.getCurrentUserId()
+        val businesses = businessService.getUserBusinesses(userId, pageable)
         return ResponseEntity.ok(ApiResponse.success(businesses))
     }
     

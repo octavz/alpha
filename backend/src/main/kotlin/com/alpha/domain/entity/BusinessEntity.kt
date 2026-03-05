@@ -1,6 +1,8 @@
 package com.alpha.domain.entity
 
+import com.alpha.domain.converter.VerificationStatusConverter
 import com.alpha.domain.enums.VerificationStatus
+import jakarta.persistence.Convert
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -99,7 +101,7 @@ class BusinessEntity : BaseEntity() {
     @Column(name = "is_featured", nullable = false)
     var isFeatured: Boolean = false
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = VerificationStatusConverter::class)
     @Column(name = "verification_status", nullable = false)
     var verificationStatus: VerificationStatus = VerificationStatus.PENDING
     
