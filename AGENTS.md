@@ -8,7 +8,7 @@ Alpha is a business directory platform with:
 
 ## Development Commands
 
-### Backend (packages/backend-java)
+### Backend (backend/)
 ```bash
 # Start backend server
 ./gradlew bootRun
@@ -26,8 +26,11 @@ Alpha is a business directory platform with:
 ./gradlew clean
 ```
 
-### Frontend (packages/web)
+### Frontend (frontend/web/)
 ```bash
+# Install dependencies (first time)
+npm install --legacy-peer-deps
+
 # Start frontend dev server
 npm run dev
 
@@ -36,6 +39,12 @@ npm run build
 
 # Run tests
 npm run test
+
+# Lint code
+npm run lint
+
+# Check TypeScript
+./node_modules/.bin/tsc --noEmit
 ```
 
 ### Database
@@ -47,7 +56,13 @@ npm run test
 ```
 
 ## Environment Variables
-Create `.env` file in root directory with:
+Create `.env` file in `frontend/web/.env` with:
+```
+NODE_ENV=development
+VITE_API_URL=http://localhost:3000
+```
+
+For backend, create `.env` in `backend/` with:
 ```
 NODE_ENV=development
 PORT=3000
@@ -65,32 +80,46 @@ CORS_ORIGIN=http://localhost:5173,http://localhost:5179
 - **Frontend**: Always start on port 5173
 - **Database**: PostgreSQL on port 5433
 
-## Important Rules
-1. **Kill all processes before starting**: Always kill existing bun and node processes to avoid port conflicts
-2. **Frontend port 5173**: Always start frontend on port 5173 and kill any processes using port 5173 first
-3. **Backend port 3000**: Always start backend on port 3000 and kill any processes using port 3000 first
-4. **Single .env file**: Use only the root `.env` file, not multiple .env files
-5. **No Vite proxy**: Handle CORS properly instead of using Vite proxy
-6. **Real data only**: Never use mock/static data when real API/database is available
-7. **Fix problems at source**: When finding issues, fix the root cause, not patch symptoms
+## IMPORTANT: PowerShell Only
+**ALWAYS use PowerShell commands on Windows** - do not use bash/shell syntax.
+- Use `powershell -Command "..."` for all commands
+- Do NOT use bash-specific syntax like `&&`, `||`, or `;` for chaining
+- Use PowerShell equivalents: `-ErrorAction SilentlyContinue`, `-Force`, etc.
+- All process kill commands use PowerShell, not taskkill directly
+- All port checks use PowerShell `Get-NetTCPConnection`
+
+## Shell Command Conversion
+Instead of bash: `cd folder && npm install`
+Use PowerShell: `cd folder; npm install` or separate commands
+
+For sequential execution in PowerShell:
+```powershell
+# Use semicolons or separate calls
+cd backend; ./gradlew bootRun
+
+# Or as separate commands
+cd backend
+./gradlew bootRun
+```
 
 ## Project Structure
 ```
 alpha/
-├── packages/
-│   ├── backend-java/    # Spring Boot + Kotlin backend
+├── backend/              # Spring Boot + Kotlin backend
+├── frontend/
 │   ├── web/             # React + Vite frontend
 │   └── shared/          # Shared types and utilities
-├── .env                 # Environment variables
-└── AGENTS.md           # This file
+├── .env.example
+├── AGENTS.md           # This file
+└── README.md
 ```
 
 ## Common Issues & Solutions
 
 ### Port Conflicts
 ```bash
-# Kill all bun processes
-taskkill /F /IM bun.exe /T 2>nul || powershell -Command "Get-Process bun* -ErrorAction SilentlyContinue | Stop-Process -Force"
+# Kill all node processes
+taskkill /F /IM node.exe /T 2>nul || powershell -Command "Get-Process node* -ErrorAction SilentlyContinue | Stop-Process -Force"
 
 # Kill processes using port 5173 (frontend)
 powershell -Command "Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }"
@@ -102,12 +131,18 @@ powershell -Command "Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyC
 timeout /t 2 /nobreak >nul
 powershell -Command "if (Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Port 5173 still in use' -ForegroundColor Yellow }"
 powershell -Command "if (Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Port 3000 still in use' -ForegroundColor Yellow }"
-powershell -Command "if (Get-Process bun* -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Bun processes still running' -ForegroundColor Yellow }"
+powershell -Command "if (Get-Process node* -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Node processes still running' -ForegroundColor Yellow }"
+```
+
+### Dependency Issues (Frontend)
+If npm install fails with peer dependency conflicts, use:
+```bash
+npm install --legacy-peer-deps
 ```
 
 ### Database Connection Issues
 1. Ensure PostgreSQL is running on port 5433
-2. Check `.env` file has correct DATABASE_URL
+2. Check `.env` file in backend/ has correct DATABASE_URL
 3. Run `./gradlew flywayMigrate` to apply migrations
 
 ### CORS Issues
@@ -117,8 +152,8 @@ powershell -Command "if (Get-Process bun* -ErrorAction SilentlyContinue) { Write
 
 ## Testing
 - Always run tests after making changes
-- Backend: `cd packages/backend-java && ./gradlew test`
-- Frontend: `cd packages/web && npm run test`
+- Backend: `cd backend && ./gradlew test`
+- Frontend: `cd frontend/web && npm run test`
 
 ## Code Quality
 - Follow existing code conventions

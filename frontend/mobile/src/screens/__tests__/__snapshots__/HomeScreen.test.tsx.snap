@@ -1,0 +1,1043 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HomeScreen renders correctly 1`] = `
+<RCTScrollView
+  contentContainerStyle={
+    {
+      "flex": 1,
+      "padding": 20,
+    }
+  }
+>
+  <View>
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "marginBottom": 40,
+          "paddingTop": 20,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#212529",
+            "fontSize": 32,
+            "fontWeight": "bold",
+            "marginBottom": 12,
+            "textAlign": "center",
+          }
+        }
+      >
+        Find Local Businesses Near You
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#6c757d",
+            "fontSize": 18,
+            "marginBottom": 30,
+            "maxWidth": 600,
+            "textAlign": "center",
+          }
+        }
+      >
+        Discover and book appointments with businesses in your region
+      </Text>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "backgroundColor": "#ffffff",
+            "borderRadius": 12,
+            "elevation": 3,
+            "flexDirection": "row",
+            "maxWidth": 800,
+            "padding": 8,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 2,
+              "width": 0,
+            },
+            "shadowOpacity": 0.1,
+            "shadowRadius": 8,
+            "width": "100%",
+          }
+        }
+      >
+        <TextInput
+          onChangeText={[Function]}
+          placeholder="Search for businesses, services, or categories..."
+          placeholderTextColor="#adb5bd"
+          style={
+            {
+              "color": "#212529",
+              "flex": 1,
+              "fontSize": 16,
+              "paddingHorizontal": 12,
+              "paddingVertical": 12,
+            }
+          }
+          value=""
+        />
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "backgroundColor": "#007bff",
+              "borderRadius": 8,
+              "opacity": 1,
+              "paddingHorizontal": 24,
+              "paddingVertical": 12,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#ffffff",
+                "fontSize": 16,
+                "fontWeight": "600",
+              }
+            }
+          >
+            Search
+          </Text>
+        </View>
+      </View>
+    </View>
+    <View
+      style={
+        {
+          "marginBottom": 40,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#212529",
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "marginBottom": 8,
+          }
+        }
+      >
+        Popular Categories
+      </Text>
+      <View
+        style={
+          {
+            "flexDirection": "row",
+            "flexWrap": "wrap",
+            "gap": 12,
+          }
+        }
+      >
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "#ffffff",
+              "borderRadius": 12,
+              "elevation": 2,
+              "marginBottom": 12,
+              "opacity": 1,
+              "padding": 20,
+              "shadowColor": "#000",
+              "shadowOffset": {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 0.1,
+              "shadowRadius": 4,
+              "width": "48%",
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#212529",
+                "fontSize": 16,
+                "fontWeight": "600",
+              }
+            }
+          >
+            Beauty & Salon
+          </Text>
+        </View>
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "#ffffff",
+              "borderRadius": 12,
+              "elevation": 2,
+              "marginBottom": 12,
+              "opacity": 1,
+              "padding": 20,
+              "shadowColor": "#000",
+              "shadowOffset": {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 0.1,
+              "shadowRadius": 4,
+              "width": "48%",
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#212529",
+                "fontSize": 16,
+                "fontWeight": "600",
+              }
+            }
+          >
+            Health & Wellness
+          </Text>
+        </View>
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "#ffffff",
+              "borderRadius": 12,
+              "elevation": 2,
+              "marginBottom": 12,
+              "opacity": 1,
+              "padding": 20,
+              "shadowColor": "#000",
+              "shadowOffset": {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 0.1,
+              "shadowRadius": 4,
+              "width": "48%",
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#212529",
+                "fontSize": 16,
+                "fontWeight": "600",
+              }
+            }
+          >
+            Home Services
+          </Text>
+        </View>
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "#ffffff",
+              "borderRadius": 12,
+              "elevation": 2,
+              "marginBottom": 12,
+              "opacity": 1,
+              "padding": 20,
+              "shadowColor": "#000",
+              "shadowOffset": {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 0.1,
+              "shadowRadius": 4,
+              "width": "48%",
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#212529",
+                "fontSize": 16,
+                "fontWeight": "600",
+              }
+            }
+          >
+            Automotive
+          </Text>
+        </View>
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "#ffffff",
+              "borderRadius": 12,
+              "elevation": 2,
+              "marginBottom": 12,
+              "opacity": 1,
+              "padding": 20,
+              "shadowColor": "#000",
+              "shadowOffset": {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 0.1,
+              "shadowRadius": 4,
+              "width": "48%",
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#212529",
+                "fontSize": 16,
+                "fontWeight": "600",
+              }
+            }
+          >
+            Food & Dining
+          </Text>
+        </View>
+        <View
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={false}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "#ffffff",
+              "borderRadius": 12,
+              "elevation": 2,
+              "marginBottom": 12,
+              "opacity": 1,
+              "padding": 20,
+              "shadowColor": "#000",
+              "shadowOffset": {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 0.1,
+              "shadowRadius": 4,
+              "width": "48%",
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#212529",
+                "fontSize": 16,
+                "fontWeight": "600",
+              }
+            }
+          >
+            Retail
+          </Text>
+        </View>
+      </View>
+    </View>
+    <View
+      style={
+        {
+          "marginBottom": 40,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#212529",
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "marginBottom": 8,
+          }
+        }
+      >
+        Featured Businesses
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#6c757d",
+            "fontSize": 16,
+            "marginBottom": 20,
+          }
+        }
+      >
+        Highly rated businesses in your area
+      </Text>
+      <RCTScrollView
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+      >
+        <View>
+          <View
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={false}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "backgroundColor": "#ffffff",
+                "borderRadius": 12,
+                "elevation": 3,
+                "marginRight": 20,
+                "opacity": 1,
+                "padding": 16,
+                "shadowColor": "#000",
+                "shadowOffset": {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 0.1,
+                "shadowRadius": 8,
+                "width": 280,
+              }
+            }
+          >
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#e9ecef",
+                  "borderRadius": 8,
+                  "height": 160,
+                  "justifyContent": "center",
+                  "marginBottom": 12,
+                  "width": "100%",
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "#adb5bd",
+                    "fontSize": 48,
+                    "fontWeight": "bold",
+                  }
+                }
+              >
+                B
+              </Text>
+            </View>
+            <Text
+              style={
+                {
+                  "color": "#212529",
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "marginBottom": 4,
+                }
+              }
+            >
+              Business 
+              1
+            </Text>
+            <Text
+              style={
+                {
+                  "color": "#6c757d",
+                  "fontSize": 14,
+                  "marginBottom": 8,
+                }
+              }
+            >
+              ★ 4.5 (120 reviews)
+            </Text>
+            <Text
+              style={
+                {
+                  "color": "#495057",
+                  "fontSize": 14,
+                  "lineHeight": 20,
+                  "marginBottom": 16,
+                }
+              }
+            >
+              Quality services with excellent customer satisfaction
+            </Text>
+            <View
+              accessibilityState={
+                {
+                  "busy": undefined,
+                  "checked": undefined,
+                  "disabled": undefined,
+                  "expanded": undefined,
+                  "selected": undefined,
+                }
+              }
+              accessibilityValue={
+                {
+                  "max": undefined,
+                  "min": undefined,
+                  "now": undefined,
+                  "text": undefined,
+                }
+              }
+              accessible={true}
+              collapsable={false}
+              focusable={false}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#28a745",
+                  "borderRadius": 8,
+                  "opacity": 1,
+                  "paddingVertical": 12,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "#ffffff",
+                    "fontSize": 16,
+                    "fontWeight": "600",
+                  }
+                }
+              >
+                Book Now
+              </Text>
+            </View>
+          </View>
+          <View
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={false}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "backgroundColor": "#ffffff",
+                "borderRadius": 12,
+                "elevation": 3,
+                "marginRight": 20,
+                "opacity": 1,
+                "padding": 16,
+                "shadowColor": "#000",
+                "shadowOffset": {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 0.1,
+                "shadowRadius": 8,
+                "width": 280,
+              }
+            }
+          >
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#e9ecef",
+                  "borderRadius": 8,
+                  "height": 160,
+                  "justifyContent": "center",
+                  "marginBottom": 12,
+                  "width": "100%",
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "#adb5bd",
+                    "fontSize": 48,
+                    "fontWeight": "bold",
+                  }
+                }
+              >
+                B
+              </Text>
+            </View>
+            <Text
+              style={
+                {
+                  "color": "#212529",
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "marginBottom": 4,
+                }
+              }
+            >
+              Business 
+              2
+            </Text>
+            <Text
+              style={
+                {
+                  "color": "#6c757d",
+                  "fontSize": 14,
+                  "marginBottom": 8,
+                }
+              }
+            >
+              ★ 4.5 (120 reviews)
+            </Text>
+            <Text
+              style={
+                {
+                  "color": "#495057",
+                  "fontSize": 14,
+                  "lineHeight": 20,
+                  "marginBottom": 16,
+                }
+              }
+            >
+              Quality services with excellent customer satisfaction
+            </Text>
+            <View
+              accessibilityState={
+                {
+                  "busy": undefined,
+                  "checked": undefined,
+                  "disabled": undefined,
+                  "expanded": undefined,
+                  "selected": undefined,
+                }
+              }
+              accessibilityValue={
+                {
+                  "max": undefined,
+                  "min": undefined,
+                  "now": undefined,
+                  "text": undefined,
+                }
+              }
+              accessible={true}
+              collapsable={false}
+              focusable={false}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#28a745",
+                  "borderRadius": 8,
+                  "opacity": 1,
+                  "paddingVertical": 12,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "#ffffff",
+                    "fontSize": 16,
+                    "fontWeight": "600",
+                  }
+                }
+              >
+                Book Now
+              </Text>
+            </View>
+          </View>
+          <View
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={false}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              {
+                "backgroundColor": "#ffffff",
+                "borderRadius": 12,
+                "elevation": 3,
+                "marginRight": 20,
+                "opacity": 1,
+                "padding": 16,
+                "shadowColor": "#000",
+                "shadowOffset": {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 0.1,
+                "shadowRadius": 8,
+                "width": 280,
+              }
+            }
+          >
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#e9ecef",
+                  "borderRadius": 8,
+                  "height": 160,
+                  "justifyContent": "center",
+                  "marginBottom": 12,
+                  "width": "100%",
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "#adb5bd",
+                    "fontSize": 48,
+                    "fontWeight": "bold",
+                  }
+                }
+              >
+                B
+              </Text>
+            </View>
+            <Text
+              style={
+                {
+                  "color": "#212529",
+                  "fontSize": 18,
+                  "fontWeight": "bold",
+                  "marginBottom": 4,
+                }
+              }
+            >
+              Business 
+              3
+            </Text>
+            <Text
+              style={
+                {
+                  "color": "#6c757d",
+                  "fontSize": 14,
+                  "marginBottom": 8,
+                }
+              }
+            >
+              ★ 4.5 (120 reviews)
+            </Text>
+            <Text
+              style={
+                {
+                  "color": "#495057",
+                  "fontSize": 14,
+                  "lineHeight": 20,
+                  "marginBottom": 16,
+                }
+              }
+            >
+              Quality services with excellent customer satisfaction
+            </Text>
+            <View
+              accessibilityState={
+                {
+                  "busy": undefined,
+                  "checked": undefined,
+                  "disabled": undefined,
+                  "expanded": undefined,
+                  "selected": undefined,
+                }
+              }
+              accessibilityValue={
+                {
+                  "max": undefined,
+                  "min": undefined,
+                  "now": undefined,
+                  "text": undefined,
+                }
+              }
+              accessible={true}
+              collapsable={false}
+              focusable={false}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "#28a745",
+                  "borderRadius": 8,
+                  "opacity": 1,
+                  "paddingVertical": 12,
+                }
+              }
+            >
+              <Text
+                style={
+                  {
+                    "color": "#ffffff",
+                    "fontSize": 16,
+                    "fontWeight": "600",
+                  }
+                }
+              >
+                Book Now
+              </Text>
+            </View>
+          </View>
+        </View>
+      </RCTScrollView>
+    </View>
+  </View>
+</RCTScrollView>
+`;

@@ -38,6 +38,7 @@ export interface Business {
   name: string;
   description: string;
   slug: string;
+  address?: string; // Combined address field
   addressLine1?: string;
   addressLine2?: string;
   city?: string;

@@ -7,15 +7,14 @@ import { StatusBar } from 'react-native'
 import { AuthProvider } from './src/contexts/AuthContext'
 import { LoadingScreen } from './src/screens/LoadingScreen'
 import { LoginScreen } from './src/screens/LoginScreen'
-// TODO: Create these screens
-// import { RegisterScreen } from './src/screens/RegisterScreen'
-// import { HomeScreen } from './src/screens/HomeScreen'
+import { RegisterScreen } from './src/screens/RegisterScreen'
+import { HomeScreen } from './src/screens/HomeScreen'
+import { SearchScreen } from './src/screens/SearchScreen'
+import { BusinessDetailScreen } from './src/screens/BusinessDetailScreen'
+import { BookingScreen } from './src/screens/BookingScreen'
+import { ProfileScreen } from './src/screens/ProfileScreen'
 
 const Stack = createStackNavigator()
-
-// Simple placeholder screens for now
-const RegisterScreen = () => null
-const HomeScreen = () => null
 
 export default function App() {
   return (
@@ -33,6 +32,10 @@ export default function App() {
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
             <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Search" component={SearchScreen} />
+            <Stack.Screen name="BusinessDetail" component={BusinessDetailScreen} />
+            <Stack.Screen name="Booking" component={BookingScreen} />
+            <Stack.Screen name="Profile" component={ProfileScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </AuthProvider>

@@ -1,0 +1,304 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BusinessDetailScreen renders correctly 1`] = `
+<RCTScrollView
+  contentContainerStyle={
+    {
+      "flex": 1,
+      "padding": 20,
+    }
+  }
+>
+  <View>
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={false}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "opacity": 1,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#007bff",
+            "fontSize": 16,
+            "marginBottom": 16,
+          }
+        }
+      >
+        ← Back
+      </Text>
+    </View>
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "marginBottom": 24,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "backgroundColor": "#e9ecef",
+            "borderRadius": 60,
+            "height": 120,
+            "justifyContent": "center",
+            "marginBottom": 16,
+            "width": 120,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#adb5bd",
+              "fontSize": 48,
+              "fontWeight": "bold",
+            }
+          }
+        >
+          B
+        </Text>
+      </View>
+      <Text
+        style={
+          {
+            "color": "#212529",
+            "fontSize": 28,
+            "fontWeight": "bold",
+            "marginBottom": 8,
+          }
+        }
+      >
+        Business Name
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#28a745",
+            "fontSize": 14,
+            "fontWeight": "600",
+            "marginBottom": 8,
+          }
+        }
+      >
+        ✓ Verified
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#6c757d",
+            "fontSize": 16,
+          }
+        }
+      >
+        ★ 4.5 (120 reviews)
+      </Text>
+    </View>
+    <View
+      style={
+        {
+          "marginBottom": 20,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#6c757d",
+            "fontSize": 14,
+            "fontWeight": "600",
+            "marginBottom": 4,
+            "textTransform": "uppercase",
+          }
+        }
+      >
+        Description
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#212529",
+            "fontSize": 16,
+          }
+        }
+      >
+        Quality services with excellent customer satisfaction and professional staff.
+      </Text>
+    </View>
+    <View
+      style={
+        {
+          "marginBottom": 20,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#6c757d",
+            "fontSize": 14,
+            "fontWeight": "600",
+            "marginBottom": 4,
+            "textTransform": "uppercase",
+          }
+        }
+      >
+        Location
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#212529",
+            "fontSize": 16,
+          }
+        }
+      >
+        123 Main St, City, State 12345
+      </Text>
+    </View>
+    <View
+      style={
+        {
+          "marginBottom": 20,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#6c757d",
+            "fontSize": 14,
+            "fontWeight": "600",
+            "marginBottom": 4,
+            "textTransform": "uppercase",
+          }
+        }
+      >
+        Phone
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#212529",
+            "fontSize": 16,
+          }
+        }
+      >
+        (123) 456-7890
+      </Text>
+    </View>
+    <View
+      style={
+        {
+          "marginBottom": 20,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#6c757d",
+            "fontSize": 14,
+            "fontWeight": "600",
+            "marginBottom": 4,
+            "textTransform": "uppercase",
+          }
+        }
+      >
+        Email
+      </Text>
+      <Text
+        style={
+          {
+            "color": "#212529",
+            "fontSize": 16,
+          }
+        }
+      >
+        contact@business.com
+      </Text>
+    </View>
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={false}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "alignItems": "center",
+          "backgroundColor": "#28a745",
+          "borderRadius": 8,
+          "marginTop": 20,
+          "opacity": 1,
+          "paddingVertical": 12,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#ffffff",
+            "fontSize": 16,
+            "fontWeight": "600",
+          }
+        }
+      >
+        Book Appointment
+      </Text>
+    </View>
+  </View>
+</RCTScrollView>
+`;

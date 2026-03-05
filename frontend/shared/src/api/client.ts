@@ -1,5 +1,19 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
-import type { User, Business, Region, Category, Appointment, AuthResponse, Page } from '../types';
+import type { User, Business, Region, Category, Appointment, Page } from '../types';
+
+// Dynamic import for AsyncStorage to avoid issues in web environment
+let AsyncStorage: any = null;
+const loadAsyncStorage = async () => {
+  if (AsyncStorage) return AsyncStorage;
+  try {
+    AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+  } catch {
+    AsyncStorage = null;
+  }
+  return AsyncStorage;
+};
+
+const isReactNative = typeof document === 'undefined' && typeof window === 'undefined';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || process.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -37,37 +51,48 @@ class ApiClient {
         return Promise.reject(error);
       }
     );
-  }
+   }
 
-  setTokens(accessToken: string, refreshToken: string, sessionId: string) {
+   private async getStorage() {
+     if (isReactNative) {
+       const storage = await loadAsyncStorage();
+       return storage;
+     }
+     return typeof window !== 'undefined' ? window.localStorage : null;
+   }
+
+   async setTokens(accessToken: string, refreshToken: string, sessionId: string) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     this.sessionId = sessionId;
     
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('sessionId', sessionId);
+    const storage = await this.getStorage();
+    if (storage) {
+      await storage.setItem('accessToken', accessToken);
+      await storage.setItem('refreshToken', refreshToken);
+      await storage.setItem('sessionId', sessionId);
     }
   }
 
-  loadTokens() {
-    if (typeof window !== 'undefined') {
-      this.accessToken = localStorage.getItem('accessToken');
-      this.refreshToken = localStorage.getItem('refreshToken');
-      this.sessionId = localStorage.getItem('sessionId');
+  async loadTokens() {
+    const storage = await this.getStorage();
+    if (storage) {
+      this.accessToken = await storage.getItem('accessToken');
+      this.refreshToken = await storage.getItem('refreshToken');
+      this.sessionId = await storage.getItem('sessionId');
     }
   }
 
-  clearTokens() {
+  async clearTokens() {
     this.accessToken = null;
     this.refreshToken = null;
     this.sessionId = null;
     
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('sessionId');
+    const storage = await this.getStorage();
+    if (storage) {
+      await storage.removeItem('accessToken');
+      await storage.removeItem('refreshToken');
+      await storage.removeItem('sessionId');
     }
   }
 

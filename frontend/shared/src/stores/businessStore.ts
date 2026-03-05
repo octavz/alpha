@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import api from '../api/client';
-import type { Business, Page } from '../types';
+import type { Business } from '../types';
 
 interface BusinessState {
   businesses: Business[];

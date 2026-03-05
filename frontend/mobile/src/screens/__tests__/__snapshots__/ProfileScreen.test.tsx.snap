@@ -1,0 +1,129 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProfileScreen renders correctly 1`] = `
+<View
+  style={
+    {
+      "flex": 1,
+      "padding": 20,
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "color": "#212529",
+        "fontSize": 28,
+        "fontWeight": "bold",
+        "marginBottom": 8,
+      }
+    }
+  >
+    Profile
+  </Text>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "backgroundColor": "#ffffff",
+        "borderRadius": 12,
+        "elevation": 2,
+        "marginBottom": 24,
+        "padding": 24,
+        "shadowColor": "#000",
+        "shadowOffset": {
+          "height": 2,
+          "width": 0,
+        },
+        "shadowOpacity": 0.1,
+        "shadowRadius": 4,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#212529",
+          "fontSize": 24,
+          "fontWeight": "bold",
+          "marginBottom": 4,
+        }
+      }
+    >
+      John Doe
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#6c757d",
+          "fontSize": 16,
+          "marginBottom": 8,
+        }
+      }
+    >
+      john.doe@example.com
+    </Text>
+    <Text
+      style={
+        {
+          "color": "#007bff",
+          "fontSize": 14,
+          "fontWeight": "600",
+        }
+      }
+    >
+      User
+    </Text>
+  </View>
+  <View
+    accessibilityState={
+      {
+        "busy": undefined,
+        "checked": undefined,
+        "disabled": undefined,
+        "expanded": undefined,
+        "selected": undefined,
+      }
+    }
+    accessibilityValue={
+      {
+        "max": undefined,
+        "min": undefined,
+        "now": undefined,
+        "text": undefined,
+      }
+    }
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      {
+        "alignItems": "center",
+        "backgroundColor": "#dc3545",
+        "borderRadius": 8,
+        "opacity": 1,
+        "paddingVertical": 14,
+      }
+    }
+  >
+    <Text
+      style={
+        {
+          "color": "#ffffff",
+          "fontSize": 16,
+          "fontWeight": "600",
+        }
+      }
+    >
+      Logout
+    </Text>
+  </View>
+</View>
+`;

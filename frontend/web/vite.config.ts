@@ -25,6 +25,7 @@ export default defineConfig({
       'react-native-linear-gradient': 'react-native-web-linear-gradient',
       'react-native-safe-area-context': path.resolve(__dirname, 'src/mocks/react-native-safe-area-context.js'),
       'react-native-vector-icons': path.resolve(__dirname, 'src/mocks/react-native-vector-icons'),
+      '@alpha/shared': path.resolve(__dirname, '../shared/src'),
     },
     extensions: ['.web.js', '.web.ts', '.web.tsx', '.js', '.ts', '.tsx', '.json'],
   },

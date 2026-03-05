@@ -1,0 +1,388 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SearchScreen renders correctly 1`] = `
+<View
+  style={
+    {
+      "flex": 1,
+      "padding": 20,
+    }
+  }
+>
+  <Text
+    style={
+      {
+        "color": "#212529",
+        "fontSize": 28,
+        "fontWeight": "bold",
+        "marginBottom": 8,
+      }
+    }
+  >
+    Search Businesses
+  </Text>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "backgroundColor": "#ffffff",
+        "borderRadius": 12,
+        "elevation": 3,
+        "flexDirection": "row",
+        "maxWidth": 800,
+        "padding": 8,
+        "shadowColor": "#000",
+        "shadowOffset": {
+          "height": 2,
+          "width": 0,
+        },
+        "shadowOpacity": 0.1,
+        "shadowRadius": 8,
+        "width": "100%",
+      }
+    }
+  >
+    <TextInput
+      onChangeText={[Function]}
+      placeholder="Search..."
+      placeholderTextColor="#adb5bd"
+      style={
+        {
+          "color": "#212529",
+          "flex": 1,
+          "fontSize": 16,
+          "paddingHorizontal": 12,
+          "paddingVertical": 12,
+        }
+      }
+      value=""
+    />
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={false}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "backgroundColor": "#007bff",
+          "borderRadius": 8,
+          "opacity": 1,
+          "paddingHorizontal": 24,
+          "paddingVertical": 12,
+        }
+      }
+    >
+      <Text
+        style={
+          {
+            "color": "#ffffff",
+            "fontSize": 16,
+            "fontWeight": "600",
+          }
+        }
+      >
+        Search
+      </Text>
+    </View>
+  </View>
+  <RCTScrollView
+    style={
+      {
+        "flex": 1,
+        "marginTop": 20,
+      }
+    }
+  >
+    <View>
+      <View
+        style={
+          {
+            "backgroundColor": "#ffffff",
+            "borderRadius": 12,
+            "elevation": 2,
+            "marginBottom": 12,
+            "padding": 16,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 2,
+              "width": 0,
+            },
+            "shadowOpacity": 0.1,
+            "shadowRadius": 4,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#212529",
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "marginBottom": 4,
+            }
+          }
+        >
+          Business 
+          1
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#495057",
+              "fontSize": 14,
+              "marginBottom": 8,
+            }
+          }
+        >
+          Quality services with excellent customer satisfaction
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#6c757d",
+              "fontSize": 14,
+            }
+          }
+        >
+          ★ 4.5 (120 reviews)
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": "#ffffff",
+            "borderRadius": 12,
+            "elevation": 2,
+            "marginBottom": 12,
+            "padding": 16,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 2,
+              "width": 0,
+            },
+            "shadowOpacity": 0.1,
+            "shadowRadius": 4,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#212529",
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "marginBottom": 4,
+            }
+          }
+        >
+          Business 
+          2
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#495057",
+              "fontSize": 14,
+              "marginBottom": 8,
+            }
+          }
+        >
+          Quality services with excellent customer satisfaction
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#6c757d",
+              "fontSize": 14,
+            }
+          }
+        >
+          ★ 4.5 (120 reviews)
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": "#ffffff",
+            "borderRadius": 12,
+            "elevation": 2,
+            "marginBottom": 12,
+            "padding": 16,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 2,
+              "width": 0,
+            },
+            "shadowOpacity": 0.1,
+            "shadowRadius": 4,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#212529",
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "marginBottom": 4,
+            }
+          }
+        >
+          Business 
+          3
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#495057",
+              "fontSize": 14,
+              "marginBottom": 8,
+            }
+          }
+        >
+          Quality services with excellent customer satisfaction
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#6c757d",
+              "fontSize": 14,
+            }
+          }
+        >
+          ★ 4.5 (120 reviews)
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": "#ffffff",
+            "borderRadius": 12,
+            "elevation": 2,
+            "marginBottom": 12,
+            "padding": 16,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 2,
+              "width": 0,
+            },
+            "shadowOpacity": 0.1,
+            "shadowRadius": 4,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#212529",
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "marginBottom": 4,
+            }
+          }
+        >
+          Business 
+          4
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#495057",
+              "fontSize": 14,
+              "marginBottom": 8,
+            }
+          }
+        >
+          Quality services with excellent customer satisfaction
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#6c757d",
+              "fontSize": 14,
+            }
+          }
+        >
+          ★ 4.5 (120 reviews)
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": "#ffffff",
+            "borderRadius": 12,
+            "elevation": 2,
+            "marginBottom": 12,
+            "padding": 16,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 2,
+              "width": 0,
+            },
+            "shadowOpacity": 0.1,
+            "shadowRadius": 4,
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#212529",
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "marginBottom": 4,
+            }
+          }
+        >
+          Business 
+          5
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#495057",
+              "fontSize": 14,
+              "marginBottom": 8,
+            }
+          }
+        >
+          Quality services with excellent customer satisfaction
+        </Text>
+        <Text
+          style={
+            {
+              "color": "#6c757d",
+              "fontSize": 14,
+            }
+          }
+        >
+          ★ 4.5 (120 reviews)
+        </Text>
+      </View>
+    </View>
+  </RCTScrollView>
+</View>
+`;

@@ -11,10 +11,13 @@
     "./types": "./src/types/index.ts"
   },
   "peerDependencies": {
+    "@react-native-async-storage/async-storage": ">=1.0.0",
     "axios": ">=1.0.0",
     "zustand": ">=4.0.0"
   },
   "devDependencies": {
+    "@react-native-async-storage/async-storage": "^1.21.0",
+    "@types/node": "^25.3.3",
     "axios": "^1.6.0",
     "zustand": "^4.4.7"
   }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react';
 import { 
   Alert, 
   Platform, 
@@ -9,60 +9,28 @@ import {
   ScrollView, 
   KeyboardAvoidingView,
   ActivityIndicator 
-} from 'react-native'
-import { Input, Card, Button } from 'react-native-elements'
-import { useAuth } from '../contexts/AuthContext'
+} from 'react-native';
+import { Input, Card, Button } from 'react-native-elements';
 
-export const LoginScreen: React.FC = () => {
-  const { login, isLoading } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [errors, setErrors] = useState<Record<string, string>>({})
-
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return re.test(email)
-  }
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {}
-    
-    if (!email) {
-      newErrors.email = 'Email is required'
-    } else if (!validateEmail(email)) {
-      newErrors.email = 'Please enter a valid email'
-    }
-    
-    if (!password) {
-      newErrors.password = 'Password is required'
-    } else if (password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters'
-    }
-    
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+export const LoginScreen = () => {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleLogin = async () => {
-    Keyboard.dismiss()
+    Keyboard.dismiss();
+    setIsLoading(true);
     
-    if (!validateForm()) return
-
     try {
-      await login(email, password)
-      // Navigation is handled by the auth context
+      // Simulate login
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      Alert.alert('Success', 'Login successful!');
     } catch (error) {
-      Alert.alert(
-        'Login Failed',
-        error instanceof Error ? error.message : 'An error occurred during login',
-        [{ text: 'OK' }]
-      )
+      Alert.alert('Login Failed', 'Invalid credentials');
+    } finally {
+      setIsLoading(false);
     }
-  }
-
-  const handleRegister = () => {
-    // Navigation to register screen is handled by the navigator
-  }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -84,7 +52,6 @@ export const LoginScreen: React.FC = () => {
             value={email}
             onChangeText={setEmail}
             placeholder="Enter your email"
-            errorMessage={errors.email}
             disabled={isLoading}
             autoCapitalize="none"
             keyboardType="email-address"
@@ -96,7 +63,6 @@ export const LoginScreen: React.FC = () => {
             value={password}
             onChangeText={setPassword}
             placeholder="Enter your password"
-            errorMessage={errors.password}
             disabled={isLoading}
             secureTextEntry
             containerStyle={styles.inputContainer}
@@ -118,22 +84,15 @@ export const LoginScreen: React.FC = () => {
             <Button
               title="Sign up"
               type="clear"
-              onPress={handleRegister}
               disabled={isLoading}
               titleStyle={styles.signUpButton}
             />
           </View>
         </Card>
-
-        <View style={styles.bottomNote}>
-          <Text style={styles.noteText}>
-            Built with React Native Elements • Cross-platform UI
-          </Text>
-        </View>
       </ScrollView>
     </KeyboardAvoidingView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -200,16 +159,4 @@ const styles = StyleSheet.create({
     color: '#007bff',
     fontWeight: '600',
   },
-  bottomNote: {
-    alignItems: 'center',
-    paddingTop: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#dee2e6',
-  },
-  noteText: {
-    fontSize: 14,
-    color: '#adb5bd',
-    textAlign: 'center',
-  },
-})
-}
+});

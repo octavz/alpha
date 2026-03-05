@@ -1,16 +1,19 @@
 # OpenCode Configuration for Alpha Project
 
 ## Project Context
-Alpha is a business directory platform with React frontend and Bun/Elysia backend.
+Alpha is a business directory platform with:
+- Backend: Spring Boot 3.2 + Kotlin + PostgreSQL (port 3000)
+- Frontend: React + Vite (port 5173)
+- Database: PostgreSQL running on port 5433
 
 ## Development Workflow
-1. Always kill existing processes before starting:
-   - `powershell -Command "Get-Process java -ErrorAction SilentlyContinue | Stop-Process -Force"`
-   - `powershell -Command "Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }"`
-   - `powershell -Command "Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }"`
-   - Verify processes are killed: `timeout /t 2 /nobreak >nul && powershell -Command "if (Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Port 5173 still in use' -ForegroundColor Yellow }" && powershell -Command "if (Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Port 3000 still in use' -ForegroundColor Yellow }" && powershell -Command "if (Get-Process java -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Java processes still running' -ForegroundColor Yellow }"`
-2. Backend runs on port 3000: `cd packages/backend-java && ./gradlew bootRun`
-3. Frontend runs on port 5173: `cd packages/web && npm run dev`
+1. Always kill existing processes before starting (use PowerShell):
+   - Kill all node processes: `powershell -Command "Get-Process node* -ErrorAction SilentlyContinue | Stop-Process -Force"`
+   - Kill processes using port 5173: `powershell -Command "Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }"`
+   - Kill processes using port 3000: `powershell -Command "Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }"`
+   - Verify: `timeout /t 2 /nobreak >nul && powershell -Command "if (Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Port 5173 still in use' -ForegroundColor Yellow }" && powershell -Command "if (Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Port 3000 still in use' -ForegroundColor Yellow }" && powershell -Command "if (Get-Process node* -ErrorAction SilentlyContinue) { Write-Host 'WARNING: Node processes still running' -ForegroundColor Yellow }"`
+2. Backend runs on port 3000: `cd backend && ./gradlew bootRun`
+3. Frontend runs on port 5173: `cd frontend/web && npm run dev`
 4. Database runs on port 5433 (PostgreSQL)
 
 ## Code Conventions
@@ -19,19 +22,33 @@ Alpha is a business directory platform with React frontend and Bun/Elysia backen
 - Fix root causes, not symptoms
 - Never use mock data when real API/database is available
 - Handle CORS properly (no Vite proxy)
+- Use PowerShell for all shell commands on Windows (no bash)
 
 ## Testing Requirements
 - Run tests after significant changes
-- Backend: `cd packages/backend-java && ./gradlew test`
-- Frontend: `cd packages/web && npm run test`
+- Backend: `cd backend && ./gradlew test`
+- Frontend: `cd frontend/web && npm run test`
+- Check TypeScript: `cd frontend/web && ./node_modules/.bin/tsc --noEmit`
 
 ## Environment
-- Single .env file in root directory
+- Frontend .env in `frontend/web/.env`
+- Backend .env in `backend/.env`
 - CORS_ORIGIN includes http://localhost:5173 and http://localhost:5179
 - Database connection: postgresql://alpha_user:alpha_password@localhost:5433/alpha
+- Frontend uses VITE_API_URL, backend uses DATABASE_URL
 
 ## Common Tasks
-- Database migrations: `./gradlew flywayMigrate`
-- Build application: `./gradlew build`
-- Run application: `./gradlew bootRun`
-- Build frontend: `npm run build`
+- Database migrations: `cd backend && ./gradlew flywayMigrate`
+- Build backend: `cd backend && ./gradlew build`
+- Run backend: `cd backend && ./gradlew bootRun`
+- Build frontend: `cd frontend/web && npm run build`
+- Install frontend dependencies: `cd frontend/web && npm install --legacy-peer-deps`
+- Lint frontend: `cd frontend/web && npm run lint`
+- Type check frontend: `cd frontend/web && ./node_modules/.bin/tsc --noEmit`
+
+## Important Notes
+- ALL shell commands must use PowerShell syntax on Windows
+- Do NOT use bash-specific syntax (&&, ||, etc.) - use PowerShell equivalents
+- Always use PowerShell for process management and port checking
+- Frontend package.json located at `frontend/web/package.json`, not root
+- Shared package located at `frontend/shared/`
