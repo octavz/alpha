@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
+import type { User, Business, Region, Category, Appointment, AuthResponse, Page } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || process.env.VITE_API_URL || 'http://localhost:3000';
 
 class ApiClient {
   private client: AxiosInstance;
@@ -42,24 +43,32 @@ class ApiClient {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     this.sessionId = sessionId;
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('sessionId', sessionId);
+    
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('sessionId', sessionId);
+    }
   }
 
   loadTokens() {
-    this.accessToken = localStorage.getItem('accessToken');
-    this.refreshToken = localStorage.getItem('refreshToken');
-    this.sessionId = localStorage.getItem('sessionId');
+    if (typeof window !== 'undefined') {
+      this.accessToken = localStorage.getItem('accessToken');
+      this.refreshToken = localStorage.getItem('refreshToken');
+      this.sessionId = localStorage.getItem('sessionId');
+    }
   }
 
   clearTokens() {
     this.accessToken = null;
     this.refreshToken = null;
     this.sessionId = null;
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('sessionId');
+    
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('sessionId');
+    }
   }
 
   getAccessToken() {
@@ -68,6 +77,10 @@ class ApiClient {
 
   getSessionId() {
     return this.sessionId;
+  }
+
+  isAuthenticated() {
+    return !!this.accessToken;
   }
 
   async refreshAccessToken(): Promise<boolean> {
@@ -87,21 +100,21 @@ class ApiClient {
   }
 
   // Auth endpoints
-  async register(email: string, password: string, name: string) {
+  async register(email: string, password: string, name: string): Promise<User> {
     const response = await this.client.post('/auth/register', { email, password, name });
     const { accessToken, refreshToken, sessionId, user } = response.data.data;
     this.setTokens(accessToken, refreshToken, sessionId);
     return user;
   }
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string): Promise<User> {
     const response = await this.client.post('/auth/login', { email, password });
     const { accessToken, refreshToken, sessionId, user } = response.data.data;
     this.setTokens(accessToken, refreshToken, sessionId);
     return user;
   }
 
-  async logout() {
+  async logout(): Promise<void> {
     if (!this.sessionId) return;
     try {
       await this.client.post('/auth/logout', { sessionId: this.sessionId });
@@ -110,43 +123,60 @@ class ApiClient {
     }
   }
 
-  async getCurrentUser() {
+  async getCurrentUser(): Promise<User> {
     const response = await this.client.get('/auth/me');
     return response.data.data;
   }
 
+  async updateProfile(data: { name?: string; phone?: string; avatarUrl?: string }): Promise<User> {
+    const response = await this.client.put('/auth/me', data);
+    return response.data.data;
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await this.client.post('/auth/change-password', null, {
+      params: { currentPassword, newPassword },
+    });
+  }
+
   // Business endpoints
-  async getBusinesses(params?: { query?: string; regionId?: string; categoryId?: string; page?: number; size?: number }) {
+  async getBusinesses(params?: {
+    query?: string;
+    regionId?: string;
+    categoryId?: string;
+    page?: number;
+    size?: number;
+  }): Promise<Page<Business>> {
     const response = await this.client.get('/businesses/search', { params });
     return response.data.data;
   }
 
-  async getBusiness(id: string) {
+  async getBusiness(id: string): Promise<Business> {
     const response = await this.client.get(`/businesses/${id}`);
     return response.data.data;
   }
 
-  async getBusinessBySlug(slug: string) {
+  async getBusinessBySlug(slug: string): Promise<Business> {
     const response = await this.client.get(`/businesses/slug/${slug}`);
     return response.data.data;
   }
 
-  async getFeaturedBusinesses(page = 0, size = 10) {
+  async getFeaturedBusinesses(page = 0, size = 10): Promise<Page<Business>> {
     const response = await this.client.get('/businesses/featured', { params: { page, size } });
     return response.data.data;
   }
 
-  async getBusinessesByRegion(regionId: string, page = 0, size = 20) {
+  async getBusinessesByRegion(regionId: string, page = 0, size = 20): Promise<Page<Business>> {
     const response = await this.client.get(`/businesses/region/${regionId}`, { params: { page, size } });
     return response.data.data;
   }
 
-  async getBusinessesByCategory(categoryId: string, page = 0, size = 20) {
+  async getBusinessesByCategory(categoryId: string, page = 0, size = 20): Promise<Page<Business>> {
     const response = await this.client.get(`/businesses/category/${categoryId}`, { params: { page, size } });
     return response.data.data;
   }
 
-  async getMyBusinesses(page = 0, size = 20) {
+  async getMyBusinesses(page = 0, size = 20): Promise<Page<Business>> {
     const response = await this.client.get('/businesses/my-businesses', { params: { page, size } });
     return response.data.data;
   }
@@ -164,7 +194,7 @@ class ApiClient {
     website?: string;
     latitude?: number;
     longitude?: number;
-  }) {
+  }): Promise<Business> {
     const response = await this.client.post('/businesses', data);
     return response.data.data;
   }
@@ -181,22 +211,27 @@ class ApiClient {
     longitude: number;
     isVerified: boolean;
     isFeatured: boolean;
-  }>) {
+  }>): Promise<Business> {
     const response = await this.client.put(`/businesses/${id}`, data);
     return response.data.data;
   }
 
-  async deleteBusiness(id: string) {
+  async deleteBusiness(id: string): Promise<void> {
     await this.client.delete(`/businesses/${id}`);
   }
 
   // Appointment endpoints
-  async getAppointments(params?: { businessId?: string; status?: string; page?: number; size?: number }) {
+  async getAppointments(params?: {
+    businessId?: string;
+    status?: string;
+    page?: number;
+    size?: number;
+  }): Promise<Page<Appointment>> {
     const response = await this.client.get('/appointments', { params });
     return response.data.data;
   }
 
-  async getAppointment(id: string) {
+  async getAppointment(id: string): Promise<Appointment> {
     const response = await this.client.get(`/appointments/${id}`);
     return response.data.data;
   }
@@ -206,39 +241,42 @@ class ApiClient {
     serviceId: string;
     dateTime: string;
     notes?: string;
-  }) {
+  }): Promise<Appointment> {
     const response = await this.client.post('/appointments', data);
     return response.data.data;
   }
 
-  async updateAppointment(id: string, data: { status?: string; dateTime?: string; notes?: string }) {
+  async updateAppointment(id: string, data: {
+    status?: string;
+    dateTime?: string;
+    notes?: string;
+  }): Promise<Appointment> {
     const response = await this.client.put(`/appointments/${id}`, data);
     return response.data.data;
   }
 
-  async cancelAppointment(id: string) {
-    const response = await this.client.delete(`/appointments/${id}`);
-    return response.data.data;
+  async cancelAppointment(id: string): Promise<void> {
+    await this.client.delete(`/appointments/${id}`);
   }
 
   // Region endpoints
-  async getRegions() {
+  async getRegions(): Promise<Region[]> {
     const response = await this.client.get('/regions');
     return response.data.data;
   }
 
-  async getRegion(id: string) {
+  async getRegion(id: string): Promise<Region> {
     const response = await this.client.get(`/regions/${id}`);
     return response.data.data;
   }
 
   // Category endpoints
-  async getCategories() {
+  async getCategories(): Promise<Category[]> {
     const response = await this.client.get('/categories');
     return response.data.data;
   }
 
-  async getCategory(id: string) {
+  async getCategory(id: string): Promise<Category> {
     const response = await this.client.get(`/categories/${id}`);
     return response.data.data;
   }

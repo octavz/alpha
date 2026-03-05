@@ -1,18 +1,6 @@
 import { create } from 'zustand';
 import api from '../api/client';
-
-interface Region {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  imageUrl?: string;
-}
+import type { Region, Category } from '../types';
 
 interface DataState {
   regions: Region[];

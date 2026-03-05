@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useSearchParams, useParams, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useSearchParams, useParams, Link, useNavigate } from 'react-router-dom';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { useAuthStore } from './stores/authStore';
-import { useBusinessStore } from './stores/businessStore';
-import { useDataStore } from './stores/dataStore';
-import api from './api/client';
+import { useAuthStore, useBusinessStore, useDataStore } from '@alpha/shared';
+import api from '@alpha/shared/api';
 
 const API_URL = 'http://localhost:3000';
 

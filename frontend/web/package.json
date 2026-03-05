@@ -13,16 +13,18 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\""
   },
   "dependencies": {
+    "@alpha/shared": "file:../shared",
     "axios": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-native-web": "^0.19.9",
     "react-native-elements": "^3.4.3",
     "react-native-vector-icons": "^10.0.0",
+    "react-native-web": "^0.19.9",
     "react-router-dom": "^6.22.0",
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "@types/react-router-dom": "^5.3.3",

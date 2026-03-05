@@ -1,27 +1,6 @@
 import { create } from 'zustand';
 import api from '../api/client';
-
-interface Business {
-  id: string;
-  name: string;
-  description: string;
-  slug: string;
-  address: string;
-  city: string;
-  regionId: string;
-  categoryId: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  latitude?: number;
-  longitude?: number;
-  imageUrl?: string;
-  isVerified: boolean;
-  isFeatured: boolean;
-  rating: number;
-  reviewCount: number;
-  createdAt: string;
-}
+import type { Business, Page } from '../types';
 
 interface BusinessState {
   businesses: Business[];
@@ -32,8 +11,13 @@ interface BusinessState {
   totalPages: number;
   currentPage: number;
 
-  // Actions
-  fetchBusinesses: (params?: { query?: string; regionId?: string; categoryId?: string; page?: number; size?: number }) => Promise<void>;
+  fetchBusinesses: (params?: {
+    query?: string;
+    regionId?: string;
+    categoryId?: string;
+    page?: number;
+    size?: number;
+  }) => Promise<void>;
   fetchFeaturedBusinesses: (page?: number, size?: number) => Promise<void>;
   fetchBusiness: (id: string) => Promise<void>;
   fetchBusinessBySlug: (slug: string) => Promise<void>;

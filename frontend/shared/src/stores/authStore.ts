@@ -1,17 +1,6 @@
 import { create } from 'zustand';
 import api from '../api/client';
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: string;
-  emailVerified: boolean;
-  createdAt: string;
-  banned: boolean;
-  avatarUrl?: string;
-  phone?: string;
-}
+import type { User } from '../types';
 
 interface AuthState {
   user: User | null;
@@ -19,11 +8,12 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   
-  // Actions
   checkAuth: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
+  updateProfile: (data: { name?: string; phone?: string; avatarUrl?: string }) => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   clearError: () => void;
 }
 
@@ -35,8 +25,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   checkAuth: async () => {
     api.loadTokens();
-    const token = api.getAccessToken();
-    if (!token) {
+    if (!api.isAuthenticated()) {
       set({ isAuthenticated: false, user: null });
       return;
     }
@@ -80,6 +69,30 @@ export const useAuthStore = create<AuthState>((set) => ({
       await api.logout();
     } finally {
       set({ user: null, isAuthenticated: false });
+    }
+  },
+
+  updateProfile: async (data) => {
+    set({ isLoading: true, error: null });
+    try {
+      const user = await api.updateProfile(data);
+      set({ user, isLoading: false });
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Update failed';
+      set({ error: message, isLoading: false });
+      throw err;
+    }
+  },
+
+  changePassword: async (currentPassword, newPassword) => {
+    set({ isLoading: true, error: null });
+    try {
+      await api.changePassword(currentPassword, newPassword);
+      set({ isLoading: false });
+    } catch (err: any) {
+      const message = err.response?.data?.message || 'Password change failed';
+      set({ error: message, isLoading: false });
+      throw err;
     }
   },
 
