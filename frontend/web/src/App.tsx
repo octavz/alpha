@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-native';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useSearchParams, useParams, Link } from 'react-router-dom';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useAuthStore } from './stores/authStore';
 import { useBusinessStore } from './stores/businessStore';
@@ -21,7 +21,7 @@ const HomePage = () => {
   }, []);
 
   const handleSearch = () => {
-    navigate('/search', { state: { query: searchQuery } });
+    navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
   };
 
   return (
@@ -53,7 +53,7 @@ const HomePage = () => {
             <TouchableOpacity
               key={cat.id}
               style={styles.categoryCard}
-              onPress={() => navigate('/search', { state: { categoryId: cat.id } })}
+              onPress={() => navigate(`/search?category=${cat.id}`)}
             >
               <Text style={styles.categoryTitle}>{cat.name}</Text>
             </TouchableOpacity>
@@ -112,17 +112,19 @@ const HomePage = () => {
   );
 };
 
-const SearchPage = ({ location }: { location: any }) => {
+const SearchPage = () => {
   const { businesses, fetchBusinesses, isLoading } = useBusinessStore();
-  const [query, setQuery] = useState(location?.state?.query || '');
-  const [categoryId, setCategoryId] = useState(location?.state?.categoryId || '');
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get('q') || '';
+  const categoryId = searchParams.get('category') || '';
+  const [searchQuery, setSearchQuery] = useState(query);
 
   useEffect(() => {
-    fetchBusinesses({ query, categoryId });
-  }, [query, categoryId]);
+    fetchBusinesses({ query: searchQuery, categoryId });
+  }, [searchQuery, categoryId]);
 
   const handleSearch = () => {
-    fetchBusinesses({ query, categoryId });
+    fetchBusinesses({ query: searchQuery, categoryId });
   };
 
   return (
@@ -133,8 +135,8 @@ const SearchPage = ({ location }: { location: any }) => {
           style={styles.searchInput}
           placeholder="Search..."
           placeholderTextColor="#adb5bd"
-          value={query}
-          onChangeText={setQuery}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
           onSubmitEditing={handleSearch}
         />
         <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
@@ -457,27 +459,27 @@ function App() {
     <Router>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => window.location.href = '/'}>
+          <Link to="/">
             <Text style={styles.headerTitle}>Alpha Directory</Text>
-          </TouchableOpacity>
+          </Link>
           <View style={styles.headerActions}>
             {isAuthenticated ? (
-              <TouchableOpacity onPress={() => window.location.href = '/profile'}>
+              <Link to="/profile">
                 <Text style={styles.headerButton}>{user?.name || 'Profile'}</Text>
-              </TouchableOpacity>
+              </Link>
             ) : (
-              <TouchableOpacity onClick={() => window.location.href = '/login'}>
+              <Link to="/login">
                 <Text style={styles.headerButton}>Login</Text>
-              </TouchableOpacity>
+              </Link>
             )}
           </View>
         </View>
 
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/search" element={<SearchPage location={{}} />} />
-          <Route path="/business/:id" element={<BusinessDetailPage id="" />} />
-          <Route path="/booking/:businessId" element={<BookingPage businessId="" />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/business/:id" element={<BusinessDetailPageWrapper />} />
+          <Route path="/booking/:businessId" element={<BookingPageWrapper />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
@@ -898,5 +900,15 @@ const styles = StyleSheet.create({
     color: '#adb5bd',
   },
 });
+
+const BusinessDetailPageWrapper = () => {
+  const { id } = useParams<{ id: string }>();
+  return <BusinessDetailPage id={id || ''} />;
+};
+
+const BookingPageWrapper = () => {
+  const { businessId } = useParams<{ businessId: string }>();
+  return <BookingPage businessId={businessId || ''} />;
+};
 
 export default App;
