@@ -25,6 +25,9 @@ interface BusinessState {
   updateBusiness: (id: string, data: Partial<Business>) => Promise<Business>;
   deleteBusiness: (id: string) => Promise<void>;
   clearError: () => void;
+  clearSelectedBusiness: () => void;
+  setCurrentBusiness: (business: Business | null) => void;
+  setBusinesses: (businesses: Business[]) => void;
 }
 
 export const useBusinessStore = create<BusinessState>((set, get) => ({
@@ -111,17 +114,20 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
     }
   },
 
-  deleteBusiness: async (id) => {
-    set({ isLoading: true, error: null });
-    try {
-      await api.deleteBusiness(id);
-      const businesses = get().businesses.filter(b => b.id !== id);
-      set({ businesses, isLoading: false });
-    } catch (err: any) {
-      set({ error: err.message, isLoading: false });
-      throw err;
-    }
-  },
+   deleteBusiness: async (id) => {
+     set({ isLoading: true, error: null });
+     try {
+       await api.deleteBusiness(id);
+       const businesses = get().businesses.filter(b => b.id !== id);
+       set({ businesses, isLoading: false });
+     } catch (err: any) {
+       set({ error: err.message, isLoading: false });
+       throw err;
+     }
+   },
 
-  clearError: () => set({ error: null }),
-}));
+    clearError: () => set({ error: null }),
+    clearSelectedBusiness: () => set({ currentBusiness: null }),
+    setCurrentBusiness: (business: Business | null) => set({ currentBusiness: business }),
+    setBusinesses: (businesses: Business[]) => set({ businesses }),
+  }));

@@ -11,6 +11,7 @@ import {
   ActivityIndicator 
 } from 'react-native';
 import { Input, Card, Button } from 'react-native-elements';
+const CardAny = Card as any;
 
 export const LoginScreen = () => {
   const [email, setEmail] = React.useState('');
@@ -46,7 +47,7 @@ export const LoginScreen = () => {
           <Text style={styles.subtitle}>Sign in to your account</Text>
         </View>
 
-        <Card containerStyle={styles.card}>
+        <CardAny containerStyle={styles.card}>
           <Input
             label="Email"
             value={email}
@@ -76,19 +77,19 @@ export const LoginScreen = () => {
             containerStyle={styles.buttonContainer}
             buttonStyle={styles.loginButton}
           />
-        </Card>
+        </CardAny>
 
-        <Card containerStyle={styles.footerCard}>
+        <CardAny containerStyle={styles.footerCard}>
           <View style={styles.footerContent}>
             <Text style={styles.footerText}>Don't have an account?</Text>
             <Button
               title="Sign up"
               type="clear"
               disabled={isLoading}
-              titleStyle={styles.signUpButton}
-            />
-          </View>
-        </Card>
+               titleStyle={styles.signUpButton}
+             />
+           </View>
+         </CardAny>
       </ScrollView>
     </KeyboardAvoidingView>
   );

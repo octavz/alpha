@@ -5,6 +5,9 @@
     "paths": {
       "@/*": ["./src/*"],
       "@shared/*": ["../shared/src/*"]
-    }
+    },
+    "types": ["jest"],
+    "lib": ["ES2020", "DOM"],
+    "module": "ESNext"
   }
 }

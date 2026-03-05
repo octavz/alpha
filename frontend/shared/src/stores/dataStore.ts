@@ -10,6 +10,8 @@ interface DataState {
 
   fetchRegions: () => Promise<void>;
   fetchCategories: () => Promise<void>;
+  clearRegions: () => void;
+  clearCategories: () => void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
@@ -29,14 +31,17 @@ export const useDataStore = create<DataState>((set) => ({
     }
   },
 
-  fetchCategories: async () => {
-    if (useDataStore.getState().categories.length > 0) return;
-    set({ isLoading: true, error: null });
-    try {
-      const categories = await api.getCategories();
-      set({ categories, isLoading: false });
-    } catch (err: any) {
-      set({ error: err.message, isLoading: false });
-    }
-  },
-}));
+   fetchCategories: async () => {
+     if (useDataStore.getState().categories.length > 0) return;
+     set({ isLoading: true, error: null });
+     try {
+       const categories = await api.getCategories();
+       set({ categories, isLoading: false });
+     } catch (err: any) {
+       set({ error: err.message, isLoading: false });
+     }
+   },
+
+   clearRegions: () => set({ regions: [] }),
+   clearCategories: () => set({ categories: [] }),
+ }));

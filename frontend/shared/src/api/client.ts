@@ -301,11 +301,17 @@ class ApiClient {
     return response.data.data;
   }
 
-  async getCategory(id: string): Promise<Category> {
-    const response = await this.client.get(`/categories/${id}`);
-    return response.data.data;
-  }
+   async getCategory(id: string): Promise<Category> {
+     const response = await this.client.get(`/categories/${id}`);
+     return response.data.data;
+   }
+
+   async getHealth(): Promise<any> {
+     const response = await this.client.get('/health');
+     return response.data;
+   }
 }
 
+export { ApiClient };
 export const api = new ApiClient();
 export default api;
