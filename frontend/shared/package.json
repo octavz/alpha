@@ -16,6 +16,7 @@
     "zustand": ">=4.0.0"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.30.2",
     "@react-native-async-storage/async-storage": "^1.21.0",
     "@testing-library/react": "^14.1.2",
     "@types/jest": "^29.5.0",
@@ -32,6 +33,10 @@
   },
   "scripts": {
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "generate:models": "node scripts/fetch-openapi.js && npx @openapitools/openapi-generator-cli generate -i openapi.json -g typescript -o src/generated --additional-properties=npmVersion=1.0.0,modelPackage=models,apiPackage=api",
+    "generate:models:fetch": "node scripts/fetch-openapi.js",
+    "generate:models:code": "npx @openapitools/openapi-generator-cli generate -i openapi.json -g typescript -o src/generated --additional-properties=npmVersion=1.0.0,modelPackage=models,apiPackage=api",
+    "generate:models:all": "npm run generate:models:fetch && npm run generate:models:code"
   }
 }
