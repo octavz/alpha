@@ -22,14 +22,13 @@ object Main extends ZIOAppDefault:
     AppointmentEndpoints.endpoints.map(_.asInstanceOf[ZServerEndpoint[Any, Any]]) ++
     ReviewEndpoints.endpoints.map(_.asInstanceOf[ZServerEndpoint[Any, Any]]) ++
     ServiceEndpoints.endpoints.map(_.asInstanceOf[ZServerEndpoint[Any, Any]]) ++
-    BusinessHoursEndpoints.endpoints.map(_.asInstanceOf[ZServerEndpoint[Any, Any]]) ++
-    List(HealthEndpoint.routes.routes.toList.head.t.asInstanceOf[ZServerEndpoint[Any, Any]])
+    BusinessHoursEndpoints.endpoints.map(_.asInstanceOf[ZServerEndpoint[Any, Any]])
 
   private val swaggerRoutes: Routes[Any, Response] =
     ZioHttpInterpreter().toHttp(SwaggerInterpreter().fromServerEndpoints(allEndpointsForSwagger, "Alpha API", "1.0.0"))
 
   override def run: ZIO[Any, Throwable, Unit] =
-    for
+    (for
       auth <- AuthEndpoints.routes
       cat <- CategoryEndpoints.routes
       reg <- RegionEndpoints.routes

@@ -1,0 +1,593 @@
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:33:9 
+[info] 33 |      run(query[Appointment].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 128ms): SELECT x2.id, x2.business_id AS businessId, x2.user_id AS userId, x2.service_id AS serviceId, x2.appointment_date AS appointmentDate, x2.start_time AS startTime, x2.end_time AS endTime, x2.service_point_number AS servicePointNumber, x2.customer_name AS customerName, x2.customer_email AS customerEmail, x2.customer_phone AS customerPhone, x2.customer_notes AS customerNotes, x2.status, x2.cancelled_at AS cancelledAt, x2.cancelled_reason AS cancelledReason, x2.created_at AS createdAt, x2.updated_at AS updatedAt FROM appointment x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:37:9 
+[info] 37 |      run(query[Appointment].filter(_.businessId == lift(businessId))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 7ms): SELECT x3.id, x3.business_id AS businessId, x3.user_id AS userId, x3.service_id AS serviceId, x3.appointment_date AS appointmentDate, x3.start_time AS startTime, x3.end_time AS endTime, x3.service_point_number AS servicePointNumber, x3.customer_name AS customerName, x3.customer_email AS customerEmail, x3.customer_phone AS customerPhone, x3.customer_notes AS customerNotes, x3.status, x3.cancelled_at AS cancelledAt, x3.cancelled_reason AS cancelledReason, x3.created_at AS createdAt, x3.updated_at AS updatedAt FROM appointment x3 WHERE x3.business_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:41:9 
+[info] 41 |      run(query[Appointment].filter(_.userId.exists(_ == lift(userId)))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 7ms): SELECT x4.id, x4.business_id AS businessId, x4.user_id AS userId, x4.service_id AS serviceId, x4.appointment_date AS appointmentDate, x4.start_time AS startTime, x4.end_time AS endTime, x4.service_point_number AS servicePointNumber, x4.customer_name AS customerName, x4.customer_email AS customerEmail, x4.customer_phone AS customerPhone, x4.customer_notes AS customerNotes, x4.status, x4.cancelled_at AS cancelledAt, x4.cancelled_reason AS cancelledReason, x4.created_at AS createdAt, x4.updated_at AS updatedAt FROM appointment x4 WHERE x4.user_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:45:9 
+[info] 45 |      run(query[Appointment].filter(_.status == lift(status))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 4ms): SELECT x6.id, x6.business_id AS businessId, x6.user_id AS userId, x6.service_id AS serviceId, x6.appointment_date AS appointmentDate, x6.start_time AS startTime, x6.end_time AS endTime, x6.service_point_number AS servicePointNumber, x6.customer_name AS customerName, x6.customer_email AS customerEmail, x6.customer_phone AS customerPhone, x6.customer_notes AS customerNotes, x6.status, x6.cancelled_at AS cancelledAt, x6.cancelled_reason AS cancelledReason, x6.created_at AS createdAt, x6.updated_at AS updatedAt FROM appointment x6 WHERE x6.status = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:49:9 
+[info] 49 |      run(query[Appointment]
+[info]    |      ^
+[info]    |Quill Query (compiled in 6ms): SELECT a.id, a.business_id AS businessId, a.user_id AS userId, a.service_id AS serviceId, a.appointment_date AS appointmentDate, a.start_time AS startTime, a.end_time AS endTime, a.service_point_number AS servicePointNumber, a.customer_name AS customerName, a.customer_email AS customerEmail, a.customer_phone AS customerPhone, a.customer_notes AS customerNotes, a.status, a.cancelled_at AS cancelledAt, a.cancelled_reason AS cancelledReason, a.created_at AS createdAt, a.updated_at AS updatedAt FROM appointment a WHERE a.business_id = ? AND a.appointment_date = ?
+[info] 50 |        .filter(a => a.businessId == lift(businessId) && a.appointmentDate == lift(date))
+[info] 51 |      ).toList
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:55:9 
+[info] 55 |      run(query[Appointment]
+[info]    |      ^
+[info]    |Quill Query (compiled in 5ms): SELECT a.id, a.business_id AS businessId, a.user_id AS userId, a.service_id AS serviceId, a.appointment_date AS appointmentDate, a.start_time AS startTime, a.end_time AS endTime, a.service_point_number AS servicePointNumber, a.customer_name AS customerName, a.customer_email AS customerEmail, a.customer_phone AS customerPhone, a.customer_notes AS customerNotes, a.status, a.cancelled_at AS cancelledAt, a.cancelled_reason AS cancelledReason, a.created_at AS createdAt, a.updated_at AS updatedAt FROM appointment a WHERE a.business_id = ? AND a.appointment_date = ? AND a.status = ?
+[info] 56 |        .filter(a => a.businessId == lift(businessId) && a.appointmentDate == lift(date) && a.status == lift(status))
+[info] 57 |      ).toList
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:61:9 
+[info] 61 |      run(query[Appointment]
+[info]    |      ^
+[info]    |Quill Query (compiled in 6ms): SELECT x7.id, x7.business_id AS businessId, x7.user_id AS userId, x7.service_id AS serviceId, x7.appointment_date AS appointmentDate, x7.start_time AS startTime, x7.end_time AS endTime, x7.service_point_number AS servicePointNumber, x7.customer_name AS customerName, x7.customer_email AS customerEmail, x7.customer_phone AS customerPhone, x7.customer_notes AS customerNotes, x7.status, x7.cancelled_at AS cancelledAt, x7.cancelled_reason AS cancelledReason, x7.created_at AS createdAt, x7.updated_at AS updatedAt FROM appointment x7 WHERE x7.business_id = ? AND x7.appointment_date >= ? AND x7.appointment_date <= ?
+[info] 62 |        .filter(_.businessId == lift(businessId))
+[info] 63 |        .filter(a => a.appointmentDate >= lift(start))
+[info] 64 |        .filter(a => a.appointmentDate <= lift(end))
+[info] 65 |      ).toList
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:69:9 
+[info] 69 |      run(query[Appointment].insertValue(lift(appointment)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 9ms): INSERT INTO appointment (id,business_id,user_id,service_id,appointment_date,start_time,end_time,service_point_number,customer_name,customer_email,customer_phone,customer_notes,status,cancelled_at,cancelled_reason,created_at,updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:74:9 
+[info] 74 |      run(query[Appointment]
+[info]    |      ^
+[info]    |Quill Query (compiled in 10ms): UPDATE appointment AS x8 SET id = ?, business_id = ?, user_id = ?, service_id = ?, appointment_date = ?, start_time = ?, end_time = ?, service_point_number = ?, customer_name = ?, customer_email = ?, customer_phone = ?, customer_notes = ?, status = ?, cancelled_at = ?, cancelled_reason = ?, created_at = ?, updated_at = ? WHERE x8.id = ?
+[info] 75 |        .filter(_.id == lift(appointment.id))
+[info] 76 |        .updateValue(lift(appointment)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:81:9 
+[info] 81 |      run(query[Appointment]
+[info]    |      ^
+[info]    |Quill Query (compiled in 2ms): UPDATE appointment AS x9 SET status = ? WHERE x9.id = ?
+[info] 82 |        .filter(_.id == lift(id))
+[info] 83 |        .update(_.status -> lift(status)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\AppointmentRepository.scala:88:9 
+[info] 88 |      run(query[Appointment].filter(_.id == lift(id)).delete)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): DELETE FROM appointment AS x11 WHERE x11.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessHoursRepository.scala:27:9 
+[info] 27 |      run(query[BusinessHours].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x2.id, x2.business_id AS businessId, x2.day_of_week AS dayOfWeek, x2.open_time AS openTime, x2.close_time AS closeTime, x2.is_closed AS isClosed FROM business_hours x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessHoursRepository.scala:31:9 
+[info] 31 |      run(query[BusinessHours].filter(_.businessId == lift(businessId))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x3.id, x3.business_id AS businessId, x3.day_of_week AS dayOfWeek, x3.open_time AS openTime, x3.close_time AS closeTime, x3.is_closed AS isClosed FROM business_hours x3 WHERE x3.business_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessHoursRepository.scala:35:9 
+[info] 35 |      run(query[BusinessHours].filter(h => h.businessId == lift(businessId) && h.dayOfWeek == lift(dayOfWeek))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT h.id, h.business_id AS businessId, h.day_of_week AS dayOfWeek, h.open_time AS openTime, h.close_time AS closeTime, h.is_closed AS isClosed FROM business_hours h WHERE h.business_id = ? AND h.day_of_week = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessHoursRepository.scala:39:9 
+[info] 39 |      run(query[BusinessHours].insertValue(lift(hours)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): INSERT INTO business_hours (id,business_id,day_of_week,open_time,close_time,is_closed) VALUES (?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessHoursRepository.scala:44:9 
+[info] 44 |      run(query[BusinessHours]
+[info]    |      ^
+[info]    |Quill Query (compiled in 3ms): UPDATE business_hours AS x4 SET id = ?, business_id = ?, day_of_week = ?, open_time = ?, close_time = ?, is_closed = ? WHERE x4.id = ?
+[info] 45 |        .filter(_.id == lift(hours.id))
+[info] 46 |        .updateValue(lift(hours)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessHoursRepository.scala:51:9 
+[info] 51 |      run(query[BusinessHours].filter(_.id == lift(id)).delete)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): DELETE FROM business_hours AS x5 WHERE x5.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessHoursRepository.scala:56:9 
+[info] 56 |      run(query[BusinessHours].filter(_.businessId == lift(businessId)).delete)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): DELETE FROM business_hours AS x6 WHERE x6.business_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:36:9 
+[info] 36 |      run(query[Business].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 4ms): SELECT x2.id, x2.user_id AS userId, x2.name, x2.slug, x2.description, x2.email, x2.phone, x2.website, x2.address_line1 AS addressLine1, x2.address_line2 AS addressLine2, x2.city, x2.state, x2.zip_code AS zipCode, x2.country, x2.latitude, x2.longitude, x2.category_id AS categoryId, x2.region_id AS regionId, x2.verification_status AS verificationStatus, x2.is_verified AS isVerified, x2.is_active AS isActive, x2.is_featured AS isFeatured, x2.logo_url AS logoUrl, x2.cover_image_url AS coverImageUrl, x2.service_points_count AS servicePointsCount, x2.created_at AS createdAt, x2.updated_at AS updatedAt FROM business x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:40:9 
+[info] 40 |      run(query[Business].filter(_.userId == lift(userId))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x3.id, x3.user_id AS userId, x3.name, x3.slug, x3.description, x3.email, x3.phone, x3.website, x3.address_line1 AS addressLine1, x3.address_line2 AS addressLine2, x3.city, x3.state, x3.zip_code AS zipCode, x3.country, x3.latitude, x3.longitude, x3.category_id AS categoryId, x3.region_id AS regionId, x3.verification_status AS verificationStatus, x3.is_verified AS isVerified, x3.is_active AS isActive, x3.is_featured AS isFeatured, x3.logo_url AS logoUrl, x3.cover_image_url AS coverImageUrl, x3.service_points_count AS servicePointsCount, x3.created_at AS createdAt, x3.updated_at AS updatedAt FROM business x3 WHERE x3.user_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:44:9 
+[info] 44 |      run(query[Business].filter(_.slug == lift(slug))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT x4.id, x4.user_id AS userId, x4.name, x4.slug, x4.description, x4.email, x4.phone, x4.website, x4.address_line1 AS addressLine1, x4.address_line2 AS addressLine2, x4.city, x4.state, x4.zip_code AS zipCode, x4.country, x4.latitude, x4.longitude, x4.category_id AS categoryId, x4.region_id AS regionId, x4.verification_status AS verificationStatus, x4.is_verified AS isVerified, x4.is_active AS isActive, x4.is_featured AS isFeatured, x4.logo_url AS logoUrl, x4.cover_image_url AS coverImageUrl, x4.service_points_count AS servicePointsCount, x4.created_at AS createdAt, x4.updated_at AS updatedAt FROM business x4 WHERE x4.slug = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:48:9 
+[info] 48 |      run(query[Business].filter(_.categoryId == lift(categoryId))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT x5.id, x5.user_id AS userId, x5.name, x5.slug, x5.description, x5.email, x5.phone, x5.website, x5.address_line1 AS addressLine1, x5.address_line2 AS addressLine2, x5.city, x5.state, x5.zip_code AS zipCode, x5.country, x5.latitude, x5.longitude, x5.category_id AS categoryId, x5.region_id AS regionId, x5.verification_status AS verificationStatus, x5.is_verified AS isVerified, x5.is_active AS isActive, x5.is_featured AS isFeatured, x5.logo_url AS logoUrl, x5.cover_image_url AS coverImageUrl, x5.service_points_count AS servicePointsCount, x5.created_at AS createdAt, x5.updated_at AS updatedAt FROM business x5 WHERE x5.category_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:52:9 
+[info] 52 |      run(query[Business].filter(_.regionId == lift(regionId))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 5ms): SELECT x6.id, x6.user_id AS userId, x6.name, x6.slug, x6.description, x6.email, x6.phone, x6.website, x6.address_line1 AS addressLine1, x6.address_line2 AS addressLine2, x6.city, x6.state, x6.zip_code AS zipCode, x6.country, x6.latitude, x6.longitude, x6.category_id AS categoryId, x6.region_id AS regionId, x6.verification_status AS verificationStatus, x6.is_verified AS isVerified, x6.is_active AS isActive, x6.is_featured AS isFeatured, x6.logo_url AS logoUrl, x6.cover_image_url AS coverImageUrl, x6.service_points_count AS servicePointsCount, x6.created_at AS createdAt, x6.updated_at AS updatedAt FROM business x6 WHERE x6.region_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:56:9 
+[info] 56 |      run(query[Business].filter(_.isFeatured == lift(true)).take(lift(limit))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT x7.id, x7.user_id AS userId, x7.name, x7.slug, x7.description, x7.email, x7.phone, x7.website, x7.address_line1 AS addressLine1, x7.address_line2 AS addressLine2, x7.city, x7.state, x7.zip_code AS zipCode, x7.country, x7.latitude, x7.longitude, x7.category_id AS categoryId, x7.region_id AS regionId, x7.verification_status AS verificationStatus, x7.is_verified AS isVerified, x7.is_active AS isActive, x7.is_featured AS isFeatured, x7.logo_url AS logoUrl, x7.cover_image_url AS coverImageUrl, x7.service_points_count AS servicePointsCount, x7.created_at AS createdAt, x7.updated_at AS updatedAt FROM business x7 WHERE x7.is_featured = ? LIMIT ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:60:9 
+[info] 60 |      run(query[Business].filter(_.isActive == lift(true))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT x8.id, x8.user_id AS userId, x8.name, x8.slug, x8.description, x8.email, x8.phone, x8.website, x8.address_line1 AS addressLine1, x8.address_line2 AS addressLine2, x8.city, x8.state, x8.zip_code AS zipCode, x8.country, x8.latitude, x8.longitude, x8.category_id AS categoryId, x8.region_id AS regionId, x8.verification_status AS verificationStatus, x8.is_verified AS isVerified, x8.is_active AS isActive, x8.is_featured AS isFeatured, x8.logo_url AS logoUrl, x8.cover_image_url AS coverImageUrl, x8.service_points_count AS servicePointsCount, x8.created_at AS createdAt, x8.updated_at AS updatedAt FROM business x8 WHERE x8.is_active = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:64:9 
+[info] 64 |      run(query[Business].filter(_.isVerified == lift(true))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 4ms): SELECT x9.id, x9.user_id AS userId, x9.name, x9.slug, x9.description, x9.email, x9.phone, x9.website, x9.address_line1 AS addressLine1, x9.address_line2 AS addressLine2, x9.city, x9.state, x9.zip_code AS zipCode, x9.country, x9.latitude, x9.longitude, x9.category_id AS categoryId, x9.region_id AS regionId, x9.verification_status AS verificationStatus, x9.is_verified AS isVerified, x9.is_active AS isActive, x9.is_featured AS isFeatured, x9.logo_url AS logoUrl, x9.cover_image_url AS coverImageUrl, x9.service_points_count AS servicePointsCount, x9.created_at AS createdAt, x9.updated_at AS updatedAt FROM business x9 WHERE x9.is_verified = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:68:9 
+[info] 68 |      run(query[Business].filter(_.verificationStatus == lift(status))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT x10.id, x10.user_id AS userId, x10.name, x10.slug, x10.description, x10.email, x10.phone, x10.website, x10.address_line1 AS addressLine1, x10.address_line2 AS addressLine2, x10.city, x10.state, x10.zip_code AS zipCode, x10.country, x10.latitude, x10.longitude, x10.category_id AS categoryId, x10.region_id AS regionId, x10.verification_status AS verificationStatus, x10.is_verified AS isVerified, x10.is_active AS isActive, x10.is_featured AS isFeatured, x10.logo_url AS logoUrl, x10.cover_image_url AS coverImageUrl, x10.service_points_count AS servicePointsCount, x10.created_at AS createdAt, x10.updated_at AS updatedAt FROM business x10 WHERE x10.verification_status = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:72:9 
+[info] 72 |      run(query[Business].filter(_.slug == lift(slug)).nonEmpty)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 7ms): SELECT EXISTS (SELECT x11.id, x11.user_id AS userId, x11.name, x11.slug, x11.description, x11.email, x11.phone, x11.website, x11.address_line1 AS addressLine1, x11.address_line2 AS addressLine2, x11.city, x11.state, x11.zip_code AS zipCode, x11.country, x11.latitude, x11.longitude, x11.category_id AS categoryId, x11.region_id AS regionId, x11.verification_status AS verificationStatus, x11.is_verified AS isVerified, x11.is_active AS isActive, x11.is_featured AS isFeatured, x11.logo_url AS logoUrl, x11.cover_image_url AS coverImageUrl, x11.service_points_count AS servicePointsCount, x11.created_at AS createdAt, x11.updated_at AS updatedAt FROM business x11 WHERE x11.slug = ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:77:9 
+[info] 77 |      run(query[Business]
+[info]    |      ^
+[info]    |Quill Query (compiled in 7ms): SELECT b.id, b.user_id AS userId, b.name, b.slug, b.description, b.email, b.phone, b.website, b.address_line1 AS addressLine1, b.address_line2 AS addressLine2, b.city, b.state, b.zip_code AS zipCode, b.country, b.latitude, b.longitude, b.category_id AS categoryId, b.region_id AS regionId, b.verification_status AS verificationStatus, b.is_verified AS isVerified, b.is_active AS isActive, b.is_featured AS isFeatured, b.logo_url AS logoUrl, b.cover_image_url AS coverImageUrl, b.service_points_count AS servicePointsCount, b.created_at AS createdAt, b.updated_at AS updatedAt FROM business b WHERE b.is_active = ? AND b.is_verified = ? AND (b.name like ? OR b.description like ? AND b.description IS NOT NULL)
+[info] 78 |        .filter(b => b.isActive == lift(true) && b.isVerified == lift(true))
+[info] 79 |        .filter(b => b.name.like(lift(pattern)) || b.description.exists(_.like(lift(pattern))))
+[info] 80 |      ).toList
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:84:9 
+[info] 84 |      run(query[Business]
+[info]    |      ^
+[info]    |Quill Query (compiled in 3ms): SELECT b.id, b.user_id AS userId, b.name, b.slug, b.description, b.email, b.phone, b.website, b.address_line1 AS addressLine1, b.address_line2 AS addressLine2, b.city, b.state, b.zip_code AS zipCode, b.country, b.latitude, b.longitude, b.category_id AS categoryId, b.region_id AS regionId, b.verification_status AS verificationStatus, b.is_verified AS isVerified, b.is_active AS isActive, b.is_featured AS isFeatured, b.logo_url AS logoUrl, b.cover_image_url AS coverImageUrl, b.service_points_count AS servicePointsCount, b.created_at AS createdAt, b.updated_at AS updatedAt FROM business b WHERE b.is_active = ? AND b.is_verified = ? AND b.region_id = ?
+[info] 85 |        .filter(b => b.isActive == lift(true) && b.isVerified == lift(true) && b.regionId == lift(regionId))
+[info] 86 |      ).toList
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:90:9 
+[info] 90 |      run(query[Business]
+[info]    |      ^
+[info]    |Quill Query (compiled in 4ms): SELECT b.id, b.user_id AS userId, b.name, b.slug, b.description, b.email, b.phone, b.website, b.address_line1 AS addressLine1, b.address_line2 AS addressLine2, b.city, b.state, b.zip_code AS zipCode, b.country, b.latitude, b.longitude, b.category_id AS categoryId, b.region_id AS regionId, b.verification_status AS verificationStatus, b.is_verified AS isVerified, b.is_active AS isActive, b.is_featured AS isFeatured, b.logo_url AS logoUrl, b.cover_image_url AS coverImageUrl, b.service_points_count AS servicePointsCount, b.created_at AS createdAt, b.updated_at AS updatedAt FROM business b WHERE b.is_active = ? AND b.is_verified = ? AND b.category_id = ?
+[info] 91 |        .filter(b => b.isActive == lift(true) && b.isVerified == lift(true) && b.categoryId == lift(categoryId))
+[info] 92 |      ).toList
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:96:9 
+[info] 96 |      run(query[Business].insertValue(lift(business)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 4ms): INSERT INTO business (id,user_id,name,slug,description,email,phone,website,address_line1,address_line2,city,state,zip_code,country,latitude,longitude,category_id,region_id,verification_status,is_verified,is_active,is_featured,logo_url,cover_image_url,service_points_count,created_at,updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:101:9 
+[info] 101 |      run(query[Business]
+[info]     |      ^
+[info]     |Quill Query (compiled in 4ms): UPDATE business AS x13 SET id = ?, user_id = ?, name = ?, slug = ?, description = ?, email = ?, phone = ?, website = ?, address_line1 = ?, address_line2 = ?, city = ?, state = ?, zip_code = ?, country = ?, latitude = ?, longitude = ?, category_id = ?, region_id = ?, verification_status = ?, is_verified = ?, is_active = ?, is_featured = ?, logo_url = ?, cover_image_url = ?, service_points_count = ?, created_at = ?, updated_at = ? WHERE x13.id = ?
+[info] 102 |        .filter(_.id == lift(business.id))
+[info] 103 |        .updateValue(lift(business)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\BusinessRepository.scala:108:9 
+[info] 108 |      run(query[Business].filter(_.id == lift(id)).delete)
+[info]     |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]     |Quill Query (compiled in 3ms): DELETE FROM business AS x14 WHERE x14.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:31:9 
+[info] 31 |      run(query[Category]).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x.id, x.name, x.slug, x.description, x.icon, x.parent_id AS parentId, x.sort_order AS sortOrder, x.is_active AS isActive, x.created_at AS createdAt, x.updated_at AS updatedAt FROM category x
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:35:9 
+[info] 35 |      run(query[Category].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x2.id, x2.name, x2.slug, x2.description, x2.icon, x2.parent_id AS parentId, x2.sort_order AS sortOrder, x2.is_active AS isActive, x2.created_at AS createdAt, x2.updated_at AS updatedAt FROM category x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:39:9 
+[info] 39 |      run(query[Category].filter(_.slug == lift(slug))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT x3.id, x3.name, x3.slug, x3.description, x3.icon, x3.parent_id AS parentId, x3.sort_order AS sortOrder, x3.is_active AS isActive, x3.created_at AS createdAt, x3.updated_at AS updatedAt FROM category x3 WHERE x3.slug = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:43:9 
+[info] 43 |      run(query[Category].filter(_.parentId.exists(_ == lift(parentId)))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x4.id, x4.name, x4.slug, x4.description, x4.icon, x4.parent_id AS parentId, x4.sort_order AS sortOrder, x4.is_active AS isActive, x4.created_at AS createdAt, x4.updated_at AS updatedAt FROM category x4 WHERE x4.parent_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:47:9 
+[info] 47 |      run(query[Category].filter(_.isActive == lift(true))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): SELECT x6.id, x6.name, x6.slug, x6.description, x6.icon, x6.parent_id AS parentId, x6.sort_order AS sortOrder, x6.is_active AS isActive, x6.created_at AS createdAt, x6.updated_at AS updatedAt FROM category x6 WHERE x6.is_active = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:51:9 
+[info] 51 |      run(query[Category].filter(_.slug == lift(slug)).nonEmpty)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT EXISTS (SELECT x7.id, x7.name, x7.slug, x7.description, x7.icon, x7.parent_id AS parentId, x7.sort_order AS sortOrder, x7.is_active AS isActive, x7.created_at AS createdAt, x7.updated_at AS updatedAt FROM category x7 WHERE x7.slug = ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:55:9 
+[info] 55 |      run(query[Category].filter(_.parentId.isEmpty)).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 4ms): SELECT x8.id, x8.name, x8.slug, x8.description, x8.icon, x8.parent_id AS parentId, x8.sort_order AS sortOrder, x8.is_active AS isActive, x8.created_at AS createdAt, x8.updated_at AS updatedAt FROM category x8 WHERE x8.parent_id IS NULL
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:60:9 
+[info] 60 |      run(query[Category]
+[info]    |      ^
+[info]    |Quill Query (compiled in 4ms): SELECT c.id, c.name, c.slug, c.description, c.icon, c.parent_id AS parentId, c.sort_order AS sortOrder, c.is_active AS isActive, c.created_at AS createdAt, c.updated_at AS updatedAt FROM category c WHERE c.name like ? OR c.description like ? AND c.description IS NOT NULL
+[info] 61 |        .filter(c => c.name.like(lift(pattern)) || c.description.exists(_.like(lift(pattern))))
+[info] 62 |      ).toList
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:66:9 
+[info] 66 |      run(query[Category].insertValue(lift(category)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): INSERT INTO category (id,name,slug,description,icon,parent_id,sort_order,is_active,created_at,updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:71:9 
+[info] 71 |      run(query[Category]
+[info]    |      ^
+[info]    |Quill Query (compiled in 2ms): UPDATE category AS x10 SET id = ?, name = ?, slug = ?, description = ?, icon = ?, parent_id = ?, sort_order = ?, is_active = ?, created_at = ?, updated_at = ? WHERE x10.id = ?
+[info] 72 |        .filter(_.id == lift(category.id))
+[info] 73 |        .updateValue(lift(category)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\CategoryRepository.scala:78:9 
+[info] 78 |      run(query[Category].filter(_.id == lift(id)).delete)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): DELETE FROM category AS x11 WHERE x11.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\EmailVerificationRepository.scala:28:9 
+[info] 28 |      run(query[EmailVerification].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x2.id, x2.user_id AS userId, x2.token, x2.expires_at AS expiresAt, x2.is_used AS isUsed, x2.created_at AS createdAt FROM email_verification x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\EmailVerificationRepository.scala:32:9 
+[info] 32 |      run(query[EmailVerification].filter(_.userId == lift(userId))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 4ms): SELECT x3.id, x3.user_id AS userId, x3.token, x3.expires_at AS expiresAt, x3.is_used AS isUsed, x3.created_at AS createdAt FROM email_verification x3 WHERE x3.user_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\EmailVerificationRepository.scala:36:9 
+[info] 36 |      run(query[EmailVerification].filter(_.token == lift(token))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x4.id, x4.user_id AS userId, x4.token, x4.expires_at AS expiresAt, x4.is_used AS isUsed, x4.created_at AS createdAt FROM email_verification x4 WHERE x4.token = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\EmailVerificationRepository.scala:40:9 
+[info] 40 |      run(query[EmailVerification]
+[info]    |      ^
+[info]    |Quill Query (compiled in 2ms): SELECT v.id, v.user_id AS userId, v.token, v.expires_at AS expiresAt, v.is_used AS isUsed, v.created_at AS createdAt FROM email_verification v WHERE v.user_id = ? AND v.is_used = ? AND v.expires_at > ?
+[info] 41 |        .filter(v => v.userId == lift(userId) && v.isUsed == lift(false) && v.expiresAt > lift(java.time.OffsetDateTime.now()))
+[info] 42 |      ).headOption
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\EmailVerificationRepository.scala:46:9 
+[info] 46 |      run(query[EmailVerification].insertValue(lift(verification)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): INSERT INTO email_verification (id,user_id,token,expires_at,is_used,created_at) VALUES (?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\EmailVerificationRepository.scala:51:9 
+[info] 51 |      run(query[EmailVerification]
+[info]    |      ^
+[info]    |Quill Query (compiled in 2ms): UPDATE email_verification AS x5 SET is_used = ? WHERE x5.id = ?
+[info] 52 |        .filter(_.id == lift(id))
+[info] 53 |        .update(_.isUsed -> lift(true)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\EmailVerificationRepository.scala:58:9 
+[info] 58 |      run(query[EmailVerification]
+[info]    |      ^
+[info]    |Quill Query (compiled in 1ms): DELETE FROM email_verification AS x7 WHERE x7.expires_at < ?
+[info] 59 |        .filter(_.expiresAt < lift(java.time.OffsetDateTime.now()))
+[info] 60 |        .delete)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\PasswordResetRepository.scala:28:9 
+[info] 28 |      run(query[PasswordReset].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): SELECT x2.id, x2.user_id AS userId, x2.token, x2.expires_at AS expiresAt, x2.is_used AS isUsed, x2.created_at AS createdAt FROM password_reset x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\PasswordResetRepository.scala:32:9 
+[info] 32 |      run(query[PasswordReset].filter(_.userId == lift(userId))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): SELECT x3.id, x3.user_id AS userId, x3.token, x3.expires_at AS expiresAt, x3.is_used AS isUsed, x3.created_at AS createdAt FROM password_reset x3 WHERE x3.user_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\PasswordResetRepository.scala:36:9 
+[info] 36 |      run(query[PasswordReset].filter(_.token == lift(token))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT x4.id, x4.user_id AS userId, x4.token, x4.expires_at AS expiresAt, x4.is_used AS isUsed, x4.created_at AS createdAt FROM password_reset x4 WHERE x4.token = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\PasswordResetRepository.scala:40:9 
+[info] 40 |      run(query[PasswordReset]
+[info]    |      ^
+[info]    |Quill Query (compiled in 2ms): SELECT r.id, r.user_id AS userId, r.token, r.expires_at AS expiresAt, r.is_used AS isUsed, r.created_at AS createdAt FROM password_reset r WHERE r.user_id = ? AND r.is_used = ? AND r.expires_at > ?
+[info] 41 |        .filter(r => r.userId == lift(userId) && r.isUsed == lift(false) && r.expiresAt > lift(java.time.OffsetDateTime.now()))
+[info] 42 |      ).headOption
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\PasswordResetRepository.scala:46:9 
+[info] 46 |      run(query[PasswordReset].insertValue(lift(reset)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): INSERT INTO password_reset (id,user_id,token,expires_at,is_used,created_at) VALUES (?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\PasswordResetRepository.scala:51:9 
+[info] 51 |      run(query[PasswordReset]
+[info]    |      ^
+[info]    |Quill Query (compiled in 1ms): UPDATE password_reset AS x5 SET is_used = ? WHERE x5.id = ?
+[info] 52 |        .filter(_.id == lift(id))
+[info] 53 |        .update(_.isUsed -> lift(true)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\PasswordResetRepository.scala:58:9 
+[info] 58 |      run(query[PasswordReset]
+[info]    |      ^
+[info]    |Quill Query (compiled in 3ms): DELETE FROM password_reset AS x7 WHERE x7.expires_at < ?
+[info] 59 |        .filter(_.expiresAt < lift(java.time.OffsetDateTime.now()))
+[info] 60 |        .delete)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\RegionRepository.scala:30:9 
+[info] 30 |      run(query[Region]).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x.id, x.name, x.code, x.country, x.timezone, x.is_active AS isActive, x.created_at AS createdAt, x.updated_at AS updatedAt FROM region x
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\RegionRepository.scala:34:9 
+[info] 34 |      run(query[Region].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x2.id, x2.name, x2.code, x2.country, x2.timezone, x2.is_active AS isActive, x2.created_at AS createdAt, x2.updated_at AS updatedAt FROM region x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\RegionRepository.scala:38:9 
+[info] 38 |      run(query[Region].filter(_.code == lift(code))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): SELECT x3.id, x3.name, x3.code, x3.country, x3.timezone, x3.is_active AS isActive, x3.created_at AS createdAt, x3.updated_at AS updatedAt FROM region x3 WHERE x3.code = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\RegionRepository.scala:42:9 
+[info] 42 |      run(query[Region].filter(_.country == lift(country))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x4.id, x4.name, x4.code, x4.country, x4.timezone, x4.is_active AS isActive, x4.created_at AS createdAt, x4.updated_at AS updatedAt FROM region x4 WHERE x4.country = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\RegionRepository.scala:46:9 
+[info] 46 |      run(query[Region].filter(_.isActive == lift(true))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT x5.id, x5.name, x5.code, x5.country, x5.timezone, x5.is_active AS isActive, x5.created_at AS createdAt, x5.updated_at AS updatedAt FROM region x5 WHERE x5.is_active = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\RegionRepository.scala:50:9 
+[info] 50 |      run(query[Region].filter(_.code == lift(code)).nonEmpty)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT EXISTS (SELECT x6.id, x6.name, x6.code, x6.country, x6.timezone, x6.is_active AS isActive, x6.created_at AS createdAt, x6.updated_at AS updatedAt FROM region x6 WHERE x6.code = ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\RegionRepository.scala:55:9 
+[info] 55 |      run(query[Region]
+[info]    |      ^
+[info]    |Quill Query (compiled in 3ms): SELECT r.id, r.name, r.code, r.country, r.timezone, r.is_active AS isActive, r.created_at AS createdAt, r.updated_at AS updatedAt FROM region r WHERE r.name like ? OR r.code like ?
+[info] 56 |        .filter(r => r.name.like(lift(pattern)) || r.code.like(lift(pattern)))
+[info] 57 |      ).toList
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\RegionRepository.scala:61:9 
+[info] 61 |      run(query[Region].insertValue(lift(region)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): INSERT INTO region (id,name,code,country,timezone,is_active,created_at,updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\RegionRepository.scala:66:9 
+[info] 66 |      run(query[Region]
+[info]    |      ^
+[info]    |Quill Query (compiled in 2ms): UPDATE region AS x7 SET id = ?, name = ?, code = ?, country = ?, timezone = ?, is_active = ?, created_at = ?, updated_at = ? WHERE x7.id = ?
+[info] 67 |        .filter(_.id == lift(region.id))
+[info] 68 |        .updateValue(lift(region)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\RegionRepository.scala:73:9 
+[info] 73 |      run(query[Region].filter(_.id == lift(id)).delete)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    | Quill Query (compiled in 1ms): DELETE FROM region AS x8 WHERE x8.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ReviewRepository.scala:30:9 
+[info] 30 |      run(query[Review].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT x2.id, x2.business_id AS businessId, x2.user_id AS userId, x2.appointment_id AS appointmentId, x2.rating, x2.title, x2.comment, x2.is_approved AS isApproved, x2.is_featured AS isFeatured, x2.created_at AS createdAt, x2.updated_at AS updatedAt FROM review x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ReviewRepository.scala:34:9 
+[info] 34 |      run(query[Review].filter(_.businessId == lift(businessId))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x3.id, x3.business_id AS businessId, x3.user_id AS userId, x3.appointment_id AS appointmentId, x3.rating, x3.title, x3.comment, x3.is_approved AS isApproved, x3.is_featured AS isFeatured, x3.created_at AS createdAt, x3.updated_at AS updatedAt FROM review x3 WHERE x3.business_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ReviewRepository.scala:38:9 
+[info] 38 |      run(query[Review].filter(_.userId == lift(userId))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x4.id, x4.business_id AS businessId, x4.user_id AS userId, x4.appointment_id AS appointmentId, x4.rating, x4.title, x4.comment, x4.is_approved AS isApproved, x4.is_featured AS isFeatured, x4.created_at AS createdAt, x4.updated_at AS updatedAt FROM review x4 WHERE x4.user_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ReviewRepository.scala:42:9 
+[info] 42 |      run(query[Review].filter(r => r.businessId == lift(businessId) && r.isApproved == lift(true))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT r.id, r.business_id AS businessId, r.user_id AS userId, r.appointment_id AS appointmentId, r.rating, r.title, r.comment, r.is_approved AS isApproved, r.is_featured AS isFeatured, r.created_at AS createdAt, r.updated_at AS updatedAt FROM review r WHERE r.business_id = ? AND r.is_approved = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ReviewRepository.scala:46:9 
+[info] 46 |      run(query[Review].filter(r => r.businessId == lift(businessId) && r.isApproved == lift(true))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT r.id, r.business_id AS businessId, r.user_id AS userId, r.appointment_id AS appointmentId, r.rating, r.title, r.comment, r.is_approved AS isApproved, r.is_featured AS isFeatured, r.created_at AS createdAt, r.updated_at AS updatedAt FROM review r WHERE r.business_id = ? AND r.is_approved = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ReviewRepository.scala:50:23 
+[info] 50 |      val results = run(query[Review]
+[info]    |                    ^
+[info]    |Quill Query (compiled in 6ms): SELECT r.rating FROM review r WHERE r.business_id = ? AND r.is_approved = ?
+[info] 51 |        .filter(r => r.businessId == lift(businessId) && r.isApproved == lift(true))
+[info] 52 |        .map(_.rating)
+[info] 53 |      )
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ReviewRepository.scala:59:9 
+[info] 59 |      run(query[Review].insertValue(lift(review)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): INSERT INTO review (id,business_id,user_id,appointment_id,rating,title,comment,is_approved,is_featured,created_at,updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ReviewRepository.scala:64:9 
+[info] 64 |      run(query[Review]
+[info]    |      ^
+[info]    |Quill Query (compiled in 5ms): UPDATE review AS x7 SET id = ?, business_id = ?, user_id = ?, appointment_id = ?, rating = ?, title = ?, comment = ?, is_approved = ?, is_featured = ?, created_at = ?, updated_at = ? WHERE x7.id = ?
+[info] 65 |        .filter(_.id == lift(review.id))
+[info] 66 |        .updateValue(lift(review)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ReviewRepository.scala:71:9 
+[info] 71 |      run(query[Review]
+[info]    |      ^
+[info]    |Quill Query (compiled in 1ms): UPDATE review AS x8 SET is_approved = ? WHERE x8.id = ?
+[info] 72 |        .filter(_.id == lift(id))
+[info] 73 |        .update(_.isApproved -> lift(true)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ReviewRepository.scala:78:9 
+[info] 78 |      run(query[Review].filter(_.id == lift(id)).delete)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): DELETE FROM review AS x10 WHERE x10.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ServiceRepository.scala:26:9 
+[info] 26 |      run(query[Service].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): SELECT x2.id, x2.business_id AS businessId, x2.name, x2.description, x2.duration_minutes AS durationMinutes, x2.price, x2.is_active AS isActive, x2.sort_order AS sortOrder, x2.created_at AS createdAt, x2.updated_at AS updatedAt FROM service x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ServiceRepository.scala:30:9 
+[info] 30 |      run(query[Service].filter(_.businessId == lift(businessId))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x3.id, x3.business_id AS businessId, x3.name, x3.description, x3.duration_minutes AS durationMinutes, x3.price, x3.is_active AS isActive, x3.sort_order AS sortOrder, x3.created_at AS createdAt, x3.updated_at AS updatedAt FROM service x3 WHERE x3.business_id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ServiceRepository.scala:34:9 
+[info] 34 |      run(query[Service].filter(s => s.businessId == lift(businessId) && s.isActive == lift(true))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): SELECT s.id, s.business_id AS businessId, s.name, s.description, s.duration_minutes AS durationMinutes, s.price, s.is_active AS isActive, s.sort_order AS sortOrder, s.created_at AS createdAt, s.updated_at AS updatedAt FROM service s WHERE s.business_id = ? AND s.is_active = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ServiceRepository.scala:38:9 
+[info] 38 |      run(query[Service].insertValue(lift(service)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): INSERT INTO service (id,business_id,name,description,duration_minutes,price,is_active,sort_order,created_at,updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ServiceRepository.scala:43:9 
+[info] 43 |      run(query[Service]
+[info]    |      ^
+[info]    |Quill Query (compiled in 3ms): UPDATE service AS x4 SET id = ?, business_id = ?, name = ?, description = ?, duration_minutes = ?, price = ?, is_active = ?, sort_order = ?, created_at = ?, updated_at = ? WHERE x4.id = ?
+[info] 44 |        .filter(_.id == lift(service.id))
+[info] 45 |        .updateValue(lift(service)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\ServiceRepository.scala:50:9 
+[info] 50 |      run(query[Service].filter(_.id == lift(id)).delete)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): DELETE FROM service AS x5 WHERE x5.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\SessionRepository.scala:29:9 
+[info] 29 |      run(query[UserSession].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x2.id, x2.user_id AS userId, x2.refresh_token AS refreshToken, x2.token, x2.user_agent AS userAgent, x2.ip_address AS ipAddress, x2.expires_at AS expiresAt, x2.is_revoked AS isRevoked, x2.created_at AS createdAt FROM user_session x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\SessionRepository.scala:33:9 
+[info] 33 |      run(query[UserSession].filter(s => s.userId == lift(userId) && s.isRevoked == lift(false))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): SELECT s.id, s.user_id AS userId, s.refresh_token AS refreshToken, s.token, s.user_agent AS userAgent, s.ip_address AS ipAddress, s.expires_at AS expiresAt, s.is_revoked AS isRevoked, s.created_at AS createdAt FROM user_session s WHERE s.user_id = ? AND s.is_revoked = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\SessionRepository.scala:37:9 
+[info] 37 |      run(query[UserSession].filter(_.refreshToken == lift(token))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): SELECT x3.id, x3.user_id AS userId, x3.refresh_token AS refreshToken, x3.token, x3.user_agent AS userAgent, x3.ip_address AS ipAddress, x3.expires_at AS expiresAt, x3.is_revoked AS isRevoked, x3.created_at AS createdAt FROM user_session x3 WHERE x3.refresh_token = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\SessionRepository.scala:41:9 
+[info] 41 |      run(query[UserSession].filter(_.token == lift(token))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): SELECT x4.id, x4.user_id AS userId, x4.refresh_token AS refreshToken, x4.token, x4.user_agent AS userAgent, x4.ip_address AS ipAddress, x4.expires_at AS expiresAt, x4.is_revoked AS isRevoked, x4.created_at AS createdAt FROM user_session x4 WHERE x4.token = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\SessionRepository.scala:45:9 
+[info] 45 |      run(query[UserSession].insertValue(lift(session)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): INSERT INTO user_session (id,user_id,refresh_token,token,user_agent,ip_address,expires_at,is_revoked,created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\SessionRepository.scala:50:9 
+[info] 50 |      run(query[UserSession]
+[info]    |      ^
+[info]    |Quill Query (compiled in 1ms): UPDATE user_session AS x5 SET is_revoked = ? WHERE x5.id = ?
+[info] 51 |        .filter(_.id == lift(id))
+[info] 52 |        .update(_.isRevoked -> lift(true)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\SessionRepository.scala:57:9 
+[info] 57 |      run(query[UserSession]
+[info]    |      ^
+[info]    |Quill Query (compiled in 1ms): UPDATE user_session AS x7 SET is_revoked = ? WHERE x7.user_id = ?
+[info] 58 |        .filter(_.userId == lift(userId))
+[info] 59 |        .update(_.isRevoked -> lift(true)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\SessionRepository.scala:64:9 
+[info] 64 |      run(query[UserSession]
+[info]    |      ^
+[info]    |Quill Query (compiled in 2ms): DELETE FROM user_session AS x9 WHERE x9.expires_at < ?
+[info] 65 |        .filter(_.expiresAt < lift(java.time.OffsetDateTime.now()))
+[info] 66 |        .delete)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:30:9 
+[info] 30 |      run(query[User].filter(_.id == lift(id))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 3ms): SELECT x2.id, x2.email, x2.password_hash AS passwordHash, x2.name, x2.phone, x2.role, x2.region_id AS regionId, x2.is_active AS isActive, x2.is_banned AS isBanned, x2.email_verified AS emailVerified, x2.google_id AS googleId, x2.avatar_url AS avatarUrl, x2.created_at AS createdAt, x2.updated_at AS updatedAt FROM user x2 WHERE x2.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:34:9 
+[info] 34 |      run(query[User].filter(_.email == lift(email))).headOption
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 1ms): SELECT x3.id, x3.email, x3.password_hash AS passwordHash, x3.name, x3.phone, x3.role, x3.region_id AS regionId, x3.is_active AS isActive, x3.is_banned AS isBanned, x3.email_verified AS emailVerified, x3.google_id AS googleId, x3.avatar_url AS avatarUrl, x3.created_at AS createdAt, x3.updated_at AS updatedAt FROM user x3 WHERE x3.email = ?
+[error] -- Error: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:38:52 
+[error] 38 |      run(query[User].filter(_.googleId == lift(Some(googleId)))).headOption
+[error]    |                                                ^^^^^^^^^^^^^^
+[error]    |Cannot Find a 'scala.Some[scala.Predef.String]' Encoder of Some.apply[String](googleId)
+[error] -- Error: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:38:10 
+[error]  38 |      run(query[User].filter(_.googleId == lift(Some(googleId)))).headOption
+[error]     |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[error]     |Exception occurred while executing macro expansion.
+[error]     |scala.MatchError: EmptyTree (of class dotty.tools.dotc.ast.Trees$EmptyTree)
+[error]     |	at scala.quoted.runtime.impl.printers.Extractors$ExtractorsPrinter.visitTree(Extractors.scala:179)
+[error]     |	at scala.quoted.runtime.impl.printers.Extractors$ExtractorsPrinter$TreeOps.$plus$eq(Extractors.scala:286)
+[error]     |	at scala.quoted.runtime.impl.printers.Extractors$ExtractorsPrinter.visitTree(Extractors.scala:179)
+[error]     |	at scala.quoted.runtime.impl.printers.Extractors$.showTree(Extractors.scala:9)
+[error]     |	at scala.quoted.runtime.impl.QuotesImpl$$anon$14.show(QuotesImpl.scala:3172)
+[error]     |	at scala.quoted.runtime.impl.QuotesImpl$$anon$14.show(QuotesImpl.scala:3171)
+[error]     |	at scala.quoted.runtime.impl.QuotesImpl$reflect$TreeMethods$.asExpr(QuotesImpl.scala:120)
+[error]     |	at scala.quoted.runtime.impl.QuotesImpl$reflect$TreeMethods$.asExpr(QuotesImpl.scala:115)
+[error]     |	at io.getquill.parser.OperationsParser$NamedOp1$.unapply(Parser.scala:957)
+[error]     |	at io.getquill.parser.OperationsParser$$anon$21.applyOrElse(Parser.scala:981)
+[error]     |	at io.getquill.parser.OperationsParser$$anon$21.applyOrElse(Parser.scala:977)
+[error]     |	at scala.PartialFunction$Lifted.apply(PartialFunction.scala:338)
+[error]     |	at scala.PartialFunction$Lifted.apply(PartialFunction.scala:334)
+[error]     |	at io.getquill.parser.engine.ParserChain$.io$getquill$parser$engine$ParserChain$OrElse$$anon$2$$_$$anonfun$1$$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.Option.orElse(Option.scala:477)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.Parser.apply(Parser.scala:9)
+[error]     |	at io.getquill.parser.engine.Parser.apply$(Parser.scala:7)
+[error]     |	at io.getquill.parser.engine.ParserChain$$anon$1.apply(ParserChain.scala:15)
+[error]     |	at io.getquill.parser.QueryParser$$anon$14.applyOrElse(Parser.scala:664)
+[error]     |	at io.getquill.parser.QueryParser$$anon$14.applyOrElse(Parser.scala:644)
+[error]     |	at scala.PartialFunction$Lifted.apply(PartialFunction.scala:338)
+[error]     |	at scala.PartialFunction$Lifted.apply(PartialFunction.scala:334)
+[error]     |	at io.getquill.parser.engine.ParserChain$.io$getquill$parser$engine$ParserChain$OrElse$$anon$2$$_$$anonfun$1$$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.Option.orElse(Option.scala:477)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.ParserChain$OrElse$$anon$2.$anonfun$1(ParserChain.scala:46)
+[error]     |	at scala.PartialFunction$$anonfun$fromFunction$1.applyOrElse(PartialFunction.scala:363)
+[error]     |	at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:35)
+[error]     |	at io.getquill.parser.engine.Parser.apply(Parser.scala:9)
+[error]     |	at io.getquill.parser.engine.Parser.apply$(Parser.scala:7)
+[error]     |	at io.getquill.parser.engine.ParserChain$$anon$1.apply(ParserChain.scala:15)
+[error]     |	at io.getquill.parser.ParserLibrary$ReadyParser.apply(Parser.scala:109)
+[error]     |	at io.getquill.context.QuoteMacro$.apply(QuoteMacro.scala:135)
+[error]     |
+[error]     |---------------------------------------------------------------------------
+[error]     |Inline stack trace
+[error]     |- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[error]     |This location contains code that was inlined from Dsl.scala:100
+[error]      ---------------------------------------------------------------------------
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:42:9 
+[info] 42 |      run(query[User].filter(_.email == lift(email)).nonEmpty)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT EXISTS (SELECT x5.id, x5.email, x5.password_hash AS passwordHash, x5.name, x5.phone, x5.role, x5.region_id AS regionId, x5.is_active AS isActive, x5.is_banned AS isBanned, x5.email_verified AS emailVerified, x5.google_id AS googleId, x5.avatar_url AS avatarUrl, x5.created_at AS createdAt, x5.updated_at AS updatedAt FROM user x5 WHERE x5.email = ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:46:9 
+[info] 46 |      run(query[User].insertValue(lift(user)))
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): INSERT INTO user (id,email,password_hash,name,phone,role,region_id,is_active,is_banned,email_verified,google_id,avatar_url,created_at,updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:51:9 
+[info] 51 |      run(query[User]
+[info]    |      ^
+[info]    |Quill Query (compiled in 1ms): UPDATE user AS x6 SET id = ?, email = ?, password_hash = ?, name = ?, phone = ?, role = ?, region_id = ?, is_active = ?, is_banned = ?, email_verified = ?, google_id = ?, avatar_url = ?, created_at = ?, updated_at = ? WHERE x6.id = ?
+[info] 52 |        .filter(_.id == lift(user.id))
+[info] 53 |        .updateValue(lift(user)))
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:58:9 
+[info] 58 |      run(query[User].filter(_.id == lift(id)).delete)
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |   Quill Query (compiled in 1ms): DELETE FROM user AS x7 WHERE x7.id = ?
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:63:9 
+[info] 63 |      run(query[User].filter(_.role == lift(role))).toList
+[info]    |      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[info]    |Quill Query (compiled in 2ms): SELECT x8.id, x8.email, x8.password_hash AS passwordHash, x8.name, x8.phone, x8.role, x8.region_id AS regionId, x8.is_active AS isActive, x8.is_banned AS isBanned, x8.email_verified AS emailVerified, x8.google_id AS googleId, x8.avatar_url AS avatarUrl, x8.created_at AS createdAt, x8.updated_at AS updatedAt FROM user x8 WHERE x8.role = ?
+[error] -- Error: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:67:52 
+[error] 67 |      run(query[User].filter(_.regionId == lift(Some(regionId)))).toList
+[error]    |                                                ^^^^^^^^^^^^^^
+[error]    |Cannot Find a 'scala.Some[java.util.UUID]' Encoder of Some.apply[UUID](regionId)
+[info] -- Info: C:\work\alpha\backend-scala-zio\src\main\scala\com\alpha\repository\UserRepository.scala:72:9 
+[info] 72 |      run(query[User]
+[info]    |      ^
+[info]    |Quill Query (compiled in 2ms): SELECT u.id, u.email, u.password_hash AS passwordHash, u.name, u.phone, u.role, u.region_id AS regionId, u.is_active AS isActive, u.is_banned AS isBanned, u.email_verified AS emailVerified, u.google_id AS googleId, u.avatar_url AS avatarUrl, u.created_at AS createdAt, u.updated_at AS updatedAt FROM user u WHERE u.email like ? OR u.name like ? AND u.name IS NOT NULL
+[info] 73 |        .filter(u => u.email.like(lift(pattern)) || u.name.exists(_.like(lift(pattern))))
+[info] 74 |      ).toList
+[error] three errors found
