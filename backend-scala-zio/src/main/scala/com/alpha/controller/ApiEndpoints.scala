@@ -4,98 +4,20 @@ import sttp.tapir.ztapir.*
 import sttp.tapir.json.zio.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.server.ziohttp.ZioHttpInterpreter
-import sttp.tapir.swagger.bundle.SwaggerInterpreter
 import zio.*
 import zio.http.{Response, Routes}
 import com.alpha.service.*
-import com.alpha.config.*
-import com.alpha.provider.*
 import com.alpha.dto.*
 import com.alpha.domain.model.*
-import com.alpha.domain.model.AvailabilitySlot
-import pdi.jwt.*
 import java.util.UUID
 
-case class AuthResponse(userId: UUID, email: String, name: Option[String], role: String, accessToken: String, refreshToken: String, sessionId: UUID)
-
-object AuthResponse:
-  import zio.json.*
-  given JsonEncoder[AuthResponse] = DeriveJsonEncoder.gen
-  given JsonDecoder[AuthResponse] = DeriveJsonDecoder.gen
-
-object TapirEndpoints:
-
-  private def encodeToken(userId: UUID, email: String, role: String, secret: String, expirySeconds: Long, issuer: String, now: java.time.Instant, tokenType: String): String =
-    val content = s"""{"email":"$email","role":"$role","type":"$tokenType"}"""
-    Jwt.encode(
-      JwtClaim(subject = Some(userId.toString), issuer = Some(issuer), expiration = Some(now.plusSeconds(expirySeconds).getEpochSecond), issuedAt = Some(now.getEpochSecond), content = content),
-      secret, JwtAlgorithm.HS256
-    )
-
-  private def buildAuthResponse(user: User, session: UserSession, jwt: JwtSettings, tp: TimeProvider): AuthResponse =
-    val now = tp.now().toInstant
-    AuthResponse(user.id, user.email, user.name, user.role,
-      encodeToken(user.id, user.email, user.role, jwt.accessSecret, 900, jwt.issuer, now, "access"),
-      encodeToken(user.id, user.email, user.role, jwt.refreshSecret, 604800, jwt.issuer, now, "refresh"),
-      session.id)
-
+object CategoryEndpoints:
   private val base = "api" / "v1"
   private val interp = ZioHttpInterpreter()
-
   private def toRoutes[R](endpoints: List[ZServerEndpoint[R, Any]]): URIO[R, Routes[Any, Response]] =
     ZIO.succeed(interp.toHttp(endpoints).sandbox.asInstanceOf[Routes[Any, Response]])
 
-  private val allEndpointsForSwagger: List[ZServerEndpoint[Any, Any]] = List(
-    endpoint.post.tag("Auth").summary("Register").in(base / "auth" / "register").in(jsonBody[RegisterUserRequest]).out(jsonBody[AuthResponse]).errorOut(stringBody).zServerLogic[Any](_ => ZIO.succeed(throw new Exception("Not implemented"))),
-    endpoint.get.tag("Health").summary("Health check").in(base / "health").out(stringBody).zServerLogic[Any](_ => ZIO.succeed("OK"))
-  )
-
-  val authEndpoints: List[ZServerEndpoint[AuthService & AppConfig & TimeProvider, Any]] = List(
-    endpoint.post.tag("Auth").summary("Register").in(base / "auth" / "register")
-      .in(jsonBody[RegisterUserRequest]).out(jsonBody[AuthResponse]).errorOut(stringBody)
-      .zServerLogic { req =>
-        (for
-          user <- ZIO.serviceWithZIO[AuthService](_.register(req))
-          session <- ZIO.serviceWithZIO[AuthService](_.login(LoginUserRequest(req.email, req.password), None, None)).map(_._2)
-          config <- ZIO.service[AppConfig]
-          tp <- ZIO.service[TimeProvider]
-        yield buildAuthResponse(user, session, config.jwt, tp)).mapError(_.getMessage)
-      },
-    endpoint.post.tag("Auth").summary("Login").in(base / "auth" / "login")
-      .in(jsonBody[LoginUserRequest]).out(jsonBody[AuthResponse]).errorOut(stringBody)
-      .zServerLogic { req =>
-        (for
-          (user, session) <- ZIO.serviceWithZIO[AuthService](_.login(req, None, None))
-          config <- ZIO.service[AppConfig]; tp <- ZIO.service[TimeProvider]
-        yield buildAuthResponse(user, session, config.jwt, tp)).mapError(_.getMessage)
-      },
-    endpoint.post.tag("Auth").summary("Refresh token").in(base / "auth" / "refresh")
-      .in(jsonBody[RefreshTokenRequest]).out(jsonBody[Map[String, String]]).errorOut(stringBody)
-      .zServerLogic { req => ZIO.serviceWithZIO[AuthService](_.refreshToken(req)).map { case (a, r) => Map("accessToken" -> a, "refreshToken" -> r) }.mapError(_.getMessage) },
-    endpoint.post.tag("Auth").summary("Logout").in(base / "auth" / "logout")
-      .in(header[UUID]("X-Session-Id")).out(statusCode(sttp.model.StatusCode(204))).errorOut(stringBody)
-      .zServerLogic { sid => ZIO.serviceWithZIO[AuthService](_.logout(sid)).mapError(_.getMessage) },
-    endpoint.post.tag("Auth").summary("Verify email").in(base / "auth" / "verify-email")
-      .in(jsonBody[VerifyEmailRequest]).out(stringBody).errorOut(stringBody)
-      .zServerLogic { req => ZIO.serviceWithZIO[AuthService](_.verifyEmail(req)).as("Email verified").mapError(_.getMessage) },
-    endpoint.post.tag("Auth").summary("Forgot password").in(base / "auth" / "forgot-password")
-      .in(jsonBody[ForgotPasswordRequest]).out(stringBody).errorOut(stringBody)
-      .zServerLogic { req => ZIO.serviceWithZIO[AuthService](_.forgotPassword(req)).as("Reset email sent").mapError(_.getMessage) },
-    endpoint.post.tag("Auth").summary("Reset password").in(base / "auth" / "reset-password")
-      .in(jsonBody[ResetPasswordRequest]).out(stringBody).errorOut(stringBody)
-      .zServerLogic { req => ZIO.serviceWithZIO[AuthService](_.resetPassword(req)).as("Password reset").mapError(_.getMessage) },
-    endpoint.post.tag("Auth").summary("Change password").in(base / "auth" / "change-password")
-      .in(header[UUID]("X-User-Id")).in(jsonBody[ChangePasswordRequest]).out(stringBody).errorOut(stringBody)
-      .zServerLogic { case (uid, req) => ZIO.serviceWithZIO[AuthService](_.changePassword(uid, req)).as("Password changed").mapError(_.getMessage) },
-    endpoint.get.tag("Auth").summary("Get me").in(base / "auth" / "me")
-      .in(header[UUID]("X-User-Id")).out(jsonBody[User]).errorOut(stringBody)
-      .zServerLogic { uid => ZIO.serviceWithZIO[AuthService](_.getUser(uid)).flatMap(ZIO.fromOption(_).orElseFail(new Exception("Not found"))).mapError(_.getMessage) },
-    endpoint.put.tag("Auth").summary("Update me").in(base / "auth" / "me")
-      .in(header[UUID]("X-User-Id")).in(jsonBody[UpdateProfileRequest]).out(jsonBody[User]).errorOut(stringBody)
-      .zServerLogic { case (uid, req) => ZIO.serviceWithZIO[AuthService](_.updateProfile(uid, req)).mapError(_.getMessage) }
-  )
-
-  val categoryEndpoints: List[ZServerEndpoint[CategoryService, Any]] = List(
+  val endpoints: List[ZServerEndpoint[CategoryService, Any]] = List(
     endpoint.get.tag("Categories").summary("List categories").in(base / "categories")
       .out(jsonBody[List[Category]]).errorOut(stringBody).zServerLogic { _ => ZIO.serviceWithZIO[CategoryService](_.getAllCategories).mapError(_.getMessage) },
     endpoint.get.tag("Categories").summary("Get category").in(base / "categories" / path[UUID]("id"))
@@ -108,7 +30,15 @@ object TapirEndpoints:
       .out(statusCode(sttp.model.StatusCode(204))).errorOut(stringBody).zServerLogic { id => ZIO.serviceWithZIO[CategoryService](_.deleteCategory(id)).mapError(_.getMessage) }
   )
 
-  val regionEndpoints: List[ZServerEndpoint[RegionService, Any]] = List(
+  val routes: URIO[CategoryService, Routes[Any, Response]] = toRoutes(endpoints)
+
+object RegionEndpoints:
+  private val base = "api" / "v1"
+  private val interp = ZioHttpInterpreter()
+  private def toRoutes[R](endpoints: List[ZServerEndpoint[R, Any]]): URIO[R, Routes[Any, Response]] =
+    ZIO.succeed(interp.toHttp(endpoints).sandbox.asInstanceOf[Routes[Any, Response]])
+
+  val endpoints: List[ZServerEndpoint[RegionService, Any]] = List(
     endpoint.get.tag("Regions").summary("List regions").in(base / "regions")
       .out(jsonBody[List[Region]]).errorOut(stringBody).zServerLogic { _ => ZIO.serviceWithZIO[RegionService](_.getAllRegions).mapError(_.getMessage) },
     endpoint.get.tag("Regions").summary("Get region").in(base / "regions" / path[UUID]("id"))
@@ -125,7 +55,15 @@ object TapirEndpoints:
       .out(statusCode(sttp.model.StatusCode(204))).errorOut(stringBody).zServerLogic { id => ZIO.serviceWithZIO[RegionService](_.deleteRegion(id)).mapError(_.getMessage) }
   )
 
-  val businessEndpoints: List[ZServerEndpoint[BusinessService, Any]] = List(
+  val routes: URIO[RegionService, Routes[Any, Response]] = toRoutes(endpoints)
+
+object BusinessEndpoints:
+  private val base = "api" / "v1"
+  private val interp = ZioHttpInterpreter()
+  private def toRoutes[R](endpoints: List[ZServerEndpoint[R, Any]]): URIO[R, Routes[Any, Response]] =
+    ZIO.succeed(interp.toHttp(endpoints).sandbox.asInstanceOf[Routes[Any, Response]])
+
+  val endpoints: List[ZServerEndpoint[BusinessService, Any]] = List(
     endpoint.get.tag("Businesses").summary("List businesses").in(base / "businesses")
       .out(jsonBody[List[Business]]).errorOut(stringBody).zServerLogic { _ => ZIO.serviceWithZIO[BusinessService](_.getBusinessesByUser(UUID.randomUUID())).mapError(_.getMessage) },
     endpoint.get.tag("Businesses").summary("Get business").in(base / "businesses" / path[UUID]("id"))
@@ -152,7 +90,15 @@ object TapirEndpoints:
       .out(jsonBody[Business]).errorOut(stringBody).zServerLogic { id => ZIO.serviceWithZIO[BusinessService](_.verifyBusiness(id)).mapError(_.getMessage) }
   )
 
-  val appointmentEndpoints: List[ZServerEndpoint[AppointmentService, Any]] = List(
+  val routes: URIO[BusinessService, Routes[Any, Response]] = toRoutes(endpoints)
+
+object AppointmentEndpoints:
+  private val base = "api" / "v1"
+  private val interp = ZioHttpInterpreter()
+  private def toRoutes[R](endpoints: List[ZServerEndpoint[R, Any]]): URIO[R, Routes[Any, Response]] =
+    ZIO.succeed(interp.toHttp(endpoints).sandbox.asInstanceOf[Routes[Any, Response]])
+
+  val endpoints: List[ZServerEndpoint[AppointmentService, Any]] = List(
     endpoint.get.tag("Appointments").summary("List appointments").in(base / "appointments")
       .in(query[Option[UUID]]("businessId")).in(query[Option[UUID]]("userId")).out(jsonBody[List[Appointment]]).errorOut(stringBody)
       .zServerLogic { case (bid, uid) =>
@@ -180,7 +126,15 @@ object TapirEndpoints:
       .in(jsonBody[CancelAppointmentRequest]).out(jsonBody[Appointment]).errorOut(stringBody).zServerLogic { case (id, req) => ZIO.serviceWithZIO[AppointmentService](_.cancelAppointment(id, req)).mapError(_.getMessage) }
   )
 
-  val reviewEndpoints: List[ZServerEndpoint[ReviewService, Any]] = List(
+  val routes: URIO[AppointmentService, Routes[Any, Response]] = toRoutes(endpoints)
+
+object ReviewEndpoints:
+  private val base = "api" / "v1"
+  private val interp = ZioHttpInterpreter()
+  private def toRoutes[R](endpoints: List[ZServerEndpoint[R, Any]]): URIO[R, Routes[Any, Response]] =
+    ZIO.succeed(interp.toHttp(endpoints).sandbox.asInstanceOf[Routes[Any, Response]])
+
+  val endpoints: List[ZServerEndpoint[ReviewService, Any]] = List(
     endpoint.get.tag("Reviews").summary("Get review").in(base / "reviews" / path[UUID]("id"))
       .out(jsonBody[Review]).errorOut(stringBody).zServerLogic { id => ZIO.serviceWithZIO[ReviewService](_.getReview(id)).flatMap(ZIO.fromOption(_).orElseFail(new Exception("Not found"))).mapError(_.getMessage) },
     endpoint.get.tag("Reviews").summary("By business").in(base / "reviews" / "business" / path[UUID]("businessId"))
@@ -199,7 +153,15 @@ object TapirEndpoints:
       .out(statusCode(sttp.model.StatusCode(204))).errorOut(stringBody).zServerLogic { id => ZIO.serviceWithZIO[ReviewService](_.deleteReview(id)).mapError(_.getMessage) }
   )
 
-  val serviceEndpoints: List[ZServerEndpoint[com.alpha.service.ServiceService, Any]] = List(
+  val routes: URIO[ReviewService, Routes[Any, Response]] = toRoutes(endpoints)
+
+object ServiceEndpoints:
+  private val base = "api" / "v1"
+  private val interp = ZioHttpInterpreter()
+  private def toRoutes[R](endpoints: List[ZServerEndpoint[R, Any]]): URIO[R, Routes[Any, Response]] =
+    ZIO.succeed(interp.toHttp(endpoints).sandbox.asInstanceOf[Routes[Any, Response]])
+
+  val endpoints: List[ZServerEndpoint[com.alpha.service.ServiceService, Any]] = List(
     endpoint.get.tag("Services").summary("Get service").in(base / "services" / path[UUID]("id"))
       .out(jsonBody[com.alpha.domain.model.Service]).errorOut(stringBody).zServerLogic { id => ZIO.serviceWithZIO[com.alpha.service.ServiceService](_.getService(id)).flatMap(ZIO.fromOption(_).orElseFail(new Exception("Not found"))).mapError(_.getMessage) },
     endpoint.get.tag("Services").summary("By business").in(base / "services" / "business" / path[UUID]("businessId"))
@@ -214,7 +176,15 @@ object TapirEndpoints:
       .out(statusCode(sttp.model.StatusCode(204))).errorOut(stringBody).zServerLogic { id => ZIO.serviceWithZIO[com.alpha.service.ServiceService](_.deleteService(id)).mapError(_.getMessage) }
   )
 
-  val businessHoursEndpoints: List[ZServerEndpoint[BusinessHoursService, Any]] = List(
+  val routes: URIO[com.alpha.service.ServiceService, Routes[Any, Response]] = toRoutes(endpoints)
+
+object BusinessHoursEndpoints:
+  private val base = "api" / "v1"
+  private val interp = ZioHttpInterpreter()
+  private def toRoutes[R](endpoints: List[ZServerEndpoint[R, Any]]): URIO[R, Routes[Any, Response]] =
+    ZIO.succeed(interp.toHttp(endpoints).sandbox.asInstanceOf[Routes[Any, Response]])
+
+  val endpoints: List[ZServerEndpoint[BusinessHoursService, Any]] = List(
     endpoint.get.tag("Business Hours").summary("Get hours").in(base / "business-hours" / path[UUID]("id"))
       .out(jsonBody[BusinessHours]).errorOut(stringBody).zServerLogic { id => ZIO.serviceWithZIO[BusinessHoursService](_.getHours(id)).flatMap(ZIO.fromOption(_).orElseFail(new Exception("Not found"))).mapError(_.getMessage) },
     endpoint.get.tag("Business Hours").summary("By business").in(base / "business-hours" / "business" / path[UUID]("businessId"))
@@ -231,31 +201,13 @@ object TapirEndpoints:
       .out(statusCode(sttp.model.StatusCode(204))).errorOut(stringBody).zServerLogic { bid => ZIO.serviceWithZIO[BusinessHoursService](_.deleteAllByBusiness(bid)).mapError(_.getMessage) }
   )
 
-  val healthEndpoints: List[ZServerEndpoint[Any, Any]] = List(
-    endpoint.get.tag("Health").summary("Health check").in(base / "health").out(stringBody).zServerLogic[Any](_ => ZIO.succeed("OK"))
-  )
+  val routes: URIO[BusinessHoursService, Routes[Any, Response]] = toRoutes(endpoints)
 
-  val authRoutes: URIO[AuthService & AppConfig & TimeProvider, Routes[Any, Response]] = toRoutes(authEndpoints)
-  val categoryRoutes: URIO[CategoryService, Routes[Any, Response]] = toRoutes(categoryEndpoints)
-  val regionRoutes: URIO[RegionService, Routes[Any, Response]] = toRoutes(regionEndpoints)
-  val businessRoutes: URIO[BusinessService, Routes[Any, Response]] = toRoutes(businessEndpoints)
-  val appointmentRoutes: URIO[AppointmentService, Routes[Any, Response]] = toRoutes(appointmentEndpoints)
-  val reviewRoutes: URIO[ReviewService, Routes[Any, Response]] = toRoutes(reviewEndpoints)
-  val serviceRoutes: URIO[com.alpha.service.ServiceService, Routes[Any, Response]] = toRoutes(serviceEndpoints)
-  val businessHoursRoutes: URIO[BusinessHoursService, Routes[Any, Response]] = toRoutes(businessHoursEndpoints)
-  val healthRoutes: URIO[Any, Routes[Any, Response]] = toRoutes(healthEndpoints)
+object HealthEndpoint:
+  private val base = "api" / "v1"
+  private val interp = ZioHttpInterpreter()
 
-  val swaggerRoutes: Routes[Any, Response] =
-    interp.toHttp(SwaggerInterpreter().fromServerEndpoints(allEndpointsForSwagger, "Alpha API", "1.0.0"))
-
-  val allRoutes: URIO[
-    AuthService & AppConfig & TimeProvider &
-    CategoryService & RegionService & BusinessService &
-    AppointmentService & ReviewService &
-    com.alpha.service.ServiceService & BusinessHoursService,
-    Routes[Any, Response]
-  ] =
-    for
-      auth <- authRoutes; cat <- categoryRoutes; reg <- regionRoutes; biz <- businessRoutes
-      appt <- appointmentRoutes; rev <- reviewRoutes; svc <- serviceRoutes; hrs <- businessHoursRoutes; health <- healthRoutes
-    yield auth ++ cat ++ reg ++ biz ++ appt ++ rev ++ svc ++ hrs ++ health ++ swaggerRoutes
+  val routes: Routes[Any, Response] =
+    interp.toHttp(List(
+      endpoint.get.tag("Health").summary("Health check").in(base / "health").out(stringBody).zServerLogic[Any](_ => ZIO.succeed("OK"))
+    ))
