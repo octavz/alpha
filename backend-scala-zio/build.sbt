@@ -26,7 +26,8 @@ lazy val root = (project in file("."))
   .settings(
     name := "alpha-backend",
     Compile / run / mainClass := Some("com.alpha.Main"),
-    test / parallelExecution := false
+    test / parallelExecution := false,
+    scalafmtOnCompile := true
   )
   .settings(
     libraryDependencies ++= Seq(

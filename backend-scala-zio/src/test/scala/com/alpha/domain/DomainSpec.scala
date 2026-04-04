@@ -11,8 +11,8 @@ object DomainSpec extends ZIOSpecDefault:
   override def spec: Spec[Any, Nothing] = suite("Domain Models Spec")(
     suite("User")(
       test("User should create with all fields") {
-        val id = UUID.randomUUID()
-        val now = OffsetDateTime.now()
+        val id   = UUID.randomUUID()
+        val now  = OffsetDateTime.now()
         val user = User(
           id = id,
           email = "test@example.com",
@@ -35,7 +35,7 @@ object DomainSpec extends ZIOSpecDefault:
         assertTrue(user.createdAt == now)
       },
       test("User should allow optional fields to be None") {
-        val now = OffsetDateTime.now()
+        val now  = OffsetDateTime.now()
         val user = User(
           id = UUID.randomUUID(),
           email = "test@example.com",
@@ -56,8 +56,8 @@ object DomainSpec extends ZIOSpecDefault:
     ),
     suite("Business")(
       test("Business should create with all fields") {
-        val id = UUID.randomUUID()
-        val now = OffsetDateTime.now()
+        val id       = UUID.randomUUID()
+        val now      = OffsetDateTime.now()
         val business = Business(
           id = id,
           userId = UUID.randomUUID(),
@@ -96,8 +96,8 @@ object DomainSpec extends ZIOSpecDefault:
     ),
     suite("Category")(
       test("Category should create with all fields") {
-        val id = UUID.randomUUID()
-        val now = OffsetDateTime.now()
+        val id       = UUID.randomUUID()
+        val now      = OffsetDateTime.now()
         val category = Category(
           id = id,
           name = "Restaurants",
@@ -118,8 +118,8 @@ object DomainSpec extends ZIOSpecDefault:
     ),
     suite("Region")(
       test("Region should create with all fields") {
-        val id = UUID.randomUUID()
-        val now = OffsetDateTime.now()
+        val id     = UUID.randomUUID()
+        val now    = OffsetDateTime.now()
         val region = Region(
           id = id,
           name = "New York",
@@ -138,8 +138,8 @@ object DomainSpec extends ZIOSpecDefault:
     ),
     suite("Appointment")(
       test("Appointment should create with all fields") {
-        val id = UUID.randomUUID()
-        val now = OffsetDateTime.now()
+        val id          = UUID.randomUUID()
+        val now         = OffsetDateTime.now()
         val appointment = Appointment(
           id = id,
           businessId = UUID.randomUUID(),
@@ -165,8 +165,8 @@ object DomainSpec extends ZIOSpecDefault:
     ),
     suite("Session")(
       test("Session should create with all fields") {
-        val id = UUID.randomUUID()
-        val now = OffsetDateTime.now()
+        val id      = UUID.randomUUID()
+        val now     = OffsetDateTime.now()
         val session = Session(
           id = id,
           userId = UUID.randomUUID(),

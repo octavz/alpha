@@ -18,10 +18,11 @@ trait ReviewService:
   def deleteReview(id: UUID): Task[Unit]
 
 object ReviewService:
-  val layer: ZLayer[ReviewRepository & TimeProvider & UUIDProvider, Nothing, ReviewService] = 
+  val layer: ZLayer[ReviewRepository & TimeProvider & UUIDProvider, Nothing, ReviewService] =
     ZLayer.fromFunction(new ReviewServiceImpl(_, _, _))
 
-class ReviewServiceImpl(reviewRepo: ReviewRepository, timeProvider: TimeProvider, uuidProvider: UUIDProvider) extends ReviewService:
+class ReviewServiceImpl(reviewRepo: ReviewRepository, timeProvider: TimeProvider, uuidProvider: UUIDProvider)
+  extends ReviewService:
 
   override def getReview(id: UUID): Task[Option[Review]] =
     reviewRepo.findById(id)

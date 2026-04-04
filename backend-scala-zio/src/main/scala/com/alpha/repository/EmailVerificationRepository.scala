@@ -16,44 +16,45 @@ trait EmailVerificationRepository:
   def deleteExpired: Task[Int]
 
 object EmailVerificationRepository:
-  val layer: ZLayer[PostgresCtx, Nothing, EmailVerificationRepository] = 
+  val layer: ZLayer[PostgresCtx, Nothing, EmailVerificationRepository] =
     ZLayer.fromFunction(new EmailVerificationRepositoryImpl(_))
 
 class EmailVerificationRepositoryImpl(ctx: PostgresCtx) extends EmailVerificationRepository:
 
   import ctx.*
 
-  override def findById(id: UUID): Task[Option[EmailVerification]] = 
+  override def findById(id: UUID): Task[Option[EmailVerification]] =
     ZIO.attempt:
       run(query[EmailVerification].filter(_.id == lift(id))).headOption
 
-  override def findByUserId(userId: UUID): Task[List[EmailVerification]] = 
+  override def findByUserId(userId: UUID): Task[List[EmailVerification]] =
     ZIO.attempt:
       run(query[EmailVerification].filter(_.userId == lift(userId))).toList
 
-  override def findByToken(token: String): Task[Option[EmailVerification]] = 
+  override def findByToken(token: String): Task[Option[EmailVerification]] =
     ZIO.attempt:
       run(query[EmailVerification].filter(_.token == lift(token))).headOption
 
-  override def findActiveByUserId(userId: UUID): Task[Option[EmailVerification]] = 
+  override def findActiveByUserId(userId: UUID): Task[Option[EmailVerification]] =
     ZIO.attempt:
       run(query[EmailVerification]
-        .filter(v => v.userId == lift(userId) && v.isUsed == lift(false) && v.expiresAt > lift(java.time.OffsetDateTime.now()))
-      ).headOption
+        .filter(v =>
+          v.userId == lift(userId) && v.isUsed == lift(false) && v.expiresAt > lift(
+            java.time.OffsetDateTime.now()))).headOption
 
-  override def create(verification: EmailVerification): Task[UUID] = 
+  override def create(verification: EmailVerification): Task[UUID] =
     ZIO.attempt:
       run(query[EmailVerification].insertValue(lift(verification)))
       verification.id
 
-  override def markAsUsed(id: UUID): Task[Int] = 
+  override def markAsUsed(id: UUID): Task[Int] =
     ZIO.attempt:
       run(query[EmailVerification]
         .filter(_.id == lift(id))
         .update(_.isUsed -> lift(true)))
       1
 
-  override def deleteExpired: Task[Int] = 
+  override def deleteExpired: Task[Int] =
     ZIO.attempt:
       run(query[EmailVerification]
         .filter(_.expiresAt < lift(java.time.OffsetDateTime.now()))

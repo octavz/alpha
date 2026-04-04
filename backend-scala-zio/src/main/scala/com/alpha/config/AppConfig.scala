@@ -81,23 +81,23 @@ object DatabaseConfig:
   val postgresLayer: ZLayer[AppConfig, Throwable, PostgresCtx] = ZLayer.scoped {
     for
       config <- ZIO.service[AppConfig]
-      db = config.database
-      hikari = db.hikari
-      ds <- ZIO.attempt {
-        val ds = new com.zaxxer.hikari.HikariDataSource()
-        ds.setJdbcUrl(db.url)
-        ds.setUsername(db.username)
-        ds.setPassword(db.password)
-        ds.setDriverClassName(db.driver)
-        ds.setMaximumPoolSize(hikari.maximumPoolSize)
-        ds.setMinimumIdle(hikari.minimumIdle)
-        ds.setConnectionTimeout(hikari.connectionTimeout.toLong)
-        ds.setIdleTimeout(hikari.idleTimeout.toLong)
-        ds.setMaxLifetime(hikari.maxLifetime.toLong)
-        ds.setPoolName("alpha-pool")
-        ds
-      }
-      _ <- ZIO.logInfo(s"HikariCP pool initialized: max=${hikari.maximumPoolSize}, min=${hikari.minimumIdle}")
-      _ <- ZIO.logInfo(s"Connecting to PostgreSQL: ${db.url}")
+      db      = config.database
+      hikari  = db.hikari
+      ds     <- ZIO.attempt {
+                  val ds = new com.zaxxer.hikari.HikariDataSource()
+                  ds.setJdbcUrl(db.url)
+                  ds.setUsername(db.username)
+                  ds.setPassword(db.password)
+                  ds.setDriverClassName(db.driver)
+                  ds.setMaximumPoolSize(hikari.maximumPoolSize)
+                  ds.setMinimumIdle(hikari.minimumIdle)
+                  ds.setConnectionTimeout(hikari.connectionTimeout.toLong)
+                  ds.setIdleTimeout(hikari.idleTimeout.toLong)
+                  ds.setMaxLifetime(hikari.maxLifetime.toLong)
+                  ds.setPoolName("alpha-pool")
+                  ds
+                }
+      _      <- ZIO.logInfo(s"HikariCP pool initialized: max=${hikari.maximumPoolSize}, min=${hikari.minimumIdle}")
+      _      <- ZIO.logInfo(s"Connecting to PostgreSQL: ${db.url}")
     yield PostgresCtx(ds)
   }

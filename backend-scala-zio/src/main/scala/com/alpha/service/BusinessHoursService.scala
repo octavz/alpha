@@ -17,10 +17,13 @@ trait BusinessHoursService:
   def deleteAllByBusiness(businessId: UUID): Task[Unit]
 
 object BusinessHoursService:
-  val layer: ZLayer[BusinessHoursRepository & TimeProvider & UUIDProvider, Nothing, BusinessHoursService] = 
+  val layer: ZLayer[BusinessHoursRepository & TimeProvider & UUIDProvider, Nothing, BusinessHoursService] =
     ZLayer.fromFunction(new BusinessHoursServiceImpl(_, _, _))
 
-class BusinessHoursServiceImpl(hoursRepo: BusinessHoursRepository, timeProvider: TimeProvider, uuidProvider: UUIDProvider) extends BusinessHoursService:
+class BusinessHoursServiceImpl(
+  hoursRepo: BusinessHoursRepository,
+  timeProvider: TimeProvider,
+  uuidProvider: UUIDProvider) extends BusinessHoursService:
 
   override def getHours(id: UUID): Task[Option[BusinessHours]] =
     hoursRepo.findById(id)
@@ -47,13 +50,13 @@ class BusinessHoursServiceImpl(hoursRepo: BusinessHoursRepository, timeProvider:
   override def updateHours(id: UUID, req: UpdateBusinessHoursRequest): Task[BusinessHours] =
     for
       hoursOpt <- hoursRepo.findById(id)
-      hours <- ZIO.fromOption(hoursOpt).orElseFail(new Exception("Business hours not found"))
-      updated = hours.copy(
-        openTime = req.openTime.orElse(hours.openTime),
-        closeTime = req.closeTime.orElse(hours.closeTime),
-        isClosed = req.isClosed.getOrElse(hours.isClosed)
-      )
-      _ <- hoursRepo.update(updated)
+      hours    <- ZIO.fromOption(hoursOpt).orElseFail(new Exception("Business hours not found"))
+      updated   = hours.copy(
+                    openTime = req.openTime.orElse(hours.openTime),
+                    closeTime = req.closeTime.orElse(hours.closeTime),
+                    isClosed = req.isClosed.getOrElse(hours.isClosed)
+                  )
+      _        <- hoursRepo.update(updated)
     yield updated
 
   override def deleteHours(id: UUID): Task[Unit] =

@@ -1,5 +1,6 @@
 package com.alpha.domain.model
 
+import com.alpha.domain.enums.*
 import java.time.{LocalDate, LocalTime, OffsetDateTime}
 import java.util.UUID
 import zio.json.*

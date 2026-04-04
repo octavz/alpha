@@ -38,14 +38,17 @@ object TestContainer extends ZIOSpecDefault:
   def postgresLayer: ZLayer[PostgreSQLContainer, Throwable, zio.postgres.Postgres] = ZLayer.scoped {
     for
       container <- ZIO.service[PostgreSQLContainer]
-      pool <- zio.pool.Pool.fromConnection(
-        zio.postgres.PostgreSQLConnection(
-          s"jdbc:postgresql://localhost:${container.getFirstMappedPort}/alpha",
-          "alpha_user",
-          "alpha_password"
-        ).Scoped,
-        1, 10, 30000, 1800000
-      )
+      pool      <- zio.pool.Pool.fromConnection(
+                     zio.postgres.PostgreSQLConnection(
+                       s"jdbc:postgresql://localhost:${container.getFirstMappedPort}/alpha",
+                       "alpha_user",
+                       "alpha_password"
+                     ).Scoped,
+                     1,
+                     10,
+                     30000,
+                     1800000
+                   )
     yield zio.postgres.Postgres(pool)
   }
 

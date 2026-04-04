@@ -25,26 +25,28 @@ object AuthMiddleware:
   def authenticate(req: Request): ZIO[AppConfig, Throwable, AuthContext] =
     for
       config <- ZIO.service[AppConfig]
-      jwt = config.jwt
-      token <- ZIO.fromOption(extractToken(req.headers))
-        .orElseFail(new Exception("Missing authorization header"))
-      claim <- ZIO.fromEither(verifyToken(token, jwt.accessSecret))
-        .orElseFail(new Exception("Invalid or expired token"))
+      jwt     = config.jwt
+      token  <- ZIO.fromOption(extractToken(req.headers))
+                  .orElseFail(new Exception("Missing authorization header"))
+      claim  <- ZIO.fromEither(verifyToken(token, jwt.accessSecret))
+                  .orElseFail(new Exception("Invalid or expired token"))
       userId <- ZIO.fromOption(claim.subject.map(UUID.fromString))
-        .orElseFail(new Exception("Missing user ID in token"))
-      email <- ZIO.fromOption(claim.content.fromJson[Map[String, String]].toOption.flatMap(_.get("email")))
-        .orElseFail(new Exception("Missing email in token"))
-      role = claim.content.fromJson[Map[String, String]].toOption.flatMap(_.get("role")).getOrElse("user")
+                  .orElseFail(new Exception("Missing user ID in token"))
+      email  <- ZIO.fromOption(claim.content.fromJson[Map[String, String]].toOption.flatMap(_.get("email")))
+                  .orElseFail(new Exception("Missing email in token"))
+      role    = claim.content.fromJson[Map[String, String]].toOption.flatMap(_.get("role")).getOrElse("user")
     yield AuthContext(userId, email, role)
 
-  def requireAuth(handler: AuthContext => ZIO[Any, Throwable, Response]): Handler[AppConfig, Throwable, Request, Response] =
+  def requireAuth(handler: AuthContext => ZIO[Any, Throwable, Response])
+    : Handler[AppConfig, Throwable, Request, Response] =
     Handler.fromFunctionZIO { (req: Request) =>
       authenticate(req).flatMap(handler).catchAll { error =>
         ZIO.succeed(Response.text(s"Unauthorized: ${error.getMessage}").status(Status.Unauthorized))
       }
     }
 
-  def requireRole(allowedRoles: Set[String])(handler: AuthContext => ZIO[Any, Throwable, Response]): Handler[AppConfig, Throwable, Request, Response] =
+  def requireRole(allowedRoles: Set[String])(handler: AuthContext => ZIO[Any, Throwable, Response])
+    : Handler[AppConfig, Throwable, Request, Response] =
     Handler.fromFunctionZIO { (req: Request) =>
       authenticate(req).flatMap { ctx =>
         if allowedRoles.contains(ctx.role) then handler(ctx)
@@ -57,14 +59,14 @@ object AuthMiddleware:
   def validateToken(token: String): ZIO[AppConfig, Throwable, AuthContext] =
     for
       config <- ZIO.service[AppConfig]
-      jwt = config.jwt
-      claim <- ZIO.fromEither(verifyToken(token, jwt.accessSecret))
-        .orElseFail(new Exception("Invalid or expired token"))
+      jwt     = config.jwt
+      claim  <- ZIO.fromEither(verifyToken(token, jwt.accessSecret))
+                  .orElseFail(new Exception("Invalid or expired token"))
       userId <- ZIO.fromOption(claim.subject.map(UUID.fromString))
-        .orElseFail(new Exception("Missing user ID in token"))
-      email <- ZIO.fromOption(claim.content.fromJson[Map[String, String]].toOption.flatMap(_.get("email")))
-        .orElseFail(new Exception("Missing email in token"))
-      role = claim.content.fromJson[Map[String, String]].toOption.flatMap(_.get("role")).getOrElse("user")
+                  .orElseFail(new Exception("Missing user ID in token"))
+      email  <- ZIO.fromOption(claim.content.fromJson[Map[String, String]].toOption.flatMap(_.get("email")))
+                  .orElseFail(new Exception("Missing email in token"))
+      role    = claim.content.fromJson[Map[String, String]].toOption.flatMap(_.get("role")).getOrElse("user")
     yield AuthContext(userId, email, role)
 
   def requireAdmin(ctx: AuthContext): ZIO[Any, Throwable, Unit] =

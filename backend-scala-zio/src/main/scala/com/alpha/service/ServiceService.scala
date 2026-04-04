@@ -16,10 +16,11 @@ trait ServiceService:
   def deleteService(id: UUID): Task[Unit]
 
 object ServiceService:
-  val layer: ZLayer[ServiceRepository & TimeProvider & UUIDProvider, Nothing, ServiceService] = 
+  val layer: ZLayer[ServiceRepository & TimeProvider & UUIDProvider, Nothing, ServiceService] =
     ZLayer.fromFunction(new ServiceServiceImpl(_, _, _))
 
-class ServiceServiceImpl(serviceRepo: ServiceRepository, timeProvider: TimeProvider, uuidProvider: UUIDProvider) extends ServiceService:
+class ServiceServiceImpl(serviceRepo: ServiceRepository, timeProvider: TimeProvider, uuidProvider: UUIDProvider)
+  extends ServiceService:
 
   override def getService(id: UUID): Task[Option[Service]] =
     serviceRepo.findById(id)
@@ -50,17 +51,17 @@ class ServiceServiceImpl(serviceRepo: ServiceRepository, timeProvider: TimeProvi
   override def updateService(id: UUID, req: UpdateServiceRequest): Task[Service] =
     for
       serviceOpt <- serviceRepo.findById(id)
-      service <- ZIO.fromOption(serviceOpt).orElseFail(new Exception("Service not found"))
-      updated = service.copy(
-        name = req.name.getOrElse(service.name),
-        description = req.description.orElse(service.description),
-        durationMinutes = req.durationMinutes.getOrElse(service.durationMinutes),
-        price = req.price.orElse(service.price),
-        isActive = req.isActive.getOrElse(service.isActive),
-        sortOrder = req.sortOrder.getOrElse(service.sortOrder),
-        updatedAt = Some(timeProvider.now())
-      )
-      _ <- serviceRepo.update(updated)
+      service    <- ZIO.fromOption(serviceOpt).orElseFail(new Exception("Service not found"))
+      updated     = service.copy(
+                      name = req.name.getOrElse(service.name),
+                      description = req.description.orElse(service.description),
+                      durationMinutes = req.durationMinutes.getOrElse(service.durationMinutes),
+                      price = req.price.orElse(service.price),
+                      isActive = req.isActive.getOrElse(service.isActive),
+                      sortOrder = req.sortOrder.getOrElse(service.sortOrder),
+                      updatedAt = Some(timeProvider.now())
+                    )
+      _          <- serviceRepo.update(updated)
     yield updated
 
   override def deleteService(id: UUID): Task[Unit] =

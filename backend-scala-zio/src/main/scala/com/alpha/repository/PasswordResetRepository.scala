@@ -16,44 +16,45 @@ trait PasswordResetRepository:
   def deleteExpired: Task[Int]
 
 object PasswordResetRepository:
-  val layer: ZLayer[PostgresCtx, Nothing, PasswordResetRepository] = 
+  val layer: ZLayer[PostgresCtx, Nothing, PasswordResetRepository] =
     ZLayer.fromFunction(new PasswordResetRepositoryImpl(_))
 
 class PasswordResetRepositoryImpl(ctx: PostgresCtx) extends PasswordResetRepository:
 
   import ctx.*
 
-  override def findById(id: UUID): Task[Option[PasswordReset]] = 
+  override def findById(id: UUID): Task[Option[PasswordReset]] =
     ZIO.attempt:
       run(query[PasswordReset].filter(_.id == lift(id))).headOption
 
-  override def findByUserId(userId: UUID): Task[List[PasswordReset]] = 
+  override def findByUserId(userId: UUID): Task[List[PasswordReset]] =
     ZIO.attempt:
       run(query[PasswordReset].filter(_.userId == lift(userId))).toList
 
-  override def findByToken(token: String): Task[Option[PasswordReset]] = 
+  override def findByToken(token: String): Task[Option[PasswordReset]] =
     ZIO.attempt:
       run(query[PasswordReset].filter(_.token == lift(token))).headOption
 
-  override def findActiveByUserId(userId: UUID): Task[Option[PasswordReset]] = 
+  override def findActiveByUserId(userId: UUID): Task[Option[PasswordReset]] =
     ZIO.attempt:
       run(query[PasswordReset]
-        .filter(r => r.userId == lift(userId) && r.isUsed == lift(false) && r.expiresAt > lift(java.time.OffsetDateTime.now()))
-      ).headOption
+        .filter(r =>
+          r.userId == lift(userId) && r.isUsed == lift(false) && r.expiresAt > lift(
+            java.time.OffsetDateTime.now()))).headOption
 
-  override def create(reset: PasswordReset): Task[UUID] = 
+  override def create(reset: PasswordReset): Task[UUID] =
     ZIO.attempt:
       run(query[PasswordReset].insertValue(lift(reset)))
       reset.id
 
-  override def markAsUsed(id: UUID): Task[Int] = 
+  override def markAsUsed(id: UUID): Task[Int] =
     ZIO.attempt:
       run(query[PasswordReset]
         .filter(_.id == lift(id))
         .update(_.isUsed -> lift(true)))
       1
 
-  override def deleteExpired: Task[Int] = 
+  override def deleteExpired: Task[Int] =
     ZIO.attempt:
       run(query[PasswordReset]
         .filter(_.expiresAt < lift(java.time.OffsetDateTime.now()))
