@@ -11,7 +11,7 @@ import com.alpha.config.*
 import com.alpha.provider.*
 import com.alpha.dto.*
 import com.alpha.domain.model.*
-import com.alpha.domain.model.AvailabilitySlot
+import com.alpha.security.*
 import pdi.jwt.*
 import java.util.UUID
 
@@ -44,7 +44,8 @@ object AuthEndpoints:
   private def toRoutes[R](endpoints: List[ZServerEndpoint[R, Any]]): URIO[R, Routes[Any, Response]] =
     ZIO.succeed(interp.toHttp(endpoints).sandbox.asInstanceOf[Routes[Any, Response]])
 
-  val endpoints: List[ZServerEndpoint[AuthService & AppConfig & TimeProvider, Any]] = List(
+  // Public endpoints (no auth required)
+  val publicEndpoints: List[ZServerEndpoint[AuthService & AppConfig & TimeProvider, Any]] = List(
     endpoint.post.tag("Auth").summary("Register").in(base / "auth" / "register")
       .in(jsonBody[RegisterUserRequest]).out(jsonBody[AuthResponse]).errorOut(stringBody)
       .zServerLogic { req =>
@@ -66,9 +67,6 @@ object AuthEndpoints:
     endpoint.post.tag("Auth").summary("Refresh token").in(base / "auth" / "refresh")
       .in(jsonBody[RefreshTokenRequest]).out(jsonBody[Map[String, String]]).errorOut(stringBody)
       .zServerLogic { req => ZIO.serviceWithZIO[AuthService](_.refreshToken(req)).map { case (a, r) => Map("accessToken" -> a, "refreshToken" -> r) }.mapError(_.getMessage) },
-    endpoint.post.tag("Auth").summary("Logout").in(base / "auth" / "logout")
-      .in(header[UUID]("X-Session-Id")).out(statusCode(sttp.model.StatusCode(204))).errorOut(stringBody)
-      .zServerLogic { sid => ZIO.serviceWithZIO[AuthService](_.logout(sid)).mapError(_.getMessage) },
     endpoint.post.tag("Auth").summary("Verify email").in(base / "auth" / "verify-email")
       .in(jsonBody[VerifyEmailRequest]).out(stringBody).errorOut(stringBody)
       .zServerLogic { req => ZIO.serviceWithZIO[AuthService](_.verifyEmail(req)).as("Email verified").mapError(_.getMessage) },
@@ -77,16 +75,34 @@ object AuthEndpoints:
       .zServerLogic { req => ZIO.serviceWithZIO[AuthService](_.forgotPassword(req)).as("Reset email sent").mapError(_.getMessage) },
     endpoint.post.tag("Auth").summary("Reset password").in(base / "auth" / "reset-password")
       .in(jsonBody[ResetPasswordRequest]).out(stringBody).errorOut(stringBody)
-      .zServerLogic { req => ZIO.serviceWithZIO[AuthService](_.resetPassword(req)).as("Password reset").mapError(_.getMessage) },
-    endpoint.post.tag("Auth").summary("Change password").in(base / "auth" / "change-password")
-      .in(header[UUID]("X-User-Id")).in(jsonBody[ChangePasswordRequest]).out(stringBody).errorOut(stringBody)
-      .zServerLogic { case (uid, req) => ZIO.serviceWithZIO[AuthService](_.changePassword(uid, req)).as("Password changed").mapError(_.getMessage) },
-    endpoint.get.tag("Auth").summary("Get me").in(base / "auth" / "me")
-      .in(header[UUID]("X-User-Id")).out(jsonBody[User]).errorOut(stringBody)
-      .zServerLogic { uid => ZIO.serviceWithZIO[AuthService](_.getUser(uid)).flatMap(ZIO.fromOption(_).orElseFail(new Exception("Not found"))).mapError(_.getMessage) },
-    endpoint.put.tag("Auth").summary("Update me").in(base / "auth" / "me")
-      .in(header[UUID]("X-User-Id")).in(jsonBody[UpdateProfileRequest]).out(jsonBody[User]).errorOut(stringBody)
-      .zServerLogic { case (uid, req) => ZIO.serviceWithZIO[AuthService](_.updateProfile(uid, req)).mapError(_.getMessage) }
+      .zServerLogic { req => ZIO.serviceWithZIO[AuthService](_.resetPassword(req)).as("Password reset").mapError(_.getMessage) }
   )
+
+  // Secure endpoints (JWT auth required)
+  val secureEndpoints: List[ZServerEndpoint[AuthService & AppConfig & TimeProvider, Any]] = List(
+    BaseEndpoints.secureEndpoint.post.tag("Auth").summary("Logout").in(base / "auth" / "logout")
+      .in(header[UUID]("X-Session-Id"))
+      .out(statusCode(sttp.model.StatusCode(204)))
+      .serverLogic { ctx => sid =>
+        ZIO.serviceWithZIO[AuthService](_.logout(sid)).mapError(e => AuthError(e.getMessage, 400))
+      },
+    BaseEndpoints.secureEndpoint.post.tag("Auth").summary("Change password").in(base / "auth" / "change-password")
+      .in(jsonBody[ChangePasswordRequest]).out(stringBody)
+      .serverLogic { ctx => req =>
+        ZIO.serviceWithZIO[AuthService](_.changePassword(ctx.userId, req)).as("Password changed").mapError(e => AuthError(e.getMessage, 400))
+      },
+    BaseEndpoints.secureEndpoint.get.tag("Auth").summary("Get me").in(base / "auth" / "me")
+      .out(jsonBody[User])
+      .serverLogic { ctx => _ =>
+        ZIO.serviceWithZIO[AuthService](_.getUser(ctx.userId)).flatMap(ZIO.fromOption(_).orElseFail(new Exception("Not found"))).mapError(e => AuthError(e.getMessage, 404))
+      },
+    BaseEndpoints.secureEndpoint.put.tag("Auth").summary("Update me").in(base / "auth" / "me")
+      .in(jsonBody[UpdateProfileRequest]).out(jsonBody[User])
+      .serverLogic { ctx => req =>
+        ZIO.serviceWithZIO[AuthService](_.updateProfile(ctx.userId, req)).mapError(e => AuthError(e.getMessage, 400))
+      }
+  )
+
+  val endpoints: List[ZServerEndpoint[AuthService & AppConfig & TimeProvider, Any]] = publicEndpoints ++ secureEndpoints
 
   val routes: URIO[AuthService & AppConfig & TimeProvider, Routes[Any, Response]] = toRoutes(endpoints)
