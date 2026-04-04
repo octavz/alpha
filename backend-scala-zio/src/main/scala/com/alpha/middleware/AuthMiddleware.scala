@@ -53,3 +53,20 @@ object AuthMiddleware:
         ZIO.succeed(Response.text(s"Unauthorized: ${error.getMessage}").status(Status.Unauthorized))
       }
     }
+
+  def validateToken(token: String): ZIO[AppConfig, Throwable, AuthContext] =
+    for
+      config <- ZIO.service[AppConfig]
+      jwt = config.jwt
+      claim <- ZIO.fromEither(verifyToken(token, jwt.accessSecret))
+        .orElseFail(new Exception("Invalid or expired token"))
+      userId <- ZIO.fromOption(claim.subject.map(UUID.fromString))
+        .orElseFail(new Exception("Missing user ID in token"))
+      email <- ZIO.fromOption(claim.content.fromJson[Map[String, String]].toOption.flatMap(_.get("email")))
+        .orElseFail(new Exception("Missing email in token"))
+      role = claim.content.fromJson[Map[String, String]].toOption.flatMap(_.get("role")).getOrElse("user")
+    yield AuthContext(userId, email, role)
+
+  def requireAdmin(ctx: AuthContext): ZIO[Any, Throwable, Unit] =
+    if ctx.role != "ADMIN" then ZIO.fail(new Exception("Forbidden: admin access required"))
+    else ZIO.unit

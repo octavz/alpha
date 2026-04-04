@@ -11,29 +11,10 @@ import com.alpha.provider.*
 
 object Main extends ZIOAppDefault:
 
-  private val appRoutes: URIO[
-    HealthController & AuthController & CategoryController & RegionController &
-    BusinessController & AppointmentController & ReviewController & ServiceController &
-    BusinessHoursController,
-    Routes[Any, Throwable]
-  ] =
-    for
-      h <- ZIO.service[HealthController]
-      a <- ZIO.service[AuthController]
-      c <- ZIO.service[CategoryController]
-      r <- ZIO.service[RegionController]
-      b <- ZIO.service[BusinessController]
-      ap <- ZIO.service[AppointmentController]
-      rev <- ZIO.service[ReviewController]
-      s <- ZIO.service[ServiceController]
-      bh <- ZIO.service[BusinessHoursController]
-    yield h.routes ++ a.routes ++ c.routes ++ r.routes ++ b.routes ++ ap.routes ++ rev.routes ++ s.routes ++ bh.routes ++ SwaggerController.routes
-
   override def run: ZIO[Any, Throwable, Unit] =
-    (for
-      routes <- appRoutes
-      _ <- Server.serve(routes.sandbox @@ CorsMiddleware.cors)
-    yield ()).provide(
+    TapirEndpoints.allRoutes.flatMap { routes =>
+      Server.serve(routes @@ CorsMiddleware.cors)
+    }.provide(
       AppConfig.live,
       DatabaseConfig.postgresLayer,
       TimeProvider.live,
@@ -57,14 +38,5 @@ object Main extends ZIOAppDefault:
       ReviewService.layer,
       ServiceService.layer,
       BusinessHoursService.layer,
-      HealthController.layer,
-      AuthController.layer,
-      CategoryController.layer,
-      RegionController.layer,
-      BusinessController.layer,
-      AppointmentController.layer,
-      ReviewController.layer,
-      ServiceController.layer,
-      BusinessHoursController.layer,
       Server.default
     )

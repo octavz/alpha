@@ -13,6 +13,7 @@ case class RegisterUserRequest(
   regionId: Option[UUID] = None
 )
 object RegisterUserRequest:
+  given JsonEncoder[RegisterUserRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[RegisterUserRequest] = DeriveJsonDecoder.gen
 
 case class LoginUserRequest(
@@ -20,24 +21,28 @@ case class LoginUserRequest(
   password: String
 )
 object LoginUserRequest:
+  given JsonEncoder[LoginUserRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[LoginUserRequest] = DeriveJsonDecoder.gen
 
 case class RefreshTokenRequest(
   refreshToken: String
 )
 object RefreshTokenRequest:
+  given JsonEncoder[RefreshTokenRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[RefreshTokenRequest] = DeriveJsonDecoder.gen
 
 case class VerifyEmailRequest(
   token: String
 )
 object VerifyEmailRequest:
+  given JsonEncoder[VerifyEmailRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[VerifyEmailRequest] = DeriveJsonDecoder.gen
 
 case class ForgotPasswordRequest(
   email: String
 )
 object ForgotPasswordRequest:
+  given JsonEncoder[ForgotPasswordRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[ForgotPasswordRequest] = DeriveJsonDecoder.gen
 
 case class ResetPasswordRequest(
@@ -45,6 +50,7 @@ case class ResetPasswordRequest(
   newPassword: String
 )
 object ResetPasswordRequest:
+  given JsonEncoder[ResetPasswordRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[ResetPasswordRequest] = DeriveJsonDecoder.gen
 
 case class ChangePasswordRequest(
@@ -52,6 +58,7 @@ case class ChangePasswordRequest(
   newPassword: String
 )
 object ChangePasswordRequest:
+  given JsonEncoder[ChangePasswordRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[ChangePasswordRequest] = DeriveJsonDecoder.gen
 
 case class UpdateProfileRequest(
@@ -60,6 +67,7 @@ case class UpdateProfileRequest(
   avatarUrl: Option[String] = None
 )
 object UpdateProfileRequest:
+  given JsonEncoder[UpdateProfileRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[UpdateProfileRequest] = DeriveJsonDecoder.gen
 
 case class CreateBusinessRequest(
@@ -81,6 +89,7 @@ case class CreateBusinessRequest(
   regionId: UUID
 )
 object CreateBusinessRequest:
+  given JsonEncoder[CreateBusinessRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[CreateBusinessRequest] = DeriveJsonDecoder.gen
 
 case class UpdateBusinessRequest(
@@ -103,6 +112,7 @@ case class UpdateBusinessRequest(
   coverImageUrl: Option[String] = None
 )
 object UpdateBusinessRequest:
+  given JsonEncoder[UpdateBusinessRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[UpdateBusinessRequest] = DeriveJsonDecoder.gen
 
 case class CreateCategoryRequest(
@@ -114,6 +124,7 @@ case class CreateCategoryRequest(
   sortOrder: Int = 0
 )
 object CreateCategoryRequest:
+  given JsonEncoder[CreateCategoryRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[CreateCategoryRequest] = DeriveJsonDecoder.gen
 
 case class UpdateCategoryRequest(
@@ -125,6 +136,7 @@ case class UpdateCategoryRequest(
   isActive: Option[Boolean] = None
 )
 object UpdateCategoryRequest:
+  given JsonEncoder[UpdateCategoryRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[UpdateCategoryRequest] = DeriveJsonDecoder.gen
 
 case class CreateRegionRequest(
@@ -134,6 +146,7 @@ case class CreateRegionRequest(
   timezone: String
 )
 object CreateRegionRequest:
+  given JsonEncoder[CreateRegionRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[CreateRegionRequest] = DeriveJsonDecoder.gen
 
 case class UpdateRegionRequest(
@@ -144,6 +157,7 @@ case class UpdateRegionRequest(
   isActive: Option[Boolean] = None
 )
 object UpdateRegionRequest:
+  given JsonEncoder[UpdateRegionRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[UpdateRegionRequest] = DeriveJsonDecoder.gen
 
 case class CreateAppointmentRequest(
@@ -160,6 +174,7 @@ case class CreateAppointmentRequest(
   customerNotes: Option[String] = None
 )
 object CreateAppointmentRequest:
+  given JsonEncoder[CreateAppointmentRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[CreateAppointmentRequest] = DeriveJsonDecoder.gen
 
 case class UpdateAppointmentRequest(
@@ -167,12 +182,14 @@ case class UpdateAppointmentRequest(
   customerNotes: Option[String] = None
 )
 object UpdateAppointmentRequest:
+  given JsonEncoder[UpdateAppointmentRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[UpdateAppointmentRequest] = DeriveJsonDecoder.gen
 
 case class CancelAppointmentRequest(
   reason: Option[String] = None
 )
 object CancelAppointmentRequest:
+  given JsonEncoder[CancelAppointmentRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[CancelAppointmentRequest] = DeriveJsonDecoder.gen
 
 case class CreateReviewRequest(
@@ -184,6 +201,7 @@ case class CreateReviewRequest(
   comment: Option[String] = None
 )
 object CreateReviewRequest:
+  given JsonEncoder[CreateReviewRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[CreateReviewRequest] = DeriveJsonDecoder.gen
 
 case class CreateServiceRequest(
@@ -195,6 +213,7 @@ case class CreateServiceRequest(
   sortOrder: Int = 0
 )
 object CreateServiceRequest:
+  given JsonEncoder[CreateServiceRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[CreateServiceRequest] = DeriveJsonDecoder.gen
 
 case class UpdateServiceRequest(
@@ -206,6 +225,7 @@ case class UpdateServiceRequest(
   sortOrder: Option[Int] = None
 )
 object UpdateServiceRequest:
+  given JsonEncoder[UpdateServiceRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[UpdateServiceRequest] = DeriveJsonDecoder.gen
 
 case class CreateBusinessHoursRequest(
@@ -216,6 +236,7 @@ case class CreateBusinessHoursRequest(
   isClosed: Boolean = false
 )
 object CreateBusinessHoursRequest:
+  given JsonEncoder[CreateBusinessHoursRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[CreateBusinessHoursRequest] = DeriveJsonDecoder.gen
 
 case class UpdateBusinessHoursRequest(
@@ -224,4 +245,5 @@ case class UpdateBusinessHoursRequest(
   isClosed: Option[Boolean] = None
 )
 object UpdateBusinessHoursRequest:
+  given JsonEncoder[UpdateBusinessHoursRequest] = DeriveJsonEncoder.gen
   given JsonDecoder[UpdateBusinessHoursRequest] = DeriveJsonDecoder.gen
