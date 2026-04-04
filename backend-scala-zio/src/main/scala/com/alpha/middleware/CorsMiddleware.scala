@@ -12,5 +12,5 @@ object CorsMiddleware:
         Header.AccessControlAllowMethods(Method.GET, Method.POST, Method.PUT, Method.DELETE, Method.OPTIONS),
       allowedHeaders = Header.AccessControlAllowHeaders("Content-Type", "Authorization"),
       allowCredentials = Header.AccessControlAllowCredentials.Allow,
-      maxAge = Some(Header.AccessControlMaxAge(zio.Duration.fromSeconds(3600)))
+      maxAge = Some(Header.AccessControlMaxAge(Duration.fromSeconds(3600)))
     ))

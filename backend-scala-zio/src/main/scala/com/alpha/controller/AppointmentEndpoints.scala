@@ -12,6 +12,7 @@ import com.alpha.domain.model.*
 import com.alpha.dto.*
 import com.alpha.security.*
 import java.util.UUID
+import java.time.LocalDate
 
 object AppointmentEndpoints:
   private val base                                                                                  = "api" / "v1"
@@ -41,7 +42,7 @@ object AppointmentEndpoints:
     SecureEndpoints.secureEndpoint.get.tag("Appointments").summary("Search appointments").in(
       base / "appointments" / "search")
       .in(query[Option[UUID]]("businessId")).in(query[Option[UUID]]("userId")).in(query[Option[String]]("status")).in(
-        query[Option[java.time.LocalDate]]("date"))
+        query[Option[LocalDate]]("date"))
       .out(jsonBody[List[Appointment]])
       .serverLogic { ctx => params =>
         val (b, u, s, d) = params
@@ -59,7 +60,7 @@ object AppointmentEndpoints:
     SecureEndpoints.secureEndpoint.get.tag("Appointments").summary("Availability").in(
       base / "appointments" / "business" / path[UUID](
         "businessId") / "availability")
-      .in(query[java.time.LocalDate]("date")).in(query[Option[UUID]]("serviceId"))
+      .in(query[LocalDate]("date")).in(query[Option[UUID]]("serviceId"))
       .out(jsonBody[List[AvailabilitySlot]])
       .serverLogic { ctx => params =>
         val (bid, dt, sid) = params

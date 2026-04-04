@@ -14,6 +14,7 @@ import com.alpha.domain.model.*
 import com.alpha.security.*
 import pdi.jwt.*
 import java.util.UUID
+import java.time.Instant
 
 case class AuthResponse(
   userId: UUID,
@@ -38,7 +39,7 @@ object AuthEndpoints:
     secret: String,
     expirySeconds: Long,
     issuer: String,
-    now: java.time.Instant,
+    now: Instant,
     tokenType: String): String =
     val content = s"""{"email":"$email","role":"$role","type":"$tokenType"}"""
     Jwt.encode(

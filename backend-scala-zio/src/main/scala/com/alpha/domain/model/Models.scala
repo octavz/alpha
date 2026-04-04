@@ -153,8 +153,8 @@ object Appointment:
   given JsonDecoder[Appointment] = DeriveJsonDecoder.gen
 
 case class AvailabilitySlot(
-  startTime: java.time.LocalTime,
-  endTime: java.time.LocalTime,
+  startTime: LocalTime,
+  endTime: LocalTime,
   servicePointNumber: Option[Int],
   isAvailable: Boolean
 )

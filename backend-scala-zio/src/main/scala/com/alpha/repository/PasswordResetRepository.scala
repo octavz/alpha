@@ -3,6 +3,7 @@ package com.alpha.repository
 import zio.*
 import com.alpha.domain.model.*
 import java.util.UUID
+import java.time.OffsetDateTime
 import io.getquill.*
 import io.getquill.extras.OffsetDateTimeOps
 
@@ -40,7 +41,7 @@ class PasswordResetRepositoryImpl(ctx: PostgresCtx) extends PasswordResetReposit
       run(query[PasswordReset]
         .filter(r =>
           r.userId == lift(userId) && r.isUsed == lift(false) && r.expiresAt > lift(
-            java.time.OffsetDateTime.now()))).headOption
+            OffsetDateTime.now()))).headOption
 
   override def create(reset: PasswordReset): Task[UUID] =
     ZIO.attempt:
@@ -57,6 +58,6 @@ class PasswordResetRepositoryImpl(ctx: PostgresCtx) extends PasswordResetReposit
   override def deleteExpired: Task[Int] =
     ZIO.attempt:
       run(query[PasswordReset]
-        .filter(_.expiresAt < lift(java.time.OffsetDateTime.now()))
+        .filter(_.expiresAt < lift(OffsetDateTime.now()))
         .delete)
       0

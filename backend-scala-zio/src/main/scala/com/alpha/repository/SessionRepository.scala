@@ -3,6 +3,7 @@ package com.alpha.repository
 import zio.*
 import com.alpha.domain.model.UserSession
 import java.util.UUID
+import java.time.OffsetDateTime
 import io.getquill.*
 import io.getquill.extras.OffsetDateTimeOps
 
@@ -62,6 +63,6 @@ class SessionRepositoryImpl(ctx: PostgresCtx) extends SessionRepository:
   override def deleteExpired: Task[Int] =
     ZIO.attempt:
       run(query[UserSession]
-        .filter(_.expiresAt < lift(java.time.OffsetDateTime.now()))
+        .filter(_.expiresAt < lift(OffsetDateTime.now()))
         .delete)
       0

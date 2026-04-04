@@ -7,7 +7,8 @@ import com.alpha.domain.model.*
 import com.alpha.dto.*
 import com.alpha.provider.*
 import java.util.UUID
-import java.time.OffsetDateTime
+import java.time.{Duration, LocalDate, LocalTime, OffsetDateTime}
+import scala.collection.mutable.ListBuffer
 
 trait AppointmentService:
   def getAppointment(id: UUID): Task[Option[Appointment]]
@@ -15,16 +16,16 @@ trait AppointmentService:
   def getAppointmentsByUser(userId: UUID): Task[List[Appointment]]
   def getAppointmentsByDateRange(
     businessId: UUID,
-    start: java.time.LocalDate,
-    end: java.time.LocalDate): Task[List[Appointment]]
+    start: LocalDate,
+    end: LocalDate): Task[List[Appointment]]
   def searchAppointments(
     businessId: Option[UUID],
     userId: Option[UUID],
     status: Option[String],
-    date: Option[java.time.LocalDate]): Task[List[Appointment]]
+    date: Option[LocalDate]): Task[List[Appointment]]
   def getAvailability(
     businessId: UUID,
-    date: java.time.LocalDate,
+    date: LocalDate,
     serviceId: Option[UUID]): Task[List[AvailabilitySlot]]
   def createAppointment(req: CreateAppointmentRequest): Task[Appointment]
   def updateAppointment(id: UUID, req: UpdateAppointmentRequest): Task[Appointment]
@@ -50,15 +51,15 @@ class AppointmentServiceImpl(
 
   override def getAppointmentsByDateRange(
     businessId: UUID,
-    start: java.time.LocalDate,
-    end: java.time.LocalDate): Task[List[Appointment]] =
+    start: LocalDate,
+    end: LocalDate): Task[List[Appointment]] =
     appointmentRepo.findByBusinessIdAndDateRange(businessId, start, end)
 
   override def searchAppointments(
     businessId: Option[UUID],
     userId: Option[UUID],
     status: Option[String],
-    date: Option[java.time.LocalDate]): Task[List[Appointment]] =
+    date: Option[LocalDate]): Task[List[Appointment]] =
     val appointmentStatus = status.flatMap(s => AppointmentStatus.values.find(_.value == s))
     (businessId, userId, appointmentStatus, date) match
       case (Some(bId), _, Some(s), Some(d)) => appointmentRepo.findByBusinessIdAndDateAndStatus(bId, d, s)
@@ -71,15 +72,39 @@ class AppointmentServiceImpl(
 
   override def getAvailability(
     businessId: UUID,
-    date: java.time.LocalDate,
+    date: LocalDate,
     serviceId: Option[UUID]): Task[List[AvailabilitySlot]] =
     for
-      appointments <- appointmentRepo.findByBusinessIdAndDate(businessId, date)
-      bookedSlots   = appointments
-                        .filter(a => serviceId.isEmpty || a.serviceId == serviceId)
-                        .filter(_.status != AppointmentStatus.CANCELLED.value)
-                        .map(a => AvailabilitySlot(a.startTime, a.endTime, a.servicePointNumber, isAvailable = false))
-    yield bookedSlots
+      appointments  <- appointmentRepo.findByBusinessIdAndDate(businessId, date)
+      bookedTimes    = appointments
+                         .filter(a => serviceId.isEmpty || a.serviceId == serviceId)
+                         .filter(_.status != AppointmentStatus.CANCELLED.value)
+                         .map(a => (a.startTime, a.endTime))
+      allSlots       =
+        generateTimeSlots(LocalTime.of(9, 0), LocalTime.of(17, 0), Duration.ofMinutes(30))
+      availableSlots = allSlots.filterNot { slot =>
+                         bookedTimes.exists {
+                           case (start, end) =>
+                             !(slot._2.isBefore(start) || slot._1.isAfter(end))
+                         }
+                       }.map {
+                         case (start, end) =>
+                           AvailabilitySlot(start, end, None, isAvailable = true)
+                       }
+    yield availableSlots
+
+  private def generateTimeSlots(
+    start: LocalTime,
+    end: LocalTime,
+    duration: Duration): List[(LocalTime, LocalTime)] =
+    val slots   = ListBuffer[(LocalTime, LocalTime)]()
+    var current = start
+    while current.isBefore(end) do
+      val slotEnd = current.plus(duration)
+      if slotEnd.isAfter(end) then ()
+      else slots += ((current, slotEnd))
+      current = slotEnd
+    slots.toList
 
   override def createAppointment(req: CreateAppointmentRequest): Task[Appointment] =
     val appointment = Appointment(
