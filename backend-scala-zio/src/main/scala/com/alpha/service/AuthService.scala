@@ -24,16 +24,17 @@ trait AuthService:
 
 object AuthService:
   val layer: ZLayer[
-    UserRepository & SessionRepository & EmailVerificationRepository & PasswordResetRepository & TimeProvider & UUIDProvider,
+    UserRepository & SessionRepository & EmailVerificationRepository & PasswordResetRepository & EmailService & TimeProvider & UUIDProvider,
     Nothing,
     AuthService] =
-    ZLayer.fromFunction(new AuthServiceImpl(_, _, _, _, _, _))
+    ZLayer.fromFunction(new AuthServiceImpl(_, _, _, _, _, _, _))
 
 class AuthServiceImpl(
   userRepo: UserRepository,
   sessionRepo: SessionRepository,
   emailVerificationRepo: EmailVerificationRepository,
   passwordResetRepo: PasswordResetRepository,
+  emailService: EmailService,
   timeProvider: TimeProvider,
   uuidProvider: UUIDProvider
 ) extends AuthService:
@@ -62,6 +63,7 @@ class AuthServiceImpl(
                   updatedAt = None
                 )
       id     <- userRepo.create(user)
+      _      <- emailService.sendWelcomeEmail(user.email, user.name.getOrElse("User"))
     yield user.copy(id = id)
 
   override def login(
@@ -127,6 +129,7 @@ class AuthServiceImpl(
                    createdAt = timeProvider.now()
                  )
       _       <- passwordResetRepo.create(reset)
+      _       <- emailService.sendPasswordResetEmail(user.email, reset.token)
     yield ()
 
   override def resetPassword(req: ResetPasswordRequest): Task[Unit] =

@@ -4,6 +4,7 @@ import zio.*
 import com.alpha.repository.*
 import com.alpha.domain.model.*
 import com.alpha.dto.*
+import com.alpha.util.SlugGenerator
 import com.alpha.provider.*
 import java.util.UUID
 
@@ -28,13 +29,19 @@ class CategoryServiceImpl(categoryRepo: CategoryRepository, timeProvider: TimePr
     categoryRepo.findById(id)
 
   override def createCategory(req: CreateCategoryRequest): Task[Category] =
+    val baseSlug                                                 = SlugGenerator.generate(req.name)
+    def findUniqueSlug(slug: String, attempt: Int): Task[String] =
+      categoryRepo.existsBySlug(slug).flatMap {
+        case true if attempt < 10 => findUniqueSlug(s"$slug-$attempt", attempt + 1)
+        case true                 => ZIO.succeed(s"$slug-${java.lang.System.currentTimeMillis()}")
+        case false                => ZIO.succeed(slug)
+      }
     for
-      exists  <- categoryRepo.existsBySlug(req.slug)
-      _       <- ZIO.fail(new Exception("Category with this slug already exists")).when(exists)
+      slug    <- findUniqueSlug(baseSlug, 1)
       category = Category(
                    id = uuidProvider.randomUUID(),
                    name = req.name,
-                   slug = req.slug,
+                   slug = slug,
                    description = req.description,
                    icon = req.icon,
                    parentId = req.parentId,
@@ -43,8 +50,8 @@ class CategoryServiceImpl(categoryRepo: CategoryRepository, timeProvider: TimePr
                    createdAt = timeProvider.now(),
                    updatedAt = None
                  )
-      id      <- categoryRepo.create(category)
-    yield category.copy(id = id)
+      _       <- categoryRepo.create(category)
+    yield category
 
   override def updateCategory(id: UUID, req: UpdateCategoryRequest): Task[Category] =
     for

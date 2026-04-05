@@ -72,7 +72,7 @@ object UpdateProfileRequest:
 
 case class CreateBusinessRequest(
   name: String,
-  slug: String,
+  slug: Option[String] = None,
   description: Option[String] = None,
   email: Option[String] = None,
   phone: Option[String] = None,
@@ -117,7 +117,7 @@ object UpdateBusinessRequest:
 
 case class CreateCategoryRequest(
   name: String,
-  slug: String,
+  slug: Option[String] = None,
   description: Option[String] = None,
   icon: Option[String] = None,
   parentId: Option[UUID] = None,

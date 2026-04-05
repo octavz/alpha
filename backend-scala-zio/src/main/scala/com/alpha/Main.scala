@@ -55,6 +55,7 @@ object Main extends ZIOAppDefault:
       BusinessHoursRepository.layer,
       PasswordResetRepository.layer,
       EmailVerificationRepository.layer,
+      EmailService.live,
       AuthService.layer,
       CategoryService.layer,
       RegionService.layer,

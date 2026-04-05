@@ -5,6 +5,7 @@ import com.alpha.repository.*
 import com.alpha.domain.enums.*
 import com.alpha.domain.model.*
 import com.alpha.dto.*
+import com.alpha.util.SlugGenerator
 import com.alpha.provider.*
 import java.util.UUID
 
@@ -50,14 +51,20 @@ class BusinessServiceImpl(businessRepo: BusinessRepository, timeProvider: TimePr
     businessRepo.searchActiveVerified(query)
 
   override def createBusiness(userId: UUID, req: CreateBusinessRequest): Task[Business] =
+    val baseSlug                                                 = SlugGenerator.generate(req.name)
+    def findUniqueSlug(slug: String, attempt: Int): Task[String] =
+      businessRepo.existsBySlug(slug).flatMap {
+        case true if attempt < 10 => findUniqueSlug(s"$slug-$attempt", attempt + 1)
+        case true                 => ZIO.succeed(s"$slug-${java.lang.System.currentTimeMillis()}")
+        case false                => ZIO.succeed(slug)
+      }
     for
-      exists  <- businessRepo.existsBySlug(req.slug)
-      _       <- ZIO.fail(new Exception("Business with this slug already exists")).when(exists)
+      slug    <- findUniqueSlug(baseSlug, 1)
       business = Business(
                    id = uuidProvider.randomUUID(),
                    userId = userId,
                    name = req.name,
-                   slug = req.slug,
+                   slug = slug,
                    description = req.description,
                    email = req.email,
                    phone = req.phone,
@@ -82,8 +89,8 @@ class BusinessServiceImpl(businessRepo: BusinessRepository, timeProvider: TimePr
                    createdAt = timeProvider.now(),
                    updatedAt = None
                  )
-      id      <- businessRepo.create(business)
-    yield business.copy(id = id)
+      _       <- businessRepo.create(business)
+    yield business
 
   override def updateBusiness(id: UUID, req: UpdateBusinessRequest): Task[Business] =
     for
