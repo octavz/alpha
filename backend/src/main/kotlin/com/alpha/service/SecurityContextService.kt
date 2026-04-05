@@ -10,20 +10,26 @@ class SecurityContextService {
     
     fun getCurrentUserId(): UUID {
         val authentication = SecurityContextHolder.getContext().authentication
-        if (authentication == null || !authentication.isAuthenticated) {
+        if (authentication == null || !authentication.isAuthenticated || authentication.principal == "anonymousUser") {
             throw com.alpha.service.exception.AuthenticationException("User not authenticated")
         }
         
         val principal = authentication.principal
         return when (principal) {
-            is String -> UUID.fromString(principal)
+            is String -> {
+                try {
+                    UUID.fromString(principal)
+                } catch (e: IllegalArgumentException) {
+                    throw com.alpha.service.exception.AuthenticationException("Invalid user ID format")
+                }
+            }
             else -> throw com.alpha.service.exception.AuthenticationException("Invalid authentication principal")
         }
     }
     
     fun getCurrentUserRole(): UserRole {
         val authentication = SecurityContextHolder.getContext().authentication
-        if (authentication == null || !authentication.isAuthenticated) {
+        if (authentication == null || !authentication.isAuthenticated || authentication.principal == "anonymousUser") {
             throw com.alpha.service.exception.AuthenticationException("User not authenticated")
         }
         

@@ -58,7 +58,8 @@ class JwtSecurityConfig(
                         "/api/v1/businesses/category/{categoryId}",
                         "/api/v1/businesses/featured",
                         "/api/v1/regions/**",
-                        "/api/v1/categories/**"
+                        "/api/v1/categories/**",
+                        "/api/v1/appointments/business/{businessId}/availability"
                     ).permitAll()
                     // All other endpoints require authentication
                     .anyRequest().authenticated()
@@ -67,13 +68,6 @@ class JwtSecurityConfig(
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
-            .logout { logout ->
-                logout.logoutUrl("/api/v1/auth/logout")
-                logout.addLogoutHandler(logoutHandler)
-                logout.logoutSuccessHandler { _, response, _ ->
-                    response.status = HttpServletResponse.SC_OK
-                }
-            }
         
         return http.build()
     }

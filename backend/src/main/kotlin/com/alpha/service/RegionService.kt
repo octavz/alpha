@@ -45,7 +45,7 @@ class RegionService(
             code = request.code
             country = request.country
             timezone = request.timezone
-            isActive = request.isActive
+            isActive = request.isActive ?: true
         }
         
         val savedRegion = regionRepository.save(region)

@@ -17,7 +17,7 @@ data class RegionResponse(
 
 data class CreateRegionRequest(
     @field:NotBlank(message = "Region name is required")
-    @field:Size(min = 2, max = 100, message = "Region name must be between 2 and 100 characters")
+    @field:Size(min = 2, max = 255, message = "Region name must be between 2 and 255 characters")
     val name: String,
     
     @field:NotBlank(message = "Region code is required")
@@ -25,22 +25,28 @@ data class CreateRegionRequest(
     val code: String,
     
     @field:NotBlank(message = "Country is required")
+    @field:Size(max = 100, message = "Country cannot exceed 100 characters")
     val country: String,
     
     @field:NotBlank(message = "Timezone is required")
+    @field:Size(max = 50, message = "Timezone cannot exceed 50 characters")
     val timezone: String,
     
-    val isActive: Boolean = true
+    val isActive: Boolean? = true
 )
 
 data class UpdateRegionRequest(
-    @field:Size(min = 2, max = 100, message = "Region name must be between 2 and 100 characters")
+    @field:Size(min = 2, max = 255, message = "Region name must be between 2 and 255 characters")
     val name: String? = null,
     
     @field:Size(min = 2, max = 10, message = "Region code must be between 2 and 10 characters")
     val code: String? = null,
     
+    @field:Size(max = 100, message = "Country cannot exceed 100 characters")
     val country: String? = null,
+    
+    @field:Size(max = 50, message = "Timezone cannot exceed 50 characters")
     val timezone: String? = null,
+    
     val isActive: Boolean? = null
 )

@@ -6,6 +6,7 @@ import com.alpha.service.dto.CategoryResponse
 import com.alpha.service.dto.CreateCategoryRequest
 import com.alpha.service.dto.UpdateCategoryRequest
 import com.alpha.service.exception.NotFoundException
+import com.alpha.service.exception.ConflictException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.*
@@ -28,13 +29,19 @@ class CategoryService(
     
     @Transactional
     fun createCategory(request: CreateCategoryRequest): CategoryResponse {
+        val categorySlug = request.name.lowercase().replace(" ", "-").replace(Regex("[^a-z0-9-]"), "")
+        
+        if (categoryRepository.existsBySlug(categorySlug)) {
+            throw ConflictException("Category with this name already exists")
+        }
+        
         val category = CategoryEntity().apply {
             name = request.name
-            slug = request.name.lowercase().replace(" ", "-")
+            slug = categorySlug
             description = request.description
             icon = request.icon
             sortOrder = request.sortOrder
-            isActive = request.isActive
+            isActive = request.isActive ?: true
         }
         return categoryRepository.save(category).toResponse()
     }

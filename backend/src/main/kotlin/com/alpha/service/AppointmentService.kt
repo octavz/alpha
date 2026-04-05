@@ -125,28 +125,24 @@ class AppointmentService(
         val currentUserId = securityContextService.getCurrentUserId()
         val currentUserRole = securityContextService.getCurrentUserRole()
         
-        // If no filters specified, return user's own appointments
-        if (businessId == null && customerId == null && status == null && startDate == null && endDate == null) {
-            if (currentUserRole == UserRole.ADMIN) {
-                // Admin can see all appointments
-                val appointments = appointmentRepository.findAll(pageable)
-                return appointments.map { AppointmentDto.fromEntity(it) }
-            } else {
-                // Regular users see their own appointments
-                val appointments = appointmentRepository.findCustomerAppointments(currentUserId, pageable)
-                return appointments.map { AppointmentDto.fromEntity(it) }
-            }
-        }
-        
-        // Apply filters
+        // Start with appropriate base query based on parameters
         var filteredAppointments: List<AppointmentEntity> = emptyList()
         
         if (businessId != null) {
+            // Filter by specific business
             filteredAppointments = appointmentRepository.findByBusinessId(businessId)
         } else if (customerId != null) {
+            // Filter by specific customer
             filteredAppointments = appointmentRepository.findByCustomerId(customerId)
         } else {
-            filteredAppointments = appointmentRepository.findAll()
+            // No specific business or customer - get appropriate scope based on user role
+            if (currentUserRole == UserRole.ADMIN) {
+                // Admin can see all appointments
+                filteredAppointments = appointmentRepository.findAll(pageable).content
+            } else {
+                // Regular users see their own appointments
+                filteredAppointments = appointmentRepository.findCustomerAppointments(currentUserId, pageable).content
+            }
         }
         
         // Apply additional filters
@@ -162,12 +158,18 @@ class AppointmentService(
             }
         }
         
-        // Check permissions for each appointment
-        val authorizedAppointments = filteredAppointments.filter { appointment ->
-            val isOwner = appointment.customer?.id == currentUserId
-            val isBusinessOwner = appointment.business?.user?.id == currentUserId
-            val isAdmin = currentUserRole == UserRole.ADMIN
-            isOwner || isBusinessOwner || isAdmin
+        // For non-admin users without specific business/customer filters, 
+        // we already filtered to their appointments above, so skip permission check
+        val authorizedAppointments = if (businessId == null && customerId == null && currentUserRole != UserRole.ADMIN) {
+            filteredAppointments // Already filtered to user's appointments
+        } else {
+            // Check permissions for each appointment when specific filters are applied
+            filteredAppointments.filter { appointment ->
+                val isOwner = appointment.customer?.id == currentUserId
+                val isBusinessOwner = appointment.business?.user?.id == currentUserId
+                val isAdmin = currentUserRole == UserRole.ADMIN
+                isOwner || isBusinessOwner || isAdmin
+            }
         }
         
         // Convert to page (simplified - in real implementation, this would be done at database level)

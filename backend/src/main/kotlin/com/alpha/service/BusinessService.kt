@@ -37,6 +37,13 @@ class BusinessService(
         val category = categoryRepository.findById(request.categoryId)
             .orElseThrow { NotFoundException("Category not found") }
         
+        val slug = generateSlug(request.name)
+        
+        // Check for duplicate slug
+        if (businessRepository.existsBySlug(slug)) {
+            throw ConflictException("Business with this name already exists")
+        }
+        
         val business = BusinessEntity().apply {
             name = request.name
             description = request.description
@@ -54,7 +61,7 @@ class BusinessService(
             this.region = region
             this.category = category
             this.user = user
-            slug = generateSlug(request.name)
+            this.slug = slug
             verificationStatus = com.alpha.domain.enums.VerificationStatus.PENDING
             isActive = true
             isFeatured = false

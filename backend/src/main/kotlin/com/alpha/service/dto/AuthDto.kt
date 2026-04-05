@@ -10,17 +10,20 @@ import java.util.*
 data class RegisterRequest(
     @field:NotBlank(message = "Email is required")
     @field:Email(message = "Invalid email format")
+    @field:Size(max = 255, message = "Email cannot exceed 255 characters")
     val email: String,
     
     @field:NotBlank(message = "Password is required")
-    @field:Size(min = 8, message = "Password must be at least 8 characters")
+    @field:Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
     val password: String,
     
     @field:NotBlank(message = "Name is required")
-    @field:Size(min = 2, message = "Name must be at least 2 characters")
+    @field:Size(min = 2, max = 255, message = "Name must be between 2 and 255 characters")
     val name: String,
     
+    @field:Size(max = 20, message = "Phone cannot exceed 20 characters")
     val phone: String? = null,
+    
     val role: UserRole? = null,
     val regionId: UUID? = null
 ) {
@@ -31,6 +34,7 @@ data class RegisterRequest(
 data class LoginRequest(
     @field:NotBlank(message = "Email is required")
     @field:Email(message = "Invalid email format")
+    @field:Size(max = 255, message = "Email cannot exceed 255 characters")
     val email: String,
     
     @field:NotBlank(message = "Password is required")
@@ -80,14 +84,33 @@ data class VerifyEmailRequest(
 data class ForgotPasswordRequest(
     @field:NotBlank(message = "Email is required")
     @field:Email(message = "Invalid email format")
+    @field:Size(max = 255, message = "Email cannot exceed 255 characters")
     val email: String
 )
 
 data class ResetPasswordRequest(
     @field:NotBlank(message = "Token is required")
+    @field:Size(min = 32, max = 256, message = "Token must be between 32 and 256 characters")
     val token: String,
     
     @field:NotBlank(message = "New password is required")
-    @field:Size(min = 8, message = "Password must be at least 8 characters")
+    @field:Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
+    val newPassword: String
+)
+
+data class UpdateProfileRequest(
+    @field:Size(min = 2, max = 255, message = "Name must be between 2 and 255 characters")
+    val name: String? = null,
+    
+    @field:Size(max = 20, message = "Phone cannot exceed 20 characters")
+    val phone: String? = null
+)
+
+data class ChangePasswordRequest(
+    @field:NotBlank(message = "Current password is required")
+    val currentPassword: String,
+    
+    @field:NotBlank(message = "New password is required")
+    @field:Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
     val newPassword: String
 )

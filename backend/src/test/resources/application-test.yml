@@ -1,0 +1,63 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+  flyway:
+    enabled: false
+  jackson:
+    serialization:
+      indent-output: false
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: non_null
+
+server:
+  port: 0
+
+logging:
+  level:
+    com.alpha: INFO
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN
+
+app:
+  jwt:
+    access-token-expiration: 900
+    refresh-token-expiration: 604800
+    secret: test_secret_key_for_integration_tests_12345678
+    access-secret: test_access_secret_key_for_integration_tests_12345678
+    refresh-secret: test_refresh_secret_key_for_integration_tests_12345678
+  security:
+    password-strength: 8
+    token-length: 32
+  pagination:
+    default-page-size: 20
+    max-page-size: 100
+  name: Alpha Business Directory (Test)
+  version: 1.0.0
+  cors:
+    allowed-origins: http://localhost:5173
+    allowed-methods: GET,POST,PUT,DELETE,PATCH,OPTIONS
+    allowed-headers: Content-Type,Authorization,X-Requested-With
+    allow-credentials: true
+    max-age: 3600
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
