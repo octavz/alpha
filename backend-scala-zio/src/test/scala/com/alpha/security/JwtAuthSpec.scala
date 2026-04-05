@@ -44,18 +44,18 @@ object JwtAuthSpec extends ZIOSpecDefault:
       },
       test("JSON encodes AuthError") {
         val error = AuthError("Unauthorized access", 401)
-        val json = error.toJson
+        val json  = error.toJson
         assertTrue(json.contains("Unauthorized access"))
         assertTrue(json.contains("401"))
       },
       test("JSON decodes AuthError") {
-        val json = """{"message":"Token expired","code":401}"""
+        val json    = """{"message":"Token expired","code":401}"""
         val decoded = json.fromJson[AuthError]
         assertTrue(decoded.map(_.message) == Right("Token expired"))
         assertTrue(decoded.map(_.code) == Right(401))
       },
       test("round-trip encode/decode AuthError") {
-        val error = AuthError("Invalid token", 401)
+        val error   = AuthError("Invalid token", 401)
         val decoded = error.toJson.fromJson[AuthError]
         assertTrue(decoded == Right(error))
       }
@@ -64,22 +64,32 @@ object JwtAuthSpec extends ZIOSpecDefault:
       test("rejects invalid token with AuthError") {
         val testConfig = AppConfig(
           app = AppSettings(
-            name = "test", version = "1.0",
+            name = "test",
+            version = "1.0",
             cors = CorsSettings("http://localhost", "GET,POST", "*", true, 3600)
           ),
           database = DatabaseSettings(
-            url = "jdbc:postgresql://localhost:5433/test", username = "test",
-            password = "test", driver = "org.postgresql.Driver",
+            url = "jdbc:postgresql://localhost:5433/test",
+            username = "test",
+            password = "test",
+            driver = "org.postgresql.Driver",
             hikari = HikariSettings(5, 1, 30000, 600000, 1800000)
           ),
           flyway = FlywaySettings(
-            enabled = true, baselineOnMigrate = true, baselineVersion = "1",
-            locations = "db/migration", validateOnMigrate = true, cleanDisabled = true
+            enabled = true,
+            baselineOnMigrate = true,
+            baselineVersion = "1",
+            locations = "db/migration",
+            validateOnMigrate = true,
+            cleanDisabled = true
           ),
           jwt = JwtSettings(
-            secret = "test-secret-key", accessSecret = "test-access-secret-key",
-            refreshSecret = "test-refresh-secret-key", accessExpiry = "15m",
-            refreshExpiry = "7d", issuer = "alpha"
+            secret = "test-secret-key",
+            accessSecret = "test-access-secret-key",
+            refreshSecret = "test-refresh-secret-key",
+            accessExpiry = "15m",
+            refreshExpiry = "7d",
+            issuer = "alpha"
           ),
           server = ServerSettings(host = "localhost", port = 3000)
         )
@@ -95,22 +105,32 @@ object JwtAuthSpec extends ZIOSpecDefault:
       test("rejects empty token with AuthError") {
         val testConfig = AppConfig(
           app = AppSettings(
-            name = "test", version = "1.0",
+            name = "test",
+            version = "1.0",
             cors = CorsSettings("http://localhost", "GET,POST", "*", true, 3600)
           ),
           database = DatabaseSettings(
-            url = "jdbc:postgresql://localhost:5433/test", username = "test",
-            password = "test", driver = "org.postgresql.Driver",
+            url = "jdbc:postgresql://localhost:5433/test",
+            username = "test",
+            password = "test",
+            driver = "org.postgresql.Driver",
             hikari = HikariSettings(5, 1, 30000, 600000, 1800000)
           ),
           flyway = FlywaySettings(
-            enabled = true, baselineOnMigrate = true, baselineVersion = "1",
-            locations = "db/migration", validateOnMigrate = true, cleanDisabled = true
+            enabled = true,
+            baselineOnMigrate = true,
+            baselineVersion = "1",
+            locations = "db/migration",
+            validateOnMigrate = true,
+            cleanDisabled = true
           ),
           jwt = JwtSettings(
-            secret = "test-secret-key", accessSecret = "test-access-secret-key",
-            refreshSecret = "test-refresh-secret-key", accessExpiry = "15m",
-            refreshExpiry = "7d", issuer = "alpha"
+            secret = "test-secret-key",
+            accessSecret = "test-access-secret-key",
+            refreshSecret = "test-refresh-secret-key",
+            accessExpiry = "15m",
+            refreshExpiry = "7d",
+            issuer = "alpha"
           ),
           server = ServerSettings(host = "localhost", port = 3000)
         )

@@ -20,7 +20,7 @@ object BusinessEndpoints:
     ZIO.succeed(interp.toHttp(endpoints).sandbox.asInstanceOf[Routes[Any, Response]])
 
   // Public endpoints
-  val publicEndpoints: List[ZServerEndpoint[BusinessService & AppConfig, Any]] = List(
+  lazy val publicEndpoints: List[ZServerEndpoint[BusinessService & AppConfig, Any]] = List(
     endpoint.get.tag("Businesses").summary("List businesses").in(base / "businesses")
       .out(jsonBody[List[Business]]).errorOut(stringBody).zServerLogic { _ =>
         ZIO.serviceWithZIO[BusinessService](_.getBusinessesByUser(UUID.randomUUID())).mapError(_.getMessage)
@@ -57,7 +57,7 @@ object BusinessEndpoints:
   )
 
   // Secure endpoints (JWT auth required)
-  val secureEndpoints: List[ZServerEndpoint[BusinessService & AppConfig, Any]] = List(
+  lazy val secureEndpoints: List[ZServerEndpoint[BusinessService & AppConfig, Any]] = List(
     SecureEndpoints.secureEndpoint.get.tag("Businesses").summary("My businesses").in(
       base / "businesses" / "my-businesses")
       .out(jsonBody[List[Business]])
@@ -95,6 +95,6 @@ object BusinessEndpoints:
       }
   )
 
-  val endpoints: List[ZServerEndpoint[BusinessService & AppConfig, Any]] = publicEndpoints ++ secureEndpoints
+  lazy val endpoints: List[ZServerEndpoint[BusinessService & AppConfig, Any]] = publicEndpoints ++ secureEndpoints
 
-  val routes: URIO[BusinessService & AppConfig, Routes[Any, Response]] = toRoutes(endpoints)
+  lazy val routes: URIO[BusinessService & AppConfig, Routes[Any, Response]] = toRoutes(endpoints)

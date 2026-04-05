@@ -66,26 +66,26 @@ object SlugGeneratorSpec extends ZIOSpecDefault:
     suite("generateUnique")(
       test("returns base slug when it doesn't exist") {
         val exists: String => Boolean = _ => false
-        val result = SlugGenerator.generateUnique("Hello World", exists)
+        val result                    = SlugGenerator.generateUnique("Hello World", exists)
         assertTrue(result == "hello-world")
       },
       test("appends number when base slug exists") {
         val exists: String => Boolean = s => s == "hello-world"
-        val result = SlugGenerator.generateUnique("Hello World", exists)
+        val result                    = SlugGenerator.generateUnique("Hello World", exists)
         assertTrue(result == "hello-world-1")
       },
       test("finds next available number") {
         val exists: String => Boolean = s => s == "hello-world" || s == "hello-world-1"
-        val result = SlugGenerator.generateUnique("Hello World", exists)
+        val result                    = SlugGenerator.generateUnique("Hello World", exists)
         assertTrue(result == "hello-world-2")
       },
       test("uses timestamp when max attempts exceeded") {
         val exists: String => Boolean = _ => true
-        val result = SlugGenerator.generateUnique("Hello World", exists, maxAttempts = 2)
+        val result                    = SlugGenerator.generateUnique("Hello World", exists, maxAttempts = 2)
         assertTrue(result.startsWith("hello-world-"))
       },
       test("respects custom maxAttempts") {
-        var attempts = 0
+        var attempts                  = 0
         val exists: String => Boolean = { s =>
           attempts += 1
           true

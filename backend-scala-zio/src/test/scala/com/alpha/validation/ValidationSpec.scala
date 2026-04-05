@@ -152,7 +152,7 @@ object ValidationSpec extends ZIOSpecDefault:
           Right("b"),
           Right("c")
         )
-        val result = Validation.validateAll(results)
+        val result  = Validation.validateAll(results)
         assertTrue(result == Right(()))
       },
       test("returns Left with all errors when validations fail") {
@@ -161,20 +161,20 @@ object ValidationSpec extends ZIOSpecDefault:
           Right("ok"),
           Left(FieldValidationError("field2", "error2"))
         )
-        val result = Validation.validateAll(results)
+        val result                                         = Validation.validateAll(results)
         assertTrue(result.isLeft)
         assertTrue(result.swap.getOrElse(Nil).length == 2)
       },
       test("returns Right for empty list") {
         val results = List.empty[Either[ValidationError, String]]
-        val result = Validation.validateAll(results)
+        val result  = Validation.validateAll(results)
         assertTrue(result == Right(()))
       },
       test("returns Left with single error") {
         val results: List[Either[ValidationError, String]] = List(
           Left(FieldValidationError("email", "required"))
         )
-        val result = Validation.validateAll(results)
+        val result                                         = Validation.validateAll(results)
         assertTrue(result.swap.getOrElse(Nil).head.field == "email")
       }
     ),

@@ -32,7 +32,7 @@ object PaginationSpec extends ZIOSpecDefault:
         assertTrue(response.totalPages == 2)
       },
       test("preserves items list") {
-        val items = List("first", "second", "third")
+        val items    = List("first", "second", "third")
         val response = PaginatedResponse(items, 3, 1, 10)
         assertTrue(response.items == items)
       },
@@ -50,7 +50,7 @@ object PaginationSpec extends ZIOSpecDefault:
       },
       test("encodes to JSON with all fields") {
         val response = PaginatedResponse(List("a", "b"), 5, 1, 2)
-        val json = response.toJson
+        val json     = response.toJson
         assertTrue(json.contains("items"))
         assertTrue(json.contains("total"))
         assertTrue(json.contains("page"))
@@ -58,7 +58,7 @@ object PaginationSpec extends ZIOSpecDefault:
         assertTrue(json.contains("totalPages"))
       },
       test("decodes from JSON") {
-        val json = """{"items":[1,2,3],"total":3,"page":1,"pageSize":10,"totalPages":1}"""
+        val json    = """{"items":[1,2,3],"total":3,"page":1,"pageSize":10,"totalPages":1}"""
         val decoded = json.fromJson[PaginatedResponse[Int]]
         assertTrue(decoded.map(_.items) == Right(List(1, 2, 3)))
         assertTrue(decoded.map(_.total) == Right(3))
@@ -66,7 +66,7 @@ object PaginationSpec extends ZIOSpecDefault:
       },
       test("round-trip encode/decode") {
         val response = PaginatedResponse(List("x", "y"), 2, 1, 10)
-        val decoded = response.toJson.fromJson[PaginatedResponse[String]]
+        val decoded  = response.toJson.fromJson[PaginatedResponse[String]]
         assertTrue(decoded == Right(response))
       }
     ),

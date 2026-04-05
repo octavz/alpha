@@ -3,6 +3,8 @@ package com.alpha.dto
 import zio.test.*
 import zio.json.*
 import com.alpha.validation.*
+import com.alpha.dto.ApiError.{given_JsonDecoder_FieldError, given_JsonEncoder_FieldError}
+import com.alpha.dto.ApiError.{given_JsonDecoder_FieldError, given_JsonEncoder_FieldError}
 
 object ApiErrorSpec extends ZIOSpecDefault:
 
@@ -31,7 +33,7 @@ object ApiErrorSpec extends ZIOSpecDefault:
     ),
     suite("validationError")(
       test("converts FieldValidationErrors to details") {
-        val errors = List(
+        val errors   = List(
           FieldValidationError("email", "Email is required"),
           FieldValidationError("password", "Password too short")
         )
@@ -48,7 +50,7 @@ object ApiErrorSpec extends ZIOSpecDefault:
         )
       },
       test("uses first error message when only GeneralValidationErrors") {
-        val errors = List(
+        val errors   = List(
           GeneralValidationError("Something went wrong")
         )
         val apiError = ApiError.validationError(errors)
@@ -59,7 +61,7 @@ object ApiErrorSpec extends ZIOSpecDefault:
         )
       },
       test("returns no details when only GeneralValidationErrors mixed") {
-        val errors = List(
+        val errors   = List(
           GeneralValidationError("General error")
         )
         val apiError = ApiError.validationError(errors)
@@ -70,7 +72,7 @@ object ApiErrorSpec extends ZIOSpecDefault:
           FieldValidationError("name", "Name is required"),
           GeneralValidationError("Additional issue")
         )
-        val apiError = ApiError.validationError(errors)
+        val apiError                      = ApiError.validationError(errors)
         assertTrue(
           apiError.code == "VALIDATION_ERROR",
           apiError.details.isDefined,
@@ -82,7 +84,7 @@ object ApiErrorSpec extends ZIOSpecDefault:
     suite("JSON encode/decode")(
       test("encodes ApiError without details") {
         val error = ApiError("NOT_FOUND", "User not found")
-        val json = error.toJson
+        val json  = error.toJson
         assertTrue(json.contains("NOT_FOUND"))
         assertTrue(json.contains("User not found"))
       },
@@ -92,27 +94,28 @@ object ApiErrorSpec extends ZIOSpecDefault:
           "Validation failed",
           Some(List(FieldError("email", "Required"), FieldError("password", "Too short")))
         )
-        val json = error.toJson
+        val json  = error.toJson
         assertTrue(json.contains("VALIDATION_ERROR"))
         assertTrue(json.contains("email"))
         assertTrue(json.contains("password"))
       },
       test("decodes ApiError without details") {
-        val json = """{"code":"BAD_REQUEST","message":"Invalid input"}"""
+        val json    = """{"code":"BAD_REQUEST","message":"Invalid input"}"""
         val decoded = json.fromJson[ApiError]
         assertTrue(decoded.map(_.code) == Right("BAD_REQUEST"))
         assertTrue(decoded.map(_.message) == Right("Invalid input"))
         assertTrue(decoded.map(_.details) == Right(None))
       },
       test("decodes ApiError with details") {
-        val json = """{"code":"VALIDATION_ERROR","message":"Validation failed","details":[{"field":"email","message":"Required"}]}"""
+        val json    =
+          """{"code":"VALIDATION_ERROR","message":"Validation failed","details":[{"field":"email","message":"Required"}]}"""
         val decoded = json.fromJson[ApiError]
         assertTrue(decoded.map(_.code) == Right("VALIDATION_ERROR"))
         assertTrue(decoded.map(_.details.isDefined) == Right(true))
-        assertTrue(decoded.flatMap(_.details.map(_.head.field)) == Right("email"))
+        assertTrue(decoded.exists(_.details.exists(_.head.field == "email")))
       },
       test("round-trip encodes and decodes ApiError") {
-        val error = ApiError(
+        val error   = ApiError(
           "INTERNAL_ERROR",
           "Server error",
           None
@@ -121,7 +124,7 @@ object ApiErrorSpec extends ZIOSpecDefault:
         assertTrue(decoded == Right(error))
       },
       test("round-trip encodes and decodes ApiError with details") {
-        val error = ApiError(
+        val error   = ApiError(
           "VALIDATION_ERROR",
           "Bad data",
           Some(List(FieldError("field1", "err1"), FieldError("field2", "err2")))
@@ -132,19 +135,19 @@ object ApiErrorSpec extends ZIOSpecDefault:
     ),
     suite("FieldError")(
       test("encodes FieldError") {
-        val fe = FieldError("email", "Invalid format")
+        val fe   = FieldError("email", "Invalid format")
         val json = fe.toJson
         assertTrue(json.contains("email"))
         assertTrue(json.contains("Invalid format"))
       },
       test("decodes FieldError") {
-        val json = """{"field":"name","message":"Required"}"""
+        val json    = """{"field":"name","message":"Required"}"""
         val decoded = json.fromJson[FieldError]
         assertTrue(decoded.map(_.field) == Right("name"))
         assertTrue(decoded.map(_.message) == Right("Required"))
       },
       test("round-trip FieldError") {
-        val fe = FieldError("phone", "Invalid phone number")
+        val fe      = FieldError("phone", "Invalid phone number")
         val decoded = fe.toJson.fromJson[FieldError]
         assertTrue(decoded == Right(fe))
       }

@@ -36,7 +36,7 @@ class UserRepositoryImpl(ctx: PostgresCtx) extends UserRepository:
 
   override def findByGoogleId(googleId: String): Task[Option[User]] =
     ZIO.attempt:
-      run(query[User].filter(_.googleId == lift(Some(googleId)))).headOption
+      run(query[User].filter(_.googleId == lift(Option(googleId)))).headOption
 
   override def existsByEmail(email: String): Task[Boolean] =
     ZIO.attempt:
@@ -65,7 +65,7 @@ class UserRepositoryImpl(ctx: PostgresCtx) extends UserRepository:
 
   override def findByRegionId(regionId: UUID): Task[List[User]] =
     ZIO.attempt:
-      run(query[User].filter(_.regionId == lift(Some(regionId)))).toList
+      run(query[User].filter(_.regionId == lift(Option(regionId)))).toList
 
   override def searchByEmailOrName(searchQuery: String): Task[List[User]] =
     ZIO.attempt:

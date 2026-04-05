@@ -27,7 +27,8 @@ lazy val root = (project in file("."))
     name := "alpha-backend",
     Compile / run / mainClass := Some("com.alpha.Main"),
     test / parallelExecution := false,
-    scalafmtOnCompile := true
+    scalafmtOnCompile := true,
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )
   .settings(
     libraryDependencies ++= Seq(
@@ -58,7 +59,7 @@ lazy val root = (project in file("."))
       "org.slf4j" % "slf4j-api" % "2.0.14",
       "ch.qos.logback" % "logback-classic" % "1.4.14",
       "dev.zio" %% "zio-test" % zioVersion % Test,
-      "dev.zio" %% "zio-test-junit" % zioVersion % Test,
+      "dev.zio" %% "zio-test-sbt" % zioVersion % Test,
       "com.github.sideeffffect" %% "zio-testcontainers" % testContainersVersion % Test,
       "org.scalatest" %% "scalatest" % "3.2.18" % Test,
       "org.scalacheck" %% "scalacheck" % "1.17.0" % Test,

@@ -1,0 +1,2 @@
+-Dsbt.server.autostart=false
+-Dsbt.io.virtual=false
