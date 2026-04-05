@@ -1,0 +1,40 @@
+# SBT
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+project/target/
+target/
+.project
+.classpath
+.settings/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.bloop/
+.bsp/
+
+# Metals
+.metals/
+
+# Mill
+out/
+.mill-version
+.mill-jvm-version
+mill
+mill.bat
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local
+
+# Logs
+*.log
